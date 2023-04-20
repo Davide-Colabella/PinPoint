@@ -1,0 +1,36 @@
+package com.univpm.pinpointmvvm.view.activities
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import coil.load
+import coil.transform.CircleCropTransformation
+import com.univpm.pinpointmvvm.R
+import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
+import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
+
+
+class AccountSettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAccountSettingsBinding
+    private lateinit var viewModel: ProfileViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityAccountSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewModel = ProfileViewModel()
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                binding.accountUsernameAccountSettings.setText(uiState.username)
+                binding.accountNameAccountSettings.setText(uiState.fullname)
+                binding.accountBioAccountSettings.setText(uiState.bio)
+                binding.profileImageAccountSettings.load(uiState.image) {
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
+                    transformations(CircleCropTransformation())
+                }
+            }
+        }
+    }
+}

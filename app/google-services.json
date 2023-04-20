@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "874278115671",
+    "firebase_url": "https://pinpointmvvm-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "pinpointmvvm",
+    "storage_bucket": "pinpointmvvm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874278115671:android:807127de2926b3ce2b8612",
+        "android_client_info": {
+          "package_name": "com.univpm.pinpointmvvm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874278115671-kb77fdu4mfmlesngfiocvgl5rp1tmncn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.univpm.pinpointmvvm",
+            "certificate_hash": "574985b4bf46dce17d78ff1ac649317f932863fd"
+          }
+        },
+        {
+          "client_id": "874278115671-ec30q4tj96opj6ev3qbt74803drchu52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-GZkVEt7auX1BrGQ9t-rPvnx6KhhzjhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874278115671-ec30q4tj96opj6ev3qbt74803drchu52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
