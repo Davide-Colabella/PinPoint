@@ -29,4 +29,11 @@
                 }
             })
         }
+
+        fun updateProfile(username: String, name: String, bio: String) {
+            usersRef.child("fullname").setValue(name)
+            usersRef.child("username").setValue(username)
+            usersRef.child("bio").setValue(bio)
+        }
+
     }

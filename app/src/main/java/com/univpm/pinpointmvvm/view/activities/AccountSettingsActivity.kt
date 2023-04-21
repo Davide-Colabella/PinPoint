@@ -19,6 +19,20 @@ class AccountSettingsActivity : AppCompatActivity() {
         binding = ActivityAccountSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ProfileViewModel()
+
+        binding.saveAccountSettingsBtn.setOnClickListener {
+            viewModel.updateProfile(
+                binding.accountNameAccountSettings.text.toString(),
+                binding.accountUsernameAccountSettings.text.toString(),
+                binding.accountBioAccountSettings.text.toString()
+            )
+            finish()
+        }
+
+        binding.closeAccountSettingsBtn.setOnClickListener {
+            finish()
+        }
+
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 binding.accountUsernameAccountSettings.setText(uiState.username)

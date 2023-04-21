@@ -29,4 +29,9 @@ class ProfileViewModel() : ViewModel(){
             }
         }
     }
+
+    fun updateProfile(username: String, name: String, bio: String) {
+        repository.updateProfile(username, name, bio)
+    }
+
 }
