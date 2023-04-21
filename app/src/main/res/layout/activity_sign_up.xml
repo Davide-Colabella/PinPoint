@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".view.activities.SignUpActivity">
+
+    <ProgressBar
+        android:id="@+id/progressBarSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="250dp"
+        android:layout_height="120dp"
+        android:src="@drawable/pinpoint"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        app:tint="@color/white" />
+
+    <EditText
+        android:id="@+id/fullname_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:inputType="textPersonName"
+        android:hint="@string/full_name"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black" />
+
+    <EditText
+        android:id="@+id/username_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:layout_below="@id/fullname_signup"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:inputType="text"
+        android:hint="@string/username"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black" />
+
+    <EditText
+        android:id="@+id/email_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:layout_below="@id/username_signup"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black" />
+
+    <EditText
+        android:id="@+id/password_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:layout_below="@id/email_signup"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:inputType="textPassword"
+        android:hint="@string/password"
+        android:textColorHint="@color/black"
+        android:textColor="@color/black" />
+
+    <Button
+        android:id="@+id/up_sign_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_signup"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/sign_up"
+        android:textAllCaps="false"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/up_sign_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/yes_account"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:textSize="17sp" />
+
+</RelativeLayout>
