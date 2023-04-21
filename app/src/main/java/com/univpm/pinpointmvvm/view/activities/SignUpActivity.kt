@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
-import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivitySignUpBinding
 import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch

@@ -80,4 +80,5 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="title_activity_sign_in">SignInActivity</string>
+    <string name="logged_in">Logged In\n</string>
 </resources>

@@ -15,8 +15,6 @@ class ProfileViewModel() : ViewModel(){
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
 
-
-
     init {
         repository.listenForUserInfoChanges { s, s2, s3, s4 ->
             viewModelScope.launch {

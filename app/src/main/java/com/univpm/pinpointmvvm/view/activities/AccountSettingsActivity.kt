@@ -10,7 +10,6 @@ import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
 import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
 
-
 class AccountSettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountSettingsBinding
     private lateinit var viewModel: ProfileViewModel
