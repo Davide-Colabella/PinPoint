@@ -15,4 +15,8 @@ class SignInRepository {
             Result.failure(e)
         }
     }
+
+    fun isLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
 }

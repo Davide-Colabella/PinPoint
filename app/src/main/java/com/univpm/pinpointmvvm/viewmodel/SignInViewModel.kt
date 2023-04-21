@@ -1,6 +1,5 @@
 package com.univpm.pinpointmvvm.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.univpm.pinpointmvvm.model.repo.SignInRepository
@@ -25,5 +24,9 @@ class SignInViewModel: ViewModel() {
                 _uiState.value = SignInUiState.error(result.exceptionOrNull()!!.message!!)
             }
         }
+    }
+
+    fun isLoggedIn(): Boolean {
+        return repository.isLoggedIn()
     }
 }

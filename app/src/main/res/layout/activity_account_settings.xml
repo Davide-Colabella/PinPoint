@@ -68,8 +68,8 @@
         android:layout_below="@+id/necessary_linear_layout"
         android:layout_centerHorizontal="true"
         android:text="@string/change_profile_image"
+        android:textColor="@color/cyan"
         android:textSize="14sp"
-        android:textColor="@color/black"
         android:layout_marginTop="8dp"/>
 
     <EditText

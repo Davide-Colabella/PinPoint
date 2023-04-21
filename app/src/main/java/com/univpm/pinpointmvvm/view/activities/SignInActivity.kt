@@ -1,8 +1,6 @@
 package com.univpm.pinpointmvvm.view.activities
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -15,13 +13,11 @@ class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
     private lateinit var viewmodel: SignInViewModel
-    private lateinit var sharedPref: SharedPreferences
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel = SignInViewModel()
-        sharedPref = getPreferences(Context.MODE_PRIVATE)
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -52,19 +48,25 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
-        if (sharedPref.getBoolean("isLogged", false)) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
-
         lifecycleScope.launch {
             viewmodel.uiState.collect { state ->
                 if (state.message != null) {
-                    sharedPref.edit().putBoolean("isLogged", true).apply()
                     startActivity(Intent(this@SignInActivity, MainActivity::class.java))
                     finish()
+                } else if (state.error != null) {
+                    Snackbar.make(binding.root, state.error, Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (viewmodel.isLoggedIn()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
     }
 }

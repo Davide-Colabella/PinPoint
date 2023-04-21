@@ -36,4 +36,8 @@
             usersRef.child("bio").setValue(bio)
         }
 
+        fun logOut() {
+            FirebaseAuth.getInstance().signOut()
+        }
+
     }

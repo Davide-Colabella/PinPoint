@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.view.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +31,12 @@ class AccountSettingsActivity : AppCompatActivity() {
         }
 
         binding.closeAccountSettingsBtn.setOnClickListener {
+            finish()
+        }
+
+        binding.logoutBtn.setOnClickListener {
+            viewModel.logOut()
+            startActivity(Intent(this, SignInActivity::class.java))
             finish()
         }
 

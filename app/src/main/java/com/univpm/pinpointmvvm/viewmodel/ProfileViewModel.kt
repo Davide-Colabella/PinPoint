@@ -20,8 +20,8 @@ class ProfileViewModel() : ViewModel(){
             viewModelScope.launch {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        username = s,
-                        fullname = s2,
+                        fullname = s,
+                        username = s2,
                         bio = s3,
                         image = s4
                     )
@@ -34,4 +34,7 @@ class ProfileViewModel() : ViewModel(){
         repository.updateProfile(username, name, bio)
     }
 
+    fun logOut() {
+        repository.logOut()
+    }
 }
