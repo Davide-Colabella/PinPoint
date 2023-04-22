@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.univpm.pinpointmvvm.uistate.UserUiState
@@ -32,6 +33,10 @@ class ProfileViewModel() : ViewModel(){
 
     fun updateProfile(username: String, name: String, bio: String) {
         repository.updateProfile(username, name, bio)
+    }
+
+    fun updateProfile(username: String, name: String, bio: String, imageUri: Uri) {
+        repository.updateProfile(username, name, bio, imageUri)
     }
 
     fun logOut() {
