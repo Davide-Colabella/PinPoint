@@ -7,6 +7,7 @@ import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityMainBinding
 import com.univpm.pinpointmvvm.view.fragments.HomeFragment
 import com.univpm.pinpointmvvm.view.fragments.ProfileFragment
+import com.univpm.pinpointmvvm.view.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.home -> replaceFragment(HomeFragment.newInstance())
                 R.id.profile -> replaceFragment(ProfileFragment.newInstance())
+                R.id.search -> replaceFragment(SearchFragment.newInstance())
                 else -> {}
             }
             true
