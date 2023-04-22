@@ -1,7 +1,11 @@
 package com.univpm.pinpointmvvm.view.activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
@@ -20,18 +24,45 @@ class AccountSettingsActivity : AppCompatActivity() {
         binding = ActivityAccountSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ProfileViewModel()
+        var imageUri: Uri? = null
+        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                imageUri = uri
+                binding.profileImageAccountSettings.load(imageUri) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_profile)
+                    transformations(CircleCropTransformation())
+                }
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
 
         binding.saveAccountSettingsBtn.setOnClickListener {
-            viewModel.updateProfile(
-                binding.accountNameAccountSettings.text.toString(),
-                binding.accountUsernameAccountSettings.text.toString(),
-                binding.accountBioAccountSettings.text.toString()
-            )
+            if (imageUri != null) {
+                viewModel.updateProfile(
+                    binding.accountNameAccountSettings.text.toString(),
+                    binding.accountUsernameAccountSettings.text.toString(),
+                    binding.accountBioAccountSettings.text.toString(),
+                    imageUri!!
+                )
+            } else {
+                viewModel.updateProfile(
+                    binding.accountUsernameAccountSettings.text.toString(),
+                    binding.accountNameAccountSettings.text.toString(),
+                    binding.accountBioAccountSettings.text.toString()
+                )
+            }
             finish()
         }
 
         binding.closeAccountSettingsBtn.setOnClickListener {
             finish()
+        }
+
+        binding.changeProfileImage.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.logoutBtn.setOnClickListener {
