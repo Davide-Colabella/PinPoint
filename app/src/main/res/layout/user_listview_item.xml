@@ -1,29 +1,48 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="10dp">
 
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/fullname_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <io.getstream.avatarview.AvatarView
+            android:id="@+id/user_profile_image_search"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="5dp"
+            app:avatarViewPlaceholder="@drawable/ic_profile"
+            app:avatarViewBorderColor="@color/black"
+            app:avatarViewBorderWidth="3dp" />
 
-    <TextView
-        android:id="@+id/username_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/image_view"
-        app:layout_constraintTop_toBottomOf="@+id/fullname_text_view"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/username_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/fullname_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/full_name" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
