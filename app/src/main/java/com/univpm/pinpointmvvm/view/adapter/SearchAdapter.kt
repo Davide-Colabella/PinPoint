@@ -1,9 +1,11 @@
-package com.univpm.pinpointmvvm.adapter
+package com.univpm.pinpointmvvm.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.CircleCropTransformation
+import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.databinding.UserListviewItemBinding
 
@@ -18,8 +20,13 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
     class ViewHolder(private val binding: UserListviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {
-            binding.imageView.load(user.image)
-            binding.fullnameTextView.text = user.fullname
+            binding.userProfileImageSearch.load(user.image) {
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
+                transformations(CircleCropTransformation())
+            }
+            binding.fullnameSearch.text = user.fullname
+            binding.usernameSearch.text = user.username
         }
     }
 

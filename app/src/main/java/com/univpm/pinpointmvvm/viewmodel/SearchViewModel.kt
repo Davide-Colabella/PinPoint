@@ -16,7 +16,4 @@ class SearchViewModel() : ViewModel() {
         repository.searchUsers(query, _userList)
     }
 
-
-
-
 }
