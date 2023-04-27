@@ -35,6 +35,11 @@
             })
         }
 
+        fun updateProfile(latitude:String, longitude : String){
+            usersRef.child("latitude").setValue(latitude)
+            usersRef.child("longitude").setValue(longitude)
+        }
+
         fun updateProfile(username: String, name: String, bio: String) {
             usersRef.child("fullname").setValue(name)
             usersRef.child("username").setValue(username)

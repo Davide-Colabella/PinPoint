@@ -1,66 +1,110 @@
 package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.univpm.pinpointmvvm.model.data.MapOptions
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.MapRepository
-import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.model.services.Localization
-import kotlinx.coroutines.coroutineScope
+import com.univpm.pinpointmvvm.view.activities.OtherUserProfileActivity
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
-/*
+// TODO gestire il continuo ascolto della posizione del dispositivo e dell'aggiornamento della posizione dell'utente
+
+
 @SuppressLint("MissingPermission", "StaticFieldLeak")
-class HomeViewModel (activity: Activity, mapFragment: SupportMapFragment) : ViewModel(){
-
-    private lateinit var listOfUsers : List<User>
-    private val mapRepository : MapRepository = MapRepository()
-    private val localization: Localization = Localization(activity)
+class HomeViewModel(
+    private val mapFragment: SupportMapFragment,
+    private val requireActivity: FragmentActivity,
+    private val viewLifecycleOwner: LifecycleOwner
+) : ViewModel() {
+    private val mapOptions = MapOptions()
+    private val mapRepository = MapRepository()
     private lateinit var map: GoogleMap
+    private val localization: Localization = Localization(requireActivity)
+
+    private val users: LiveData<List<User>> = mapRepository.getAllUsers()
 
     init {
-        mapFragment.getMapAsync{
-            map = it
-            runBlocking {
-                addCurrentPositionMarker()
+        setupMapOptions()
+        setupCameraMovementObserver()
+        setupMarkerObserver()
+    }
+
+
+    private fun setupMapOptions() {
+
+        mapFragment.getMapAsync { googleMap ->
+            map = googleMap
+            map.isMyLocationEnabled = mapOptions.isMyLocationEnabled
+            map.uiSettings.isZoomControlsEnabled = mapOptions.isZoomControlsEnabled
+            map.uiSettings.isZoomGesturesEnabled = mapOptions.isZoomGestureEnabled
+            map.uiSettings.isMapToolbarEnabled = mapOptions.isMapToolbarEnabled
+            viewLifecycleOwner.lifecycleScope.launch {
+                val position = localization.getLastLocation()!!
+                val mapViewBounds = LatLngBounds(
+                    LatLng(position.latitude, position.longitude),  // SW bounds
+                    LatLng(position.latitude, position.longitude) // NE bounds
+                )
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, mapOptions.zoomLevel))
+                map.setLatLngBoundsForCameraTarget(mapViewBounds)
             }
-            addUsersPositionMarker()
+            map.setOnInfoWindowClickListener { marker ->
+                val userFromMarker = marker.tag as User?
+                val intent = Intent(requireActivity, OtherUserProfileActivity::class.java)
+                val bundle = Bundle().apply {
+                    putString("username", userFromMarker!!.username)
+                    putString("email", userFromMarker.email)
+                }
+                intent.putExtras(bundle)
+                startActivity(requireActivity as Context, intent, bundle)
+            }
         }
     }
 
-    private fun addUsersPositionMarker() {
-
+    private fun setupCameraMovementObserver() {
+        localization.startUpdates { location ->
+            val position = LatLng(location!!.latitude, location.longitude)
+            val mapViewBounds = LatLngBounds(
+                LatLng(position.latitude, position.longitude),  // SW bounds
+                LatLng(position.latitude, position.longitude)  // NE bounds
+            )
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, mapOptions.zoomLevel))
+            map.setLatLngBoundsForCameraTarget(mapViewBounds)
+        }
     }
 
-    private suspend fun addCurrentPositionMarker() {
-        coroutineScope {
-            val currentPosition = localization.getCurrentPosition()
-            if (currentPosition != null) {
-                val markerOptions = MarkerOptions()
-                    .position(currentPosition)
-                    .title("Current Position")
-                map.addMarker(markerOptions)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 18.0f))
+
+    private fun setupMarkerObserver() {
+
+        users.observe(viewLifecycleOwner) { userList ->
+            map.clear()
+            userList.forEach { user ->
+                val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
+                val marker = map.addMarker(
+                    MarkerOptions().position(position).title(user.username)
+                )
+                marker!!.tag = user
             }
         }
     }
 
-}
- */
-
-class HomeViewModel() : ViewModel() {
-    private val mapRepository = MapRepository()
-
-    val users: LiveData<List<User>> = mapRepository.getAllUsers()
-
+    override fun onCleared() {
+        super.onCleared()
+        localization.stopUpdates()
+    }
 }
