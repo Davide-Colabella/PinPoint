@@ -37,7 +37,8 @@ class SearchFragment : Fragment() {
 
     private fun initUI() {
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        adapter = SearchAdapter()
+        adapter = SearchAdapter(searchViewModel, requireContext())
+
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.adapter = adapter

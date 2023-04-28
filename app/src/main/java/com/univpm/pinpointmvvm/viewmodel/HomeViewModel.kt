@@ -51,8 +51,8 @@ class HomeViewModel(
         mapFragment.getMapAsync { googleMap ->
             map = googleMap
             map.isMyLocationEnabled = mapOptions.isMyLocationEnabled
-            map.uiSettings.isZoomControlsEnabled = mapOptions.isZoomControlsEnabled
-            map.uiSettings.isZoomGesturesEnabled = mapOptions.isZoomGestureEnabled
+            //map.uiSettings.isZoomControlsEnabled = mapOptions.isZoomControlsEnabled
+            //map.uiSettings.isZoomGesturesEnabled = mapOptions.isZoomGestureEnabled
             map.uiSettings.isMapToolbarEnabled = mapOptions.isMapToolbarEnabled
             viewLifecycleOwner.lifecycleScope.launch {
                 val position = localization.getLastLocation()!!
@@ -67,8 +67,7 @@ class HomeViewModel(
                 val userFromMarker = marker.tag as User?
                 val intent = Intent(requireActivity, OtherUserProfileActivity::class.java)
                 val bundle = Bundle().apply {
-                    putString("username", userFromMarker!!.username)
-                    putString("email", userFromMarker.email)
+                        putSerializable("USER_OBJECT", userFromMarker)
                 }
                 intent.putExtras(bundle)
                 startActivity(requireActivity as Context, intent, bundle)

@@ -46,7 +46,7 @@ class Localization(private val activity: Activity) : LocationListener {
     fun startUpdates(listener: (Location?) -> Unit) {
         this.listener = listener
         locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER, 1000L, 20f, this
+            LocationManager.GPS_PROVIDER, 1000L, 100f, this
         )
     }
 

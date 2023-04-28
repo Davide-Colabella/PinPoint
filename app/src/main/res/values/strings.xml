@@ -23,6 +23,7 @@
     <string name="followers">follower</string>
     <string name="following">following</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="segui">Segui</string>
     <string name="bio">Bio</string>
 
     <!--Fragment search-->

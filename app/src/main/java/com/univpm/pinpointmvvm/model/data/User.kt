@@ -1,5 +1,7 @@
 package com.univpm.pinpointmvvm.model.data
 
+import java.io.Serializable
+
 data class User(
     val uid: String? = null,
     val fullname: String? = null,
@@ -9,4 +11,4 @@ data class User(
     val bio: String? = null,
     val latitude: String? = null,
     val longitude: String? = null,
-)
+) : Serializable
