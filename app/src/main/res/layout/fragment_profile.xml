@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,16 +7,16 @@
     tools:context=".view.fragments.ProfileFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout_profile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/app_bar_layout_profile">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_profile"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="4dp"
             android:layout_marginLeft="6dp"
+            android:layout_marginTop="4dp"
             android:layout_marginRight="6dp">
 
             <RelativeLayout
@@ -28,11 +27,11 @@
                     android:id="@+id/profile_fragment_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:maxLines="1"
                     android:text="@string/username"
                     android:textSize="18sp"
-                    android:maxLines="1"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true" />
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
@@ -49,42 +48,43 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/top_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="16dp" >
+                android:padding="16dp">
 
                 <io.getstream.avatarview.AvatarView
                     android:id="@+id/profile_fragment_profile_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:avatarViewPlaceholder="@drawable/ic_profile"
-                    app:avatarViewBorderColor = "@color/black"
-                    app:avatarViewBorderWidth="3dp" />
+                    app:avatarViewBorderColor="@color/black"
+                    app:avatarViewBorderWidth="3dp"
+                    app:avatarViewPlaceholder="@drawable/ic_profile" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="60dp"
                     android:layout_marginTop="15dp"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:baselineAligned="false"
                         android:gravity="center"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical" >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/total_posts"
@@ -98,7 +98,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/post"
-                                android:textSize="15sp"/>
+                                android:textSize="15sp" />
 
                         </LinearLayout>
 
@@ -107,7 +107,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical" >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/total_followers"
@@ -121,7 +121,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/followers"
-                                android:textSize="15sp"/>
+                                android:textSize="15sp" />
 
                         </LinearLayout>
 
@@ -130,7 +130,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical" >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/total_following"
@@ -144,7 +144,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/following"
-                                android:textSize="15sp"/>
+                                android:textSize="15sp" />
 
                         </LinearLayout>
 
@@ -154,9 +154,9 @@
                         android:id="@+id/edit_profile_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/edit_profile"
                         android:layout_gravity="center"
-                        android:textAllCaps="false" >
+                        android:text="@string/edit_profile"
+                        android:textAllCaps="false">
 
                     </Button>
 
@@ -169,7 +169,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp" >
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/profile_fragment_full_name"
@@ -185,7 +185,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bio"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -193,13 +193,13 @@
 
     </ScrollView>
 
-    <TextView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_posts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/scroll_view_profile"
-        android:text="@string/post"
-        android:textAlignment="center"
-        android:textSize="48sp" />
+        android:layout_marginTop="0dp" />
 
 
 </RelativeLayout>

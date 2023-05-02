@@ -23,14 +23,12 @@ import com.univpm.pinpointmvvm.model.services.Localization
 import com.univpm.pinpointmvvm.view.activities.OtherUserProfileActivity
 import kotlinx.coroutines.launch
 
-// TODO gestire il continuo ascolto della posizione del dispositivo e dell'aggiornamento della posizione dell'utente
-
 
 @SuppressLint("MissingPermission", "StaticFieldLeak")
 class HomeViewModel(
     private val mapFragment: SupportMapFragment,
     private val requireActivity: FragmentActivity,
-    private val viewLifecycleOwner: LifecycleOwner
+    private val viewLifecycleOwner: LifecycleOwner,
 ) : ViewModel() {
     private val mapOptions = MapOptions()
     private val mapRepository = MapRepository()
@@ -46,9 +44,10 @@ class HomeViewModel(
     }
 
 
+    @SuppressLint("PotentialBehaviorOverride")
     private fun setupMapOptions() {
 
-        mapFragment.getMapAsync { googleMap ->
+       mapFragment.getMapAsync { googleMap ->
             map = googleMap
             map.isMyLocationEnabled = mapOptions.isMyLocationEnabled
             //map.uiSettings.isZoomControlsEnabled = mapOptions.isZoomControlsEnabled
@@ -60,17 +59,14 @@ class HomeViewModel(
                     LatLng(position.latitude, position.longitude),  // SW bounds
                     LatLng(position.latitude, position.longitude) // NE bounds
                 )
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, mapOptions.zoomLevel))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, mapOptions.zoomLevel))
                 map.setLatLngBoundsForCameraTarget(mapViewBounds)
             }
             map.setOnInfoWindowClickListener { marker ->
                 val userFromMarker = marker.tag as User?
                 val intent = Intent(requireActivity, OtherUserProfileActivity::class.java)
-                val bundle = Bundle().apply {
-                        putSerializable("USER_OBJECT", userFromMarker)
-                }
-                intent.putExtras(bundle)
-                startActivity(requireActivity as Context, intent, bundle)
+                intent.putExtra("USER_OBJECT", userFromMarker)
+                startActivity(requireActivity, intent,  null)
             }
         }
     }

@@ -9,12 +9,15 @@
     import com.google.firebase.database.ValueEventListener
     import com.google.firebase.storage.FirebaseStorage
     import com.google.firebase.storage.UploadTask
+    import java.util.UUID
 
     class UserRepository {
         private val db = FirebaseDatabase.getInstance().reference
         private val user = FirebaseAuth.getInstance().currentUser!!
         private val usersRef = db.child("users").child(user.uid)
-        private val storageRef = FirebaseStorage.getInstance().reference.child("Profile Pictures")
+        private val userPostRef = db.child("posts").child(user.uid)
+        private val profileImageStorageRef = FirebaseStorage.getInstance().reference.child("Profile Pictures")
+        private val postStorageRef = FirebaseStorage.getInstance().reference.child("Posts")
 
         fun listenForUserInfoChanges(onUserInfoChanged: (String, String, String, String) -> Unit) {
 
@@ -55,8 +58,27 @@
             }
         }
 
+        fun uploadPost(imageUri: Uri){
+            uploadImage(imageUri, true).addOnSuccessListener{
+                uri -> userPostRef.push().setValue(uri.toString())
+            }
+        }
+
+        private fun uploadImage(imageUri: Uri, post: Boolean): Task<Uri> {
+            UUID.randomUUID().toString()
+            val fileRef = postStorageRef.child(user.uid).child(UUID.randomUUID().toString() + ".jpg")
+            val uploadTask: UploadTask = fileRef.putFile(imageUri)
+            return uploadTask.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let {
+                        throw it
+                    }
+                }
+                fileRef.downloadUrl
+            }
+        }
         private fun uploadImage(imageUri: Uri): Task<Uri> {
-            val fileRef = storageRef.child(user.uid + ".jpg")
+            val fileRef = profileImageStorageRef.child(user.uid + ".jpg")
             val uploadTask: UploadTask = fileRef.putFile(imageUri)
             return uploadTask.continueWithTask { task ->
                 if (!task.isSuccessful) {

@@ -193,13 +193,12 @@
 
     </ScrollView>
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_posts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/scroll_view_profile"
-        android:text="@string/post"
-        android:textAlignment="center"
-        android:textSize="48sp" />
+        android:layout_marginTop="0dp" />
 
 
 </RelativeLayout>

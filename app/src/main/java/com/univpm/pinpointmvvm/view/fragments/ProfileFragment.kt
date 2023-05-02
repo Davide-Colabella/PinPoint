@@ -23,6 +23,7 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var adapter : PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,4 +52,6 @@ class ProfileFragment : Fragment() {
             }
         }
     }
+
+
 }

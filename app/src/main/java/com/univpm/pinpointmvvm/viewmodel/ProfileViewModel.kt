@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.viewmodel
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,8 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-class ProfileViewModel() : ViewModel(){
+@SuppressLint("StaticFieldLeak")
+class ProfileViewModel(
+) : ViewModel() {
     private val repository = UserRepository()
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()

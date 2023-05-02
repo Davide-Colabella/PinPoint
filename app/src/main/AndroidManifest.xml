@@ -2,10 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera.any"/>
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -18,9 +22,11 @@
         android:theme="@style/Theme.PinPointMVVM"
         tools:targetApi="31">
         <activity
-            android:name=".view.activities.OtherUserProfileActivity"
+            android:name=".view.fragments.PostFragment"
             android:exported="false" />
-        <!-- Any inner elements would go here. -->
+        <activity
+            android:name=".view.activities.OtherUserProfileActivity"
+            android:exported="false" /> <!-- Any inner elements would go here. -->
         <activity
             android:name=".view.activities.SignUpActivity"
             android:exported="false" />
@@ -36,7 +42,7 @@
         </activity>
         <activity
             android:name=".view.activities.MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity android:name=".view.activities.AccountSettingsActivity" />
 
         <meta-data

@@ -1,7 +1,9 @@
 package com.univpm.pinpointmvvm.model.data
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-import java.io.Serializable
 
+@Parcelize
 data class User(
     val uid: String? = null,
     val fullname: String? = null,
@@ -11,4 +13,4 @@ data class User(
     val bio: String? = null,
     val latitude: String? = null,
     val longitude: String? = null,
-) : Serializable
+) : Parcelable
