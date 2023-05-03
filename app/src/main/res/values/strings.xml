@@ -86,5 +86,5 @@
     <string name="anteprima_dell_immagine_selezionata">Anteprima dell\'immagine selezionata</string>
     <string name="salva_immagine" > Salva </string>
     <string name="scatta_foto">Scatta foto</string>
-    <string name="sfoglia">Sfoglia\n</string>
+    <string name="sfoglia">Sfoglia</string>
 </resources>

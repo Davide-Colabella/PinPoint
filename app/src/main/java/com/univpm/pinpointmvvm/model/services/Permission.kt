@@ -3,45 +3,42 @@ package com.univpm.pinpointmvvm.model.services
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-object Permission {
-    private const val LOCATION_PERMISSION_REQUEST_CODE = 123
 
+class Permission(private val activity: AppCompatActivity) {
 
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.CAMERA
-    )
-
-    fun checkPermissionStatus(activity: Activity): Boolean {
-        return requiredPermissions.all {
-            ContextCompat.checkSelfPermission(
-                activity,
-                it
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    fun requestPermissions(activity: Activity) {
-        ActivityCompat.requestPermissions(
-            activity,
-            requiredPermissions,
-            LOCATION_PERMISSION_REQUEST_CODE
+    companion object {
+        val PERMISSIONS = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
+        const val PERMISSION_CAMERA = Manifest.permission.CAMERA
+        const val PERMISSION_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
+        const val PERMISSION_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
+        const val REQUEST_CODE = 123
     }
 
-    fun handlePermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ): Boolean {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                return true
-            }
-        }
-        return false
+    fun checkPermissions(): Boolean {
+        val camera = ContextCompat.checkSelfPermission(activity, PERMISSION_CAMERA) ==
+                PackageManager.PERMISSION_GRANTED
+        val fineLocation = ContextCompat.checkSelfPermission(activity, PERMISSION_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+        val coarseLocation =
+            ContextCompat.checkSelfPermission(activity, PERMISSION_COARSE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED
+        return camera && fineLocation && coarseLocation
+    }
+
+    fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            activity, arrayOf(
+                PERMISSION_CAMERA,
+                PERMISSION_FINE_LOCATION,
+                PERMISSION_COARSE_LOCATION
+            ), REQUEST_CODE
+        )
     }
 }

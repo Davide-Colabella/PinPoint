@@ -21,22 +21,19 @@ class HomeFragment : Fragment() {
         fun newInstance() = HomeFragment()
     }
 
-    private lateinit var localization: Localization
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
 
-    @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
-        localization = Localization(requireActivity())
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        return FragmentHomeBinding.inflate(inflater, container, false).root
+    }
 
-        homeViewModel = HomeViewModel(mapFragment, requireActivity(), viewLifecycleOwner)
-
-        return binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val supportMapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        homeViewModel = HomeViewModel(supportMapFragment, requireActivity(), viewLifecycleOwner)
     }
 }
 

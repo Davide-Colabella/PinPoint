@@ -1,6 +1,8 @@
     package com.univpm.pinpointmvvm.model.repo
 
     import android.net.Uri
+    import android.os.Build
+    import androidx.annotation.RequiresApi
     import com.google.android.gms.tasks.Task
     import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.database.DataSnapshot
@@ -9,6 +11,11 @@
     import com.google.firebase.database.ValueEventListener
     import com.google.firebase.storage.FirebaseStorage
     import com.google.firebase.storage.UploadTask
+    import java.text.SimpleDateFormat
+    import java.time.LocalDateTime
+    import java.time.format.DateTimeFormatter
+    import java.util.Date
+    import java.util.Locale
     import java.util.UUID
 
     class UserRepository {
@@ -53,20 +60,23 @@
             usersRef.child("fullname").setValue(name)
             usersRef.child("username").setValue(username)
             usersRef.child("bio").setValue(bio)
-            uploadImage(imageUri).addOnSuccessListener { uri ->
+            setProfileImage(imageUri).addOnSuccessListener { uri ->
                 usersRef.child("image").setValue(uri.toString())
             }
         }
 
+
         fun uploadPost(imageUri: Uri){
-            uploadImage(imageUri, true).addOnSuccessListener{
+            setPostImage(imageUri).addOnSuccessListener{
                 uri -> userPostRef.push().setValue(uri.toString())
             }
         }
 
-        private fun uploadImage(imageUri: Uri, post: Boolean): Task<Uri> {
-            UUID.randomUUID().toString()
-            val fileRef = postStorageRef.child(user.uid).child(UUID.randomUUID().toString() + ".jpg")
+        private fun setPostImage(imageUri: Uri): Task<Uri> {
+            val currentDateTime = Date()
+            val formatter = SimpleDateFormat("dd-MM-yyyy-HH-mm-ss", Locale.ITALIAN)
+            val formattedDateTime = formatter.format(currentDateTime)
+            val fileRef = postStorageRef.child(user.uid).child("$formattedDateTime.jpg")
             val uploadTask: UploadTask = fileRef.putFile(imageUri)
             return uploadTask.continueWithTask { task ->
                 if (!task.isSuccessful) {
@@ -77,7 +87,7 @@
                 fileRef.downloadUrl
             }
         }
-        private fun uploadImage(imageUri: Uri): Task<Uri> {
+        private fun setProfileImage(imageUri: Uri): Task<Uri> {
             val fileRef = profileImageStorageRef.child(user.uid + ".jpg")
             val uploadTask: UploadTask = fileRef.putFile(imageUri)
             return uploadTask.continueWithTask { task ->

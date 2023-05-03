@@ -3,6 +3,7 @@ package com.univpm.pinpointmvvm.view.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -12,7 +13,7 @@ import com.univpm.pinpointmvvm.databinding.UserListviewItemBinding
 import com.univpm.pinpointmvvm.viewmodel.SearchViewModel
 
 
-class SearchAdapter(private val searchViewModel: SearchViewModel, private val context: Context) :
+class SearchAdapter(private val searchViewModel: SearchViewModel, private val fragment: FragmentActivity) :
     RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
     var userList = listOf<User>()
         set(value) {
@@ -47,7 +48,7 @@ class SearchAdapter(private val searchViewModel: SearchViewModel, private val co
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = userList[position]
         holder.itemView.setOnClickListener {
-            searchViewModel.startShowProfileSearchedActivity(item,context)
+            searchViewModel.startShowProfileSearchedActivity(item, fragment)
         }
         holder.bind(item)
     }

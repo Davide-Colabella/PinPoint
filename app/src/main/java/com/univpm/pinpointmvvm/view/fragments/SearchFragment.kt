@@ -15,7 +15,7 @@ import com.univpm.pinpointmvvm.viewmodel.SearchViewModel
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private lateinit var searchViewModel: SearchViewModel
-    private lateinit var adapter: SearchAdapter
+    private lateinit var searchAdapter: SearchAdapter
 
     companion object {
         fun newInstance() = SearchFragment()
@@ -37,16 +37,16 @@ class SearchFragment : Fragment() {
 
     private fun initUI() {
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        adapter = SearchAdapter(searchViewModel, requireContext())
+        searchAdapter = SearchAdapter(searchViewModel, requireActivity())
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = searchAdapter
     }
 
     private fun recyclerViewObserver() {
         searchViewModel.userList.observe(viewLifecycleOwner) {
-            adapter.userList = it
+            searchAdapter.userList = it
         }
     }
 
@@ -60,7 +60,7 @@ class SearchFragment : Fragment() {
                 if (!newText.isNullOrBlank()){
                     searchViewModel.searchUser(newText)
                 }else{
-                    adapter.clearList()
+                    searchAdapter.clearList()
                 }
                 return false
             }

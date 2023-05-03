@@ -32,14 +32,14 @@ class Localization(private val activity: Activity) : LocationListener {
         activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var listener: ((Location?) -> Unit)? = null
 
-    suspend fun getLastLocation(): LatLng? {
+    suspend fun getLastLocation(): LatLng {
         return try {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
             val location = fusedLocationClient.lastLocation.await()
             setCurrentUserPosition(location)
             LatLng(location.latitude, location.longitude)
         } catch (e: Exception) {
-            null
+            LatLng(0.0, 0.0)
         }
     }
 
