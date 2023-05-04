@@ -1,12 +1,10 @@
 package com.univpm.pinpointmvvm.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.bumptech.glide.Glide
-import com.univpm.pinpointmvvm.R
+import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostBinding
 import com.univpm.pinpointmvvm.model.data.Post
 
@@ -32,7 +30,10 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post) {
-            binding.postImage.load(post.imageUrl)
+            binding.postImage.load(post.imageUrl) {
+                crossfade(true)
+                transformations(SquareCropTransformation())
+            }
         }
     }
 }

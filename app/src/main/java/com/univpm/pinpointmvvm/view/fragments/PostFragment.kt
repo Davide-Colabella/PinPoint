@@ -2,6 +2,7 @@ package com.univpm.pinpointmvvm.view.fragments
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
+import com.commit451.coiltransformations.SquareCropTransformation
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
@@ -43,7 +46,7 @@ class PostFragment : Fragment() {
     //Quando viene premuto il pulsante "salva" aggiunge il post sul database
     private fun onUploadPost(view: View) {
         binding.btnSalvaImmagine.setOnClickListener {
-            if (binding.imageView.drawable != null) {
+            if (binding.imageviewPost.drawable != null) {
                 postViewModel.uploadPost(imageUri)
 
                 Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT).show()
@@ -53,6 +56,8 @@ class PostFragment : Fragment() {
                 transaction.replace(R.id.frame_layout, HomeFragment())
                 transaction.addToBackStack(null)
                 transaction.commit()
+                val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+                bottomNavigationView.selectedItemId = R.id.home
             }
         }
     }
@@ -63,9 +68,11 @@ class PostFragment : Fragment() {
         val req = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 imageUri = uri
-                binding.imageView.load(imageUri) {
+                binding.imageviewPost.load(imageUri) {
                     crossfade(true)
+                    transformations(SquareCropTransformation())
                 }
+                Log.d("TAG", "onGallery: $imageUri")
             }
         }
         binding.btnSfogliaGalleria.setOnClickListener {

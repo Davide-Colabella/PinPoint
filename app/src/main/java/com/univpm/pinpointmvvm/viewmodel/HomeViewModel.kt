@@ -2,7 +2,6 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -58,7 +57,6 @@ class HomeViewModel(
                 localizationUpdates()
             }
         }
-
     }
 
     private fun addMarkers() {
@@ -81,12 +79,12 @@ class HomeViewModel(
         //inizio dell'aggiornamento della posizione
         localization.startUpdates { location ->
             position = LatLng(location!!.latitude, location.longitude)
-            mapBounds = LatLngBounds(
-                LatLng(position.latitude, position.longitude),  // SW bounds
-                LatLng(position.latitude, position.longitude)  // NE bounds
-            )
+//            mapBounds = LatLngBounds(
+//                LatLng(position.latitude, position.longitude),  // SW bounds
+//                LatLng(position.latitude, position.longitude)  // NE bounds
+//            )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
-            map.setLatLngBoundsForCameraTarget(mapBounds)
+//            map.setLatLngBoundsForCameraTarget(mapBounds)
         }
     }
 
@@ -103,12 +101,14 @@ class HomeViewModel(
 
     private fun mapOptions() {
         //determina i confini di visualizzazione della mappa
-        map.setLatLngBoundsForCameraTarget(mapBounds)
+//        map.setLatLngBoundsForCameraTarget(mapBounds)
         //definisci le opzioni di visualizzazione
         map.isMyLocationEnabled = true
         map.isIndoorEnabled = false
         map.isBuildingsEnabled = true
         map.uiSettings.isCompassEnabled = true
+//        //rimuove il pulsante per aprire google maps
+        map.uiSettings.isMapToolbarEnabled = false
     }
 
 

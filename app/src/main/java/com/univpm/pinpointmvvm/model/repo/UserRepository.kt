@@ -1,9 +1,7 @@
     package com.univpm.pinpointmvvm.model.repo
 
     import android.net.Uri
-    import android.os.Build
     import android.util.Log
-    import androidx.annotation.RequiresApi
     import androidx.lifecycle.MutableLiveData
     import com.google.android.gms.tasks.Task
     import com.google.firebase.auth.FirebaseAuth
@@ -19,11 +17,8 @@
     import com.univpm.pinpointmvvm.model.data.Post
     import com.univpm.pinpointmvvm.model.data.User
     import java.text.SimpleDateFormat
-    import java.time.LocalDateTime
-    import java.time.format.DateTimeFormatter
     import java.util.Date
     import java.util.Locale
-    import java.util.UUID
 
     class UserRepository {
         private val db = FirebaseDatabase.getInstance().reference
@@ -94,6 +89,7 @@
                 fileRef.downloadUrl
             }
         }
+
         private fun setProfileImage(imageUri: Uri): Task<Uri> {
             val fileRef = profileImageStorageRef.child(user.uid + ".jpg")
             val uploadTask: UploadTask = fileRef.putFile(imageUri)
@@ -106,7 +102,6 @@
                 fileRef.downloadUrl
             }
         }
-
 
         fun logOut() {
             FirebaseAuth.getInstance().signOut()
