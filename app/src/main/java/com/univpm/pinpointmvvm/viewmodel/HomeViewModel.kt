@@ -2,14 +2,20 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import coil.Coil
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
+import com.commit451.coiltransformations.CropTransformation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
@@ -19,7 +25,6 @@ import com.univpm.pinpointmvvm.model.repo.MapRepository
 import com.univpm.pinpointmvvm.model.services.Localization
 import com.univpm.pinpointmvvm.view.activities.UserProfileActivity
 import kotlinx.coroutines.launch
-
 
 @SuppressLint("MissingPermission", "StaticFieldLeak", "PotentialBehaviorOverride")
 class HomeViewModel(
@@ -61,16 +66,31 @@ class HomeViewModel(
 
     private fun addMarkers() {
         //aggiunta dei marker sulla mappa
+        val imageLoader = Coil.imageLoader(fragment)
         users.observe(viewLifecycleOwner) { userList ->
             map.clear()
-            userList.forEach { user ->
-                val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
-                val marker = map.addMarker(
-                    MarkerOptions()
-                        .position(position)
-                        .title(user.username)
-                )
-                marker!!.tag = user
+            if (map.cameraPosition.zoom > 15.0f) {
+                userList.forEach { user ->
+                    val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
+                    val marker = map.addMarker(
+                        MarkerOptions()
+                            .position(position)
+                            .title(user.username)
+                    )
+                    marker!!.tag = user
+                    val request = ImageRequest.Builder(fragment)
+                        .data(user.image)
+                        .transformations(
+                            CircleCropTransformation(),
+                            CropTransformation(CropTransformation.CropType.CENTER)
+                        )
+                        .size(150)
+                        .target { drawable ->
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                        }
+                        .build()
+                    imageLoader.enqueue(request)
+                }
             }
         }
     }

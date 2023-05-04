@@ -13,6 +13,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentProfileBinding
+import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
 import com.univpm.pinpointmvvm.view.adapter.PostAdapter
 import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
@@ -34,6 +35,10 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         binding.editProfileButton.setOnClickListener {
+            startActivity(Intent(context, AccountEditActivity::class.java))
+        }
+
+        binding.profileFragmentSettings.setOnClickListener {
             startActivity(Intent(context, AccountSettingsActivity::class.java))
         }
 

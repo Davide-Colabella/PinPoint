@@ -53,8 +53,7 @@ class PostFragment : Fragment() {
 
                 //chiudo il fragment appena carico la foto sul database
                 val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.frame_layout, HomeFragment())
-                transaction.addToBackStack(null)
+                transaction.replace(R.id.frame_layout, HomeFragment.newInstance())
                 transaction.commit()
                 val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
                 bottomNavigationView.selectedItemId = R.id.home
