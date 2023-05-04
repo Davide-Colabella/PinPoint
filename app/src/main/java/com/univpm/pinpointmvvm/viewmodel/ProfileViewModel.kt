@@ -2,8 +2,13 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.univpm.pinpointmvvm.model.data.Post
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +22,9 @@ class ProfileViewModel(
     private val repository = UserRepository()
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+
+    private val _posts = MutableLiveData<List<Post>>()
+    val posts: LiveData<List<Post>> = _posts
 
     init {
         repository.listenForUserInfoChanges { s, s2, s3, s4 ->
@@ -43,5 +51,9 @@ class ProfileViewModel(
 
     fun logOut() {
         repository.logOut()
+    }
+
+    fun getPostsFromFirebase() {
+        repository.getPostOfUser(_posts)
     }
 }

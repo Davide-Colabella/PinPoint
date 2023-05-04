@@ -2,15 +2,22 @@
 
     import android.net.Uri
     import android.os.Build
+    import android.util.Log
     import androidx.annotation.RequiresApi
+    import androidx.lifecycle.MutableLiveData
     import com.google.android.gms.tasks.Task
     import com.google.firebase.auth.FirebaseAuth
     import com.google.firebase.database.DataSnapshot
     import com.google.firebase.database.DatabaseError
     import com.google.firebase.database.FirebaseDatabase
+    import com.google.firebase.database.GenericTypeIndicator
     import com.google.firebase.database.ValueEventListener
+    import com.google.firebase.database.ktx.database
+    import com.google.firebase.ktx.Firebase
     import com.google.firebase.storage.FirebaseStorage
     import com.google.firebase.storage.UploadTask
+    import com.univpm.pinpointmvvm.model.data.Post
+    import com.univpm.pinpointmvvm.model.data.User
     import java.text.SimpleDateFormat
     import java.time.LocalDateTime
     import java.time.format.DateTimeFormatter
@@ -68,7 +75,7 @@
 
         fun uploadPost(imageUri: Uri){
             setPostImage(imageUri).addOnSuccessListener{
-                uri -> userPostRef.push().setValue(uri.toString())
+                uri -> userPostRef.push().child("imageUrl").setValue(uri.toString())
             }
         }
 
@@ -103,5 +110,45 @@
 
         fun logOut() {
             FirebaseAuth.getInstance().signOut()
+        }
+
+        fun getPostOfUser(user : User, _posts : MutableLiveData<List<Post>>){
+            val database = Firebase.database.reference.child("posts").child(user.uid!!)
+            database.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val postList = mutableListOf<Post>()
+                    for (postSnapshot in snapshot.children) {
+                        val postMap = postSnapshot.getValue(object : GenericTypeIndicator<Map<String, Any>>() {})
+                        val imageUrl = postMap?.get("imageUrl") as String
+                        val post = Post(imageUrl)
+                        post.let { postList.add(it) }
+                    }
+                    _posts.value = postList
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w("POST", "getPostsFromFirebase:onCancelled", error.toException())
+                }
+            })
+        }
+
+        fun getPostOfUser(_posts : MutableLiveData<List<Post>>){
+            val database = Firebase.database.reference.child("posts").child(user.uid)
+            database.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val postList = mutableListOf<Post>()
+                    for (postSnapshot in snapshot.children) {
+                        val postMap = postSnapshot.getValue(object : GenericTypeIndicator<Map<String, Any>>() {})
+                        val imageUrl = postMap?.get("imageUrl") as String
+                        val post = Post(imageUrl)
+                        post.let { postList.add(it) }
+                    }
+                    _posts.value = postList
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w("POST", "getPostsFromFirebase:onCancelled", error.toException())
+                }
+            })
         }
     }

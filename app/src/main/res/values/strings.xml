@@ -87,4 +87,5 @@
     <string name="salva_immagine" > Salva </string>
     <string name="scatta_foto">Scatta foto</string>
     <string name="sfoglia">Sfoglia</string>
+    <string name="no_posts_found">NO POST</string>
 </resources>

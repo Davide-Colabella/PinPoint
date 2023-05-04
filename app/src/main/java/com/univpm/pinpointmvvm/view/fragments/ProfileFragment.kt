@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentProfileBinding
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
+import com.univpm.pinpointmvvm.view.adapter.PostAdapter
 import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
 
@@ -21,8 +23,9 @@ class ProfileFragment : Fragment() {
         fun newInstance() = ProfileFragment()
     }
 
-    private val viewModel: ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,10 +39,11 @@ class ProfileFragment : Fragment() {
 
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
+            profileViewModel.uiState.collect { uiState ->
                 binding.profileFragmentUsername.text = uiState.username
                 binding.profileFragmentFullName.text = uiState.fullname
                 binding.profileFragmentBio.text = uiState.bio
@@ -48,8 +52,21 @@ class ProfileFragment : Fragment() {
                     error(R.drawable.ic_profile)
                     transformations(CircleCropTransformation())
                 }
+
+                postAdapter = PostAdapter()
+                binding.postList.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = postAdapter
+                }
+
+                profileViewModel.getPostsFromFirebase()
+                profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
+                    postAdapter.posts = posts
+                    postAdapter.notifyDataSetChanged()
+                }
             }
         }
+
     }
 
 
