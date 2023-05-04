@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.activities.AccountEditActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_bar_layout_account_settings">
+
+        <view class="androidx.appcompat.widget.Toolbar"
+            android:id="@+id/toolbar_account_settings"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/close_account_settings_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/ic_close"/>
+
+                <ImageView
+                    android:id="@+id/save_account_settings_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_check"
+                    />
+
+            </RelativeLayout>
+
+        </view>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/necessary_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_bar_layout_account_settings"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp">
+        <io.getstream.avatarview.AvatarView
+            android:id="@+id/profile_image_account_settings"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            app:avatarViewPlaceholder="@drawable/ic_profile"
+            app:avatarViewBorderColor="@color/black"
+            app:avatarViewBorderWidth="3dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/change_profile_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/necessary_linear_layout"
+        android:layout_centerHorizontal="true"
+        android:text="@string/change_profile_image"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"/>
+
+    <EditText
+        android:id="@+id/account_name_account_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_profile_image"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"
+        android:inputType="textPersonName"
+        android:hint="@string/full_name"/>
+
+    <EditText
+        android:id="@+id/account_username_account_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/account_name_account_settings"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"
+        android:inputType="textPersonName"
+        android:hint="@string/username"/>
+
+    <EditText
+        android:id="@+id/account_bio_account_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/account_username_account_settings"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"
+        android:inputType="textMultiLine"
+        android:maxLength="140"
+        android:hint="@string/bio_limit"/>
+
+
+</RelativeLayout>
