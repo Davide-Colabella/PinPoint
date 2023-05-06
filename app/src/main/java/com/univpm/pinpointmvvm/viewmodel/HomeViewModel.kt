@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
@@ -81,8 +82,9 @@ class HomeViewModel(
     private fun addMarkers() {
         //aggiunta dei marker sulla mappa
         val imageLoader = Coil.imageLoader(fragment)
+        val markers = mutableListOf<Marker>()
+        var loadedImages = 0
         users.observe(viewLifecycleOwner) { userList ->
-            map.clear()
             userList.forEach { user ->
                 val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
                 val marker = map.addMarker(
@@ -90,7 +92,9 @@ class HomeViewModel(
                         .position(position)
                         .title(user.username)
                 )
-                marker!!.tag = user
+                marker!!.isVisible = false
+                marker.tag = user
+                markers.add(marker)
                 val request = ImageRequest.Builder(fragment)
                     .data(user.image)
                     .transformations(
@@ -100,6 +104,13 @@ class HomeViewModel(
                     .size(120)
                     .target { drawable ->
                         marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                        loadedImages++
+                        if (loadedImages == userList.size) {
+                            // All images have been loaded, add the markers to the map
+                            markers.forEach { mapMarker ->
+                                mapMarker.isVisible = true
+                            }
+                        }
                     }
                     .build()
                 imageLoader.enqueue(request)
