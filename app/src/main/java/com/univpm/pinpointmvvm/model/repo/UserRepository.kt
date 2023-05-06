@@ -67,10 +67,10 @@
             }
         }
 
-
-        fun uploadPost(imageUri: Uri){
-            setPostImage(imageUri).addOnSuccessListener{
-                uri -> userPostRef.push().child("imageUrl").setValue(uri.toString())
+        fun uploadPost(imageUri: Uri, description: String){
+            setPostImage(imageUri).addOnSuccessListener{ uri ->
+                val post = Post(imageUrl = uri.toString(), description = description, date = Date().toString(), userId = user.uid)
+                userPostRef.push().setValue(post)
             }
         }
 
@@ -114,8 +114,11 @@
                     val postList = mutableListOf<Post>()
                     for (postSnapshot in snapshot.children) {
                         val postMap = postSnapshot.getValue(object : GenericTypeIndicator<Map<String, Any>>() {})
+                        Log.d("PostFetch", postMap.toString())
                         val imageUrl = postMap?.get("imageUrl") as String
-                        val post = Post(imageUrl)
+                        val description = postMap["description"] as String
+                        val date = postMap["date"] as String
+                        val post = Post(imageUrl, description = description, date = date)
                         post.let { postList.add(it) }
                     }
                     _posts.value = postList
@@ -134,8 +137,11 @@
                     val postList = mutableListOf<Post>()
                     for (postSnapshot in snapshot.children) {
                         val postMap = postSnapshot.getValue(object : GenericTypeIndicator<Map<String, Any>>() {})
+                        Log.d("PostFetch", postMap.toString())
                         val imageUrl = postMap?.get("imageUrl") as String
-                        val post = Post(imageUrl)
+                        val description = postMap["description"] as String
+                        val date = postMap["date"] as String
+                        val post = Post(imageUrl, description = description, date = date)
                         post.let { postList.add(it) }
                     }
                     _posts.value = postList

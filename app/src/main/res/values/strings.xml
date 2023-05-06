@@ -89,4 +89,6 @@
     <string name="scegli">Scegli</string>
     <string name="no_posts_found">NO POST</string>
     <string name="nuovo_post">Nuovo Post</string>
+    <string name="descrizione">Description</string>
+    <string name="date">Data</string>
 </resources>

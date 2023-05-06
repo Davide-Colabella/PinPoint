@@ -34,6 +34,9 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
                 crossfade(true)
                 transformations(SquareCropTransformation())
             }
+            binding.postUsername.text = post.username
+            binding.postDescription.text = post.description
+            binding.postDate.text = post.date.toString()
         }
     }
 }

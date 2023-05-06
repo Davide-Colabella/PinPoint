@@ -24,10 +24,18 @@
         android:contentDescription="@string/anteprima_dell_immagine_selezionata"
         android:layout_below="@+id/textview_post" />
 
+    <EditText
+        android:id="@+id/edittext_descrizione"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageview_post"
+        android:layout_marginTop="30dp"
+        android:hint="@string/descrizione" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageview_post"
+        android:layout_below="@+id/edittext_descrizione"
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true">
 

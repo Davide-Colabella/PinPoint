@@ -3,7 +3,6 @@ package com.univpm.pinpointmvvm.view.activities
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.databinding.ActivityUserProfileBinding
@@ -46,6 +45,9 @@ class UserProfileActivity : AppCompatActivity() {
         postViewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
         postViewModel.getPostsFromFirebase(user!!)
         postViewModel.posts.observe(this) { posts ->
+            for (post in posts) {
+                post.username = user!!.username
+            }
             postAdapter.posts = posts
             postAdapter.notifyDataSetChanged()
         }

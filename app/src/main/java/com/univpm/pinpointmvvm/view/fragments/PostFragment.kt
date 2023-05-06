@@ -6,12 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
-import com.commit451.coiltransformations.SquareCropTransformation
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
@@ -24,8 +24,7 @@ class PostFragment : Fragment() {
     companion object {
         fun newInstance() = PostFragment()
     }
-
-    private lateinit var imageUri: Uri
+    private var imageUri: Uri = Uri.EMPTY
     private val postViewModel: PostViewModel by viewModels()
     private lateinit var binding: FragmentPostBinding
 
@@ -40,14 +39,14 @@ class PostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onGallery()
         onUploadPost(view)
-
     }
 
     //Quando viene premuto il pulsante "salva" aggiunge il post sul database
     private fun onUploadPost(view: View) {
         binding.btnSalvaImmagine.setOnClickListener {
             if (binding.imageviewPost.drawable != null) {
-                postViewModel.uploadPost(imageUri)
+                Log.d("PostFragment", "onUploadPost: $imageUri")
+                postViewModel.uploadPost(imageUri, binding.edittextDescrizione.text.toString())
 
                 Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT).show()
 
@@ -63,21 +62,29 @@ class PostFragment : Fragment() {
 
     //quando viene premuto il pulsante "sfoglia" si puo scegliere un'immagine dalla galleria
     private fun onGallery() {
-
-        val req = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                imageUri = uri
+        val cropImage = registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful) {
+                // Use the returned uri.
+                imageUri = result.uriContent!!
                 binding.imageviewPost.load(imageUri) {
                     crossfade(true)
-                    transformations(SquareCropTransformation())
+//                    transformations(SquareCropTransformation())
                 }
-                Log.d("TAG", "onGallery: $imageUri")
+                Log.d("ImageCropper", imageUri.toString())
+            } else {
+                // An error occurred.
+                val exception = result.error
+                Log.d("ImageCropper", exception.toString())
             }
         }
         binding.btnSfogliaGalleria.setOnClickListener {
-            req.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            val options = CropImageOptions(
+                allowFlipping = false,
+                fixAspectRatio = true,
+            )
+            cropImage.launch(
+                CropImageContractOptions(imageUri, options)
+            )
         }
     }
-
-
 }

@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
@@ -56,6 +57,19 @@ class HomeViewModel(
                 //muovi la camera alla posizione
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
                 mapOptions()
+                map.mapType = GoogleMap.MAP_TYPE_NORMAL
+                val styleJson = """
+                                    [
+                                      {
+                                        "featureType": "poi",
+                                        "elementType": "labels",
+                                        "stylers": [
+                                          { "visibility": "off" }
+                                        ]
+                                      }
+                                    ]
+                                """.trimIndent()
+                map.setMapStyle(MapStyleOptions(styleJson))
 
                 addMarkers()
                 snippetListener()
@@ -69,28 +83,26 @@ class HomeViewModel(
         val imageLoader = Coil.imageLoader(fragment)
         users.observe(viewLifecycleOwner) { userList ->
             map.clear()
-            if (map.cameraPosition.zoom > 15.0f) {
-                userList.forEach { user ->
-                    val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
-                    val marker = map.addMarker(
-                        MarkerOptions()
-                            .position(position)
-                            .title(user.username)
+            userList.forEach { user ->
+                val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
+                val marker = map.addMarker(
+                    MarkerOptions()
+                        .position(position)
+                        .title(user.username)
+                )
+                marker!!.tag = user
+                val request = ImageRequest.Builder(fragment)
+                    .data(user.image)
+                    .transformations(
+                        CircleCropTransformation(),
+                        CropTransformation(CropTransformation.CropType.CENTER)
                     )
-                    marker!!.tag = user
-                    val request = ImageRequest.Builder(fragment)
-                        .data(user.image)
-                        .transformations(
-                            CircleCropTransformation(),
-                            CropTransformation(CropTransformation.CropType.CENTER)
-                        )
-                        .size(150)
-                        .target { drawable ->
-                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
-                        }
-                        .build()
-                    imageLoader.enqueue(request)
-                }
+                    .size(120)
+                    .target { drawable ->
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                    }
+                    .build()
+                imageLoader.enqueue(request)
             }
         }
     }
@@ -127,10 +139,9 @@ class HomeViewModel(
         map.isIndoorEnabled = false
         map.isBuildingsEnabled = true
         map.uiSettings.isCompassEnabled = true
-//        //rimuove il pulsante per aprire google maps
+        //rimuove il pulsante per aprire google maps
         map.uiSettings.isMapToolbarEnabled = false
     }
-
 
     override fun onCleared() {
         super.onCleared()

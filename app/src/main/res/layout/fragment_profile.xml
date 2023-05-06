@@ -48,13 +48,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/scroll_view_profile"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/app_bar_layout_profile">
 
         <LinearLayout
+            android:id="@+id/profile_fragment_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -198,15 +198,13 @@
 
             </LinearLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/post_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
-    </ScrollView>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/post_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/scroll_view_profile"/>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

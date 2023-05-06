@@ -3,12 +3,13 @@ package com.univpm.pinpointmvvm.view.activities
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountEditBinding
 import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
@@ -23,18 +24,22 @@ class AccountEditActivity : AppCompatActivity() {
         binding = ActivityAccountEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ProfileViewModel()
-        var imageUri: Uri? = null
-        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                Log.d("PhotoPicker", "Selected URI: $uri")
-                imageUri = uri
+        var imageUri: Uri? = Uri.EMPTY
+        val cropImage = registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful) {
+                // Use the returned uri.
+                imageUri = result.uriContent!!
                 binding.profileImageAccountSettings.load(imageUri) {
                     crossfade(true)
                     placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
                     transformations(CircleCropTransformation())
                 }
+                Log.d("ImageCropper", imageUri.toString())
             } else {
-                Log.d("PhotoPicker", "No media selected")
+                // An error occurred.
+                val exception = result.error
+                Log.d("ImageCropper", exception.toString())
             }
         }
 
@@ -61,7 +66,13 @@ class AccountEditActivity : AppCompatActivity() {
         }
 
         binding.changeProfileImage.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            val options = CropImageOptions(
+                allowFlipping = false,
+                fixAspectRatio = true,
+            )
+            cropImage.launch(
+                CropImageContractOptions(imageUri, options)
+            )
         }
 
         lifecycleScope.launch {

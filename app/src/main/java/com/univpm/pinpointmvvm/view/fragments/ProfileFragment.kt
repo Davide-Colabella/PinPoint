@@ -66,6 +66,9 @@ class ProfileFragment : Fragment() {
 
                 profileViewModel.getPostsFromFirebase()
                 profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
+                    for (post in posts) {
+                        post.username = uiState.username
+                    }
                     postAdapter.posts = posts
                     postAdapter.notifyDataSetChanged()
                 }
