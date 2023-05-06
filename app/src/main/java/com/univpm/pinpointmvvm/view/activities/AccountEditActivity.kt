@@ -44,20 +44,15 @@ class AccountEditActivity : AppCompatActivity() {
         }
 
         binding.saveAccountSettingsBtn.setOnClickListener {
-            if (imageUri != null) {
-                viewModel.updateProfile(
-                    binding.accountNameAccountSettings.text.toString(),
-                    binding.accountUsernameAccountSettings.text.toString(),
-                    binding.accountBioAccountSettings.text.toString(),
-                    imageUri!!
-                )
-            } else {
-                viewModel.updateProfile(
-                    binding.accountUsernameAccountSettings.text.toString(),
-                    binding.accountNameAccountSettings.text.toString(),
-                    binding.accountBioAccountSettings.text.toString()
-                )
-            }
+                imageUri?.let { it1 ->
+                    viewModel.updateProfile(
+                        binding.accountNameAccountSettings.text.toString(),
+                        binding.accountUsernameAccountSettings.text.toString(),
+                        binding.accountBioAccountSettings.text.toString(),
+                        it1
+                    )
+                }
+
             finish()
         }
 
