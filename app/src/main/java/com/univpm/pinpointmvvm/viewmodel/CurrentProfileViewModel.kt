@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 @SuppressLint("StaticFieldLeak")
-class ProfileViewModel(
+class CurrentProfileViewModel(
 ) : ViewModel() {
     private val repository = UserRepository()
     private val _uiState = MutableStateFlow(UserUiState())
@@ -39,11 +39,7 @@ class ProfileViewModel(
         }
     }
 
-    fun updateProfile(username: String, name: String, bio: String) {
-        repository.updateProfile(username, name, bio)
-    }
-
-    fun updateProfile(username: String, name: String, bio: String, imageUri: Uri) {
+    fun updateProfile(username: String, name: String, bio: String, imageUri: Uri = Uri.EMPTY) {
         repository.updateProfile(username, name, bio, imageUri)
     }
 

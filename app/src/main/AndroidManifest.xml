@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +28,7 @@
             android:screenOrientation="portrait"
             />
         <activity
-            android:name=".view.activities.UserProfileActivity"
+            android:name=".view.fragments.OtherProfileFragment"
             android:screenOrientation="portrait"
             android:exported="false" /> <!-- Any inner elements would go here. -->
         <activity

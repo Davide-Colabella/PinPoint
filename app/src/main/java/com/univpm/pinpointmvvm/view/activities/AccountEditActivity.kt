@@ -12,18 +12,18 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountEditBinding
-import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
+import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
 class AccountEditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountEditBinding
-    private lateinit var viewModel: ProfileViewModel
+    private lateinit var viewModel: CurrentProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ProfileViewModel()
+        viewModel = CurrentProfileViewModel()
         var imageUri: Uri? = Uri.EMPTY
         val cropImage = registerForActivityResult(CropImageContract()) { result ->
             if (result.isSuccessful) {

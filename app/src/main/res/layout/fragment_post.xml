@@ -30,7 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageview_post"
         android:layout_marginTop="30dp"
-        android:hint="@string/descrizione" />
+        android:hint="@string/descrizione"
+        android:minHeight="48dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"

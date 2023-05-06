@@ -12,27 +12,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.databinding.FragmentProfileBinding
+import com.univpm.pinpointmvvm.databinding.FragmentCurrentProfileBinding
 import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
 import com.univpm.pinpointmvvm.view.adapter.PostAdapter
-import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
+import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
-class ProfileFragment : Fragment() {
+class CurrentProfileFragment : Fragment() {
     companion object {
-        fun newInstance() = ProfileFragment()
+        fun newInstance() = CurrentProfileFragment()
     }
 
-    private val profileViewModel: ProfileViewModel by viewModels()
-    private lateinit var binding: FragmentProfileBinding
+    private val currentProfileViewModel: CurrentProfileViewModel by viewModels()
+    private lateinit var binding: FragmentCurrentProfileBinding
     private lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding = FragmentCurrentProfileBinding.inflate(inflater, container, false)
 
         binding.editProfileButton.setOnClickListener {
             startActivity(Intent(context, AccountEditActivity::class.java))
@@ -48,7 +48,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            profileViewModel.uiState.collect { uiState ->
+            currentProfileViewModel.uiState.collect { uiState ->
                 binding.profileFragmentUsername.text = uiState.username
                 binding.profileFragmentFullName.text = uiState.fullname
                 binding.profileFragmentBio.text = uiState.bio
@@ -64,8 +64,8 @@ class ProfileFragment : Fragment() {
                     adapter = postAdapter
                 }
 
-                profileViewModel.getPostsFromFirebase()
-                profileViewModel.posts.observe(viewLifecycleOwner) { posts ->
+                currentProfileViewModel.getPostsFromFirebase()
+                currentProfileViewModel.posts.observe(viewLifecycleOwner) { posts ->
                     for (post in posts) {
                         post.username = uiState.username
                     }

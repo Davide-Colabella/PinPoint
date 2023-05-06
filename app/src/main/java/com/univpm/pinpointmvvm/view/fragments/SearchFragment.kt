@@ -15,7 +15,7 @@ import com.univpm.pinpointmvvm.viewmodel.SearchViewModel
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private lateinit var searchViewModel: SearchViewModel
-    private lateinit var searchAdapter: SearchAdapter
+    private var searchAdapter = SearchAdapter()
 
     companion object {
         fun newInstance() = SearchFragment()
@@ -25,30 +25,29 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
+
+
+        val searchViewModelFactory =
+            SearchViewModel.SearchViewModelFactory(requireActivity(), searchAdapter)
+        searchViewModel =
+            ViewModelProvider(this, searchViewModelFactory)[SearchViewModel::class.java].apply {
+                updateListOfUsers()
+            }
+
+        searchUiSetup()
+        searchViewListener()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initUI()
-        searchViewListener()
-        recyclerViewObserver()
-    }
 
-    private fun initUI() {
-        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        searchAdapter = SearchAdapter(searchViewModel, requireActivity())
-
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.adapter = searchAdapter
-    }
-
-    private fun recyclerViewObserver() {
-        searchViewModel.userList.observe(viewLifecycleOwner) {
-            searchAdapter.userList = it
+    private fun searchUiSetup() {
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            adapter = searchAdapter
         }
     }
+
 
     private fun searchViewListener() {
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
@@ -57,13 +56,15 @@ class SearchFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (!newText.isNullOrBlank()){
+                if (!newText.isNullOrBlank()) {
                     searchViewModel.searchUser(newText)
-                }else{
+                    searchViewModel.updateListOfUsers()
+                } else {
                     searchAdapter.clearList()
                 }
                 return false
             }
         })
     }
+
 }

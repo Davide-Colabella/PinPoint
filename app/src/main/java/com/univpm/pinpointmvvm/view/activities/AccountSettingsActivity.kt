@@ -4,18 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
-import com.univpm.pinpointmvvm.viewmodel.ProfileViewModel
+import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 
 class AccountSettingsActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityAccountSettingsBinding
-    private lateinit var viewModel: ProfileViewModel
+    private lateinit var viewModel: CurrentProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ProfileViewModel()
+        viewModel = CurrentProfileViewModel()
 
         binding.logoutBtn.setOnClickListener {
             viewModel.logOut()

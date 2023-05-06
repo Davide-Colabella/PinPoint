@@ -1,32 +1,44 @@
 package com.univpm.pinpointmvvm.viewmodel
 
-import android.content.Context
-import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ReportFragment
 import androidx.lifecycle.ViewModel
-import com.univpm.pinpointmvvm.model.constants.Constants
+import androidx.lifecycle.ViewModelProvider
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.SearchRepository
-import com.univpm.pinpointmvvm.view.activities.UserProfileActivity
+import com.univpm.pinpointmvvm.view.adapter.SearchAdapter
 
-class SearchViewModel() : ViewModel() {
-    private val repository = SearchRepository()
+class SearchViewModel(
+    private val fragment: FragmentActivity,
+    private val adapter: SearchAdapter
+) :
+    ViewModel() {
     private val _userList = MutableLiveData<List<User>>()
-    val userList: LiveData<List<User>> = _userList
+    private val userList: LiveData<List<User>> = _userList
+    private val repository = SearchRepository()
 
 
     fun searchUser(query: String) {
         repository.searchUsers(query, _userList)
     }
 
-    fun startShowProfileSearchedActivity(user: User, fragment: FragmentActivity) {
-        val intent = Intent(fragment, UserProfileActivity::class.java).apply {
-            putExtra(Constants.USER_OBJECT_PARCEL, user)
+    fun updateListOfUsers() {
+        userList.observe(fragment) {
+            adapter.users = it
         }
-        fragment.startActivity(intent)
     }
 
+
+    class SearchViewModelFactory(
+        private val fragment: FragmentActivity,
+        private val adapter: SearchAdapter
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
+                return SearchViewModel(fragment, adapter) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 }

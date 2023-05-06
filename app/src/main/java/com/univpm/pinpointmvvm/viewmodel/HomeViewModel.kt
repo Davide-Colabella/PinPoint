@@ -1,12 +1,12 @@
 package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
-import android.content.Intent
+import android.os.Bundle
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.Coil
 import coil.request.ImageRequest
@@ -17,28 +17,37 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.repo.MapRepository
+import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.model.services.Localization
-import com.univpm.pinpointmvvm.view.activities.UserProfileActivity
+import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 import kotlinx.coroutines.launch
+
+/*
+private lateinit var mapBounds: LatLngBounds
+mapBounds = LatLngBounds(
+                LatLng(position.latitude, position.longitude),  // SW bounds
+                LatLng(position.latitude, position.longitude) // NE bounds
+            )
+map.setLatLngBoundsForCameraTarget(mapBounds)
+ */
+
 
 @SuppressLint("MissingPermission", "StaticFieldLeak", "PotentialBehaviorOverride")
 class HomeViewModel(
     private val supportMapFragment: SupportMapFragment,
     private val fragment: FragmentActivity,
-    private val viewLifecycleOwner: LifecycleOwner,
 ) : ViewModel() {
-    private lateinit var mapBounds: LatLngBounds
+
     private lateinit var position: LatLng
     private lateinit var map: GoogleMap
-    private val mapRepository = MapRepository()
+    private val userRepository = UserRepository()
     private val localization: Localization = Localization(fragment)
-    private val users: LiveData<List<User>> = mapRepository.getAllUsers()
+    private val users: LiveData<List<User>> = userRepository.fetchAllUsersOnDatabase()
 
     init {
         /*
@@ -46,105 +55,108 @@ class HomeViewModel(
             Crea i confini di visualizzazione della mappa.
             A mappa pronta, setup della mappa
          */
-        viewLifecycleOwner.lifecycleScope.launch {
+        fragment.lifecycleScope.launch {
             position = localization.getLastLocation()
-            mapBounds = LatLngBounds(
-                LatLng(position.latitude, position.longitude),  // SW bounds
-                LatLng(position.latitude, position.longitude) // NE bounds
-            )
+
             supportMapFragment.getMapAsync {
                 map = it
-                //muovi la camera alla posizione
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
-                mapOptions()
-                map.mapType = GoogleMap.MAP_TYPE_NORMAL
-                val styleJson = """
-                                    [
-                                      {
-                                        "featureType": "poi",
-                                        "elementType": "labels",
-                                        "stylers": [
-                                          { "visibility": "off" }
-                                        ]
-                                      }
-                                    ]
-                                """.trimIndent()
-                map.setMapStyle(MapStyleOptions(styleJson))
-
-                addMarkers()
-                snippetListener()
-                localizationUpdates()
+                mapSetUi()
+                mapAddMarkers()
+                mapSnippetClick()
+                mapLocationUpdates()
             }
         }
     }
 
-    private fun addMarkers() {
-        //aggiunta dei marker sulla mappa
+    //aggiunta dei marker sulla mappa
+    private fun mapAddMarkers() {
         val imageLoader = Coil.imageLoader(fragment)
-        users.observe(viewLifecycleOwner) { userList ->
+        users.observe(fragment) { userList ->
             map.clear()
-            userList.forEach { user ->
-                val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
-                val marker = map.addMarker(
-                    MarkerOptions()
-                        .position(position)
-                        .title(user.username)
-                )
-                marker!!.tag = user
-                val request = ImageRequest.Builder(fragment)
-                    .data(user.image)
-                    .transformations(
-                        CircleCropTransformation(),
-                        CropTransformation(CropTransformation.CropType.CENTER)
+            if (map.cameraPosition.zoom > 15.0f) {
+                userList.forEach { user ->
+                    val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
+                    val marker = map.addMarker(
+                        MarkerOptions()
+                            .position(position)
+                            .title(user.username)
                     )
-                    .size(120)
-                    .target { drawable ->
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
-                    }
-                    .build()
-                imageLoader.enqueue(request)
+                    marker!!.tag = user
+                    val request = ImageRequest.Builder(fragment)
+                        .data(user.image)
+                        .transformations(
+                            CircleCropTransformation(),
+                            CropTransformation(CropTransformation.CropType.CENTER)
+                        )
+                        .size(150)
+                        .target { drawable ->
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                        }
+                        .build()
+                    imageLoader.enqueue(request)
+                }
             }
         }
     }
 
-    private fun localizationUpdates() {
+    private fun mapLocationUpdates() {
         //inizio dell'aggiornamento della posizione
         localization.startUpdates { location ->
             position = LatLng(location!!.latitude, location.longitude)
-//            mapBounds = LatLngBounds(
-//                LatLng(position.latitude, position.longitude),  // SW bounds
-//                LatLng(position.latitude, position.longitude)  // NE bounds
-//            )
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
-//            map.setLatLngBoundsForCameraTarget(mapBounds)
+            val currentZoom = map.cameraPosition.zoom
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, currentZoom))
         }
     }
 
-    private fun snippetListener() {
-        //definisce il click sullo snippet del marker
+    //definisce il click sullo snippet del marker
+    private fun mapSnippetClick() {
         map.setOnInfoWindowClickListener { marker ->
             val user = marker.tag as User
-            val intent = Intent(fragment, UserProfileActivity::class.java).apply {
-                putExtra(Constants.USER_OBJECT_PARCEL, user)
+            val bundle = Bundle().apply {
+                putParcelable(Constants.USER_OBJECT_PARCEL, user)
             }
-            fragment.startActivity(intent)
+            val destinationFragment = OtherProfileFragment.newInstance().apply {
+                arguments = bundle
+            }
+            fragment.apply {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame_layout, destinationFragment)
+                    .commit()
+
+                findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
+                    selectedItemId = R.id.nothing
+                }
+            }
         }
     }
 
-    private fun mapOptions() {
-        //determina i confini di visualizzazione della mappa
-//        map.setLatLngBoundsForCameraTarget(mapBounds)
-        //definisci le opzioni di visualizzazione
-        map.isMyLocationEnabled = true
-        map.isIndoorEnabled = false
-        map.isBuildingsEnabled = true
-        map.uiSettings.isCompassEnabled = true
-        //rimuove il pulsante per aprire google maps
-        map.uiSettings.isMapToolbarEnabled = false
+    private fun mapSetUi() {
+        map.apply {
+            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
+            isMyLocationEnabled = true
+            isIndoorEnabled = false
+            isBuildingsEnabled = true
+            uiSettings.isCompassEnabled = true
+            uiSettings.isMapToolbarEnabled = false
+        }
     }
+
 
     override fun onCleared() {
         super.onCleared()
         localization.stopUpdates()
+    }
+
+
+    class HomeViewModelFactory(
+        private val mapFragment: SupportMapFragment,
+        private val activity: FragmentActivity,
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                return HomeViewModel(mapFragment, activity) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }

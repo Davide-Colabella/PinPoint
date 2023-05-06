@@ -22,9 +22,7 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         holder.bind(post)
     }
 
-    override fun getItemCount(): Int {
-        return posts.size
-    }
+    override fun getItemCount() : Int =  posts.size
 
     inner class PostViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {

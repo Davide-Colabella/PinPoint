@@ -12,11 +12,7 @@ import coil.load
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
-import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
-import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 
 class PostFragment : Fragment() {
@@ -24,8 +20,13 @@ class PostFragment : Fragment() {
     companion object {
         fun newInstance() = PostFragment()
     }
+
     private var imageUri: Uri = Uri.EMPTY
     private val postViewModel: PostViewModel by viewModels()
+    private val options = CropImageOptions(
+        allowFlipping = false,
+        fixAspectRatio = true,
+    )
     private lateinit var binding: FragmentPostBinding
 
     override fun onCreateView(
@@ -45,21 +46,14 @@ class PostFragment : Fragment() {
     private fun onUploadPost(view: View) {
         binding.btnSalvaImmagine.setOnClickListener {
             if (binding.imageviewPost.drawable != null) {
-                Log.d("PostFragment", "onUploadPost: $imageUri")
-                postViewModel.uploadPost(imageUri, binding.edittextDescrizione.text.toString())
-
-                Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT).show()
-
-                //chiudo il fragment appena carico la foto sul database
-                val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.frame_layout, HomeFragment.newInstance())
-                transaction.commit()
-                val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-                bottomNavigationView.selectedItemId = R.id.home
+                binding.edittextDescrizione.text.toString().apply {
+                    postViewModel.uploadPost(imageUri, this, view, requireActivity())
+                }
             }
         }
     }
 
+    //TODO spostare la logica di onGallery in PostViewModel
     //quando viene premuto il pulsante "sfoglia" si puo scegliere un'immagine dalla galleria
     private fun onGallery() {
         val cropImage = registerForActivityResult(CropImageContract()) { result ->
@@ -68,7 +62,7 @@ class PostFragment : Fragment() {
                 imageUri = result.uriContent!!
                 binding.imageviewPost.load(imageUri) {
                     crossfade(true)
-//                    transformations(SquareCropTransformation())
+                //transformations(SquareCropTransformation())
                 }
                 Log.d("ImageCropper", imageUri.toString())
             } else {
@@ -78,10 +72,6 @@ class PostFragment : Fragment() {
             }
         }
         binding.btnSfogliaGalleria.setOnClickListener {
-            val options = CropImageOptions(
-                allowFlipping = false,
-                fixAspectRatio = true,
-            )
             cropImage.launch(
                 CropImageContractOptions(imageUri, options)
             )
