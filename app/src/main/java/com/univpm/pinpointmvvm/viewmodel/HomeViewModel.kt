@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -132,10 +133,18 @@ class HomeViewModel(
 
     private fun mapSetUi() {
         map.apply {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f))
+            val cameraPosition = CameraPosition.Builder()
+                .tilt(45.0f)
+                .target(position)
+                .zoom(18.0f)
+                .build()
+
+            moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
             isMyLocationEnabled = true
             isIndoorEnabled = false
             isBuildingsEnabled = true
+            uiSettings.isTiltGesturesEnabled = false
             uiSettings.isCompassEnabled = true
             uiSettings.isMapToolbarEnabled = false
         }
@@ -148,7 +157,7 @@ class HomeViewModel(
     }
 
 
-    class HomeViewModelFactory(
+    class Factory(
         private val mapFragment: SupportMapFragment,
         private val activity: FragmentActivity,
     ) : ViewModelProvider.Factory {

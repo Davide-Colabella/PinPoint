@@ -7,7 +7,7 @@ import com.google.firebase.storage.FirebaseStorage
 object DatabaseSettings {
 
     private const val DATABASE_USERS_PATH = "users"
-    const val DATABASE_POSTS_PATH = "posts"
+    private const val DATABASE_POSTS_PATH = "posts"
     private const val STORAGE_PROFILE_IMAGE_PATH = "Profile Pictures"
     private const val STORAGE_POSTS_PATH = "Post"
 

@@ -1,38 +1,42 @@
 package com.univpm.pinpointmvvm.viewmodel
 
 import android.net.Uri
-import android.view.View
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
-import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.model.constants.Constants
+import androidx.lifecycle.viewModelScope
+import com.univpm.pinpointmvvm.model.repo.PostRepository
 import com.univpm.pinpointmvvm.model.repo.UserRepository
-import com.univpm.pinpointmvvm.view.fragments.HomeFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PostViewModel : ViewModel() {
 
-    private var userRepository = UserRepository()
+    private var postRepository = PostRepository()
+    private val _postUploadSuccess = MutableStateFlow(false)
+    val postUploadSuccess: StateFlow<Boolean> = _postUploadSuccess.asStateFlow()
+    private val _postUploadError = MutableStateFlow("")
+    val postUploadError: StateFlow<String> = _postUploadError.asStateFlow()
 
-    fun uploadPost(imageUri: Uri, description: String, view: View, fragment: FragmentActivity) {
-        userRepository.uploadPost(imageUri, description)
-        Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT).show()
-        closeFragment(fragment)
-    }
-
-
-    private fun closeFragment(fragment: FragmentActivity) {
-        val destinationFragment = HomeFragment.newInstance()
-        fragment.apply {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_layout, destinationFragment)
-                .commit()
-
-            findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                selectedItemId = R.id.home
+    fun uploadPost(imageUri: Uri, description: String) {
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.Default) {
+                    postRepository.uploadPost(
+                        imageUri = imageUri,
+                        description = description
+                    )
+                }
+                _postUploadSuccess.value = true
+            } catch (e: Exception) {
+                _postUploadError.value = e.message.toString()
             }
         }
+
     }
+
+
 }
 

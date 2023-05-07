@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.view.fragments
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -7,13 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
+import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
+import kotlinx.coroutines.launch
 
 class PostFragment : Fragment() {
 
@@ -40,6 +48,52 @@ class PostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         onGallery()
         onUploadPost(view)
+        observeUploadPostSuccess(view)
+        observeUploadPostError(view)
+    }
+
+    private fun observeUploadPostError(view: View) {
+        lifecycleScope.launch {
+            postViewModel.postUploadError.collect {
+                if (it.isNotBlank()) {
+                    Snackbar.make(view, Constants.POST_UNSUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT)
+                        .setTextColor(Color.WHITE)
+                        .setBackgroundTint(Color.RED)
+                        .show()
+                }
+            }
+
+        }
+    }
+
+    private fun observeUploadPostSuccess(view: View) {
+        lifecycleScope.launch {
+            postViewModel.postUploadSuccess.collect {
+                if (it) {
+                    Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT)
+                        .setTextColor(Color.WHITE)
+                        .setBackgroundTint(Color.GREEN)
+                        .show()
+                    closeFragment(requireActivity())
+
+                }
+            }
+
+        }
+
+    }
+
+    private fun closeFragment(fragment: FragmentActivity) {
+        val destinationFragment = HomeFragment.newInstance()
+        fragment.apply {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_layout, destinationFragment)
+                .commit()
+
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
+                selectedItemId = R.id.home
+            }
+        }
     }
 
     //Quando viene premuto il pulsante "salva" aggiunge il post sul database
@@ -47,7 +101,7 @@ class PostFragment : Fragment() {
         binding.btnSalvaImmagine.setOnClickListener {
             if (binding.imageviewPost.drawable != null) {
                 binding.edittextDescrizione.text.toString().apply {
-                    postViewModel.uploadPost(imageUri, this, view, requireActivity())
+                    postViewModel.uploadPost(imageUri, this)
                 }
             }
         }
@@ -62,7 +116,7 @@ class PostFragment : Fragment() {
                 imageUri = result.uriContent!!
                 binding.imageviewPost.load(imageUri) {
                     crossfade(true)
-                //transformations(SquareCropTransformation())
+                    //transformations(SquareCropTransformation())
                 }
                 Log.d("ImageCropper", imageUri.toString())
             } else {

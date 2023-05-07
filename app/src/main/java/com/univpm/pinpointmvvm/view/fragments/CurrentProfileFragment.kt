@@ -1,21 +1,25 @@
 package com.univpm.pinpointmvvm.view.fragments
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentCurrentProfileBinding
+import com.univpm.pinpointmvvm.model.constants.Constants
+import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
-import com.univpm.pinpointmvvm.view.adapter.PostAdapter
+import com.univpm.pinpointmvvm.view.adapter.CurrentUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
@@ -24,55 +28,96 @@ class CurrentProfileFragment : Fragment() {
         fun newInstance() = CurrentProfileFragment()
     }
 
-    private val currentProfileViewModel: CurrentProfileViewModel by viewModels()
-    private lateinit var binding: FragmentCurrentProfileBinding
-    private lateinit var postAdapter: PostAdapter
+    private val viewModel: CurrentProfileViewModel by viewModels()
+    private lateinit var viewBinding: FragmentCurrentProfileBinding
+    private lateinit var currentUserPostAdapter : CurrentUserPostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCurrentProfileBinding.inflate(inflater, container, false)
-
-        binding.editProfileButton.setOnClickListener {
-            startActivity(Intent(context, AccountEditActivity::class.java))
+        currentUserPostAdapter = CurrentUserPostAdapter{
+            viewModel.deletePost(it)
+        }
+        viewBinding = FragmentCurrentProfileBinding.inflate(inflater, container, false).apply {
+            editProfileButton.setOnClickListener {
+                startActivity(Intent(context, AccountEditActivity::class.java))
+            }
+            profileFragmentSettings.setOnClickListener {
+                startActivity(Intent(context, AccountSettingsActivity::class.java))
+            }
         }
 
-        binding.profileFragmentSettings.setOnClickListener {
-            startActivity(Intent(context, AccountSettingsActivity::class.java))
+        lifecycleScope.launch {
+            viewModel.uiState.collect { uiState ->
+                setupUi(uiState)
+                observeListOfPosts(uiState)
+            }
         }
-
-        return binding.root
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeDeletePostSuccess(view)
+        observeDeletePostError(view)
+    }
+
+
+    private fun observeListOfPosts(uiState: UserUiState) {
+        uiState.posts?.observe(viewLifecycleOwner) { posts ->
+            for (post in posts) {
+                post.username = uiState.username
+            }
+            currentUserPostAdapter.posts = posts
+            currentUserPostAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun setupUi(uiState: UserUiState) {
+        viewBinding.apply {
+            profileFragmentUsername.text = uiState.username
+            profileFragmentFullName.text = uiState.fullname
+            profileFragmentFullName.text = uiState.fullname
+            profileFragmentBio.text = uiState.bio
+            profileFragmentProfileImage.load(uiState.image) {
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
+                transformations(CircleCropTransformation())
+            }
+            postRecyclerView.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = currentUserPostAdapter
+            }
+        }
+    }
+
+    private fun observeDeletePostError(view: View) {
         lifecycleScope.launch {
-            currentProfileViewModel.uiState.collect { uiState ->
-                binding.profileFragmentUsername.text = uiState.username
-                binding.profileFragmentFullName.text = uiState.fullname
-                binding.profileFragmentBio.text = uiState.bio
-                binding.profileFragmentProfileImage.load(uiState.image) {
-                    placeholder(R.drawable.ic_profile)
-                    error(R.drawable.ic_profile)
-                    transformations(CircleCropTransformation())
-                }
-
-                postAdapter = PostAdapter()
-                binding.postList.apply {
-                    layoutManager = LinearLayoutManager(requireContext())
-                    adapter = postAdapter
-                }
-
-                currentProfileViewModel.getPostsFromFirebase()
-                currentProfileViewModel.posts.observe(viewLifecycleOwner) { posts ->
-                    for (post in posts) {
-                        post.username = uiState.username
-                    }
-                    postAdapter.posts = posts
-                    postAdapter.notifyDataSetChanged()
+            viewModel.postDeleteError.collect {
+                if (it.isNotBlank()) {
+                    Snackbar.make(view, Constants.POST_SUCCESSFULLY_DELETED, Snackbar.LENGTH_SHORT)
+                        .setTextColor(Color.WHITE)
+                        .setBackgroundTint(Color.RED)
+                        .show()
                 }
             }
+
+        }
+    }
+
+    private fun observeDeletePostSuccess(view: View) {
+        lifecycleScope.launch {
+            viewModel.postDeleteSuccess.collect {
+                if (it) {
+                    Snackbar.make(view, Constants.POST_UNSUCCESSFULLY_DELETED, Snackbar.LENGTH_SHORT)
+                        .setTextColor(Color.WHITE)
+                        .setBackgroundTint(Color.GREEN)
+                        .show()
+
+                }
+            }
+
         }
 
     }

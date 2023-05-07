@@ -12,11 +12,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.UploadTask
 import com.univpm.pinpointmvvm.model.data.Post
 import com.univpm.pinpointmvvm.model.data.User
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class UserRepository {
+    private val TAG = "UserRepositoryDegub"
+
     fun fetchAllUsersOnDatabase(): LiveData<List<User>> {
         val usersLiveData = MutableLiveData<List<User>>()
         val _usersList = mutableListOf<User>()
@@ -60,6 +59,24 @@ class UserRepository {
         })
     }
 
+    fun listenForUserInfoChanges(
+        user: User, onUserInfoChanged: (String, String, String, String) -> Unit
+    ) {
+        DatabaseSettings.dbUsers.child(user.uid!!)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    snapshot.getValue(User::class.java)?.apply {
+                        onUserInfoChanged(fullname!!, username!!, bio!!, image!!)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "listenForUserInfoChanges:onCancelled", error.toException())
+                }
+            })
+    }
+
     fun updateProfile(latitude: String, longitude: String) {
         DatabaseSettings.dbCurrentUser.child("latitude").setValue(latitude)
         DatabaseSettings.dbCurrentUser.child("longitude").setValue(longitude)
@@ -74,34 +91,6 @@ class UserRepository {
         }
     }
 
-    fun uploadPost(imageUri: Uri, description: String) {
-        pushPostOnDb(imageUri).addOnSuccessListener { uri ->
-            val post = Post(
-                imageUrl = uri.toString(),
-                description = description,
-                date = Date().toString(),
-                userId = DatabaseSettings.currentUserUid
-            )
-            DatabaseSettings.dbCurrentUserPosts.push().setValue(post)
-        }
-    }
-
-    private fun pushPostOnDb(imageUri: Uri): Task<Uri> {
-        val currentDateTime = Date()
-        val formatter = SimpleDateFormat("dd-MM-yyyy-HH-mm-ss", Locale.ITALIAN)
-        val formattedDateTime = formatter.format(currentDateTime)
-        val fileRef = DatabaseSettings.storagePosts.child(DatabaseSettings.currentUserUid)
-            .child("$formattedDateTime.jpg")
-        val uploadTask: UploadTask = fileRef.putFile(imageUri)
-        return uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let {
-                    throw it
-                }
-            }
-            fileRef.downloadUrl
-        }
-    }
 
     private fun setProfileImage(imageUri: Uri): Task<Uri> {
         val fileRef =
@@ -121,39 +110,74 @@ class UserRepository {
         FirebaseAuth.getInstance().signOut()
     }
 
-    fun getPostOfUser(user: User, _posts: MutableLiveData<List<Post>>) {
-        DatabaseSettings.dbPosts.child(user.uid!!).apply {
-            addValueEventListener(object : ValueEventListener {
+    fun getPostOfUser(user: User): LiveData<List<Post>> {
+        var resultList: MutableLiveData<List<Post>> = MutableLiveData()
+
+        DatabaseSettings.dbPosts.child(user.uid!!)
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
                         it.getValue(Post::class.java)!!
                     }.apply {
-                        _posts.value = this
+                        resultList.value = this.sortedByDescending { it.date }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w("POST", "getPostsFromFirebase:onCancelled", error.toException())
+                    Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
                 }
             })
-        }
+
+
+        return resultList
     }
 
-    fun getPostOfUser(_posts: MutableLiveData<List<Post>>) {
+    fun getPostOfUser(): LiveData<List<Post>> {
+        var resultList: MutableLiveData<List<Post>> = MutableLiveData()
         DatabaseSettings.dbCurrentUserPosts.apply {
             addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
                         it.getValue(Post::class.java)!!
                     }.apply {
-                        _posts.value = this
+                        resultList.value = this.sortedByDescending { it.date }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w("POST", "getPostsFromFirebase:onCancelled", error.toException())
+                    Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
                 }
             })
         }
+
+        return resultList
     }
+
+
+    fun deletePost(postToDelete: Post): Task<Void>? {
+        var task: Task<Void>? = null
+        DatabaseSettings.dbCurrentUserPosts
+            .orderByChild("imageUrl").equalTo(postToDelete.imageUrl).apply {
+                addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (postSnapshot in snapshot.children) {
+                            val post = postSnapshot.getValue(Post::class.java)
+                            if (post?.imageUrl == postToDelete.imageUrl) {
+                                // Elimina il post dal database e dallo storage
+                                val postId = postSnapshot.key
+                                task = postSnapshot.ref.removeValue()
+                                //FirebaseStorage.getInstance().getReference("Post/$postId.jpg").delete()
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
+            }
+
+        return task
+    }
+
 }

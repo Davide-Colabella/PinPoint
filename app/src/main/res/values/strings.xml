@@ -96,4 +96,5 @@
     <string name="post_nvabar_item">Post</string>
     <string name="profile_nvabar_item">Profile</string>
     <string name="nothing_nvabar_item">Nothing</string>
+    <string name="cancella_post">Cancella Post</string>
 </resources>

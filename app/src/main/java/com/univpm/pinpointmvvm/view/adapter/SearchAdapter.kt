@@ -55,20 +55,23 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
 
     fun clearList() {
-        this.users = emptyList()
+        users = emptyList()
+        notifyDataSetChanged()
     }
 
     inner class SearchViewHolder(private val binding: UserListviewItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(user: com.univpm.pinpointmvvm.model.data.User) {
-            binding.userProfileImageSearch.load(user.image) {
-                placeholder(R.drawable.ic_profile)
-                error(R.drawable.ic_profile)
-                transformations(CircleCropTransformation())
+        fun bind(user: User) {
+            binding.apply {
+                userProfileImageSearch.load(user.image) {
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
+                    transformations(CircleCropTransformation())
+                }
+                fullnameSearch.text = user.fullname
+                usernameSearch.text = user.username
             }
-            binding.fullnameSearch.text = user.fullname
-            binding.usernameSearch.text = user.username
         }
     }
 }

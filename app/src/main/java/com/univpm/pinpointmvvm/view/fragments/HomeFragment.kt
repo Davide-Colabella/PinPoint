@@ -1,6 +1,5 @@
 package com.univpm.pinpointmvvm.view.fragments
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentHomeBinding
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
 
-
 class HomeFragment : Fragment() {
 
     companion object {
@@ -20,16 +18,17 @@ class HomeFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val supportMapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-        val viewModelFactory =
-            HomeViewModel.HomeViewModelFactory(supportMapFragment, requireActivity())
-        homeViewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
+
+        (childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment).apply {
+            HomeViewModel.Factory(this, requireActivity()).apply {
+                ViewModelProvider(this@HomeFragment, this)[HomeViewModel::class.java]
+            }
+        }
         return binding.root
     }
 }
