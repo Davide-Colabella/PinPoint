@@ -2,16 +2,18 @@ package com.univpm.pinpointmvvm.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostOtherUserBinding
-import com.univpm.pinpointmvvm.model.data.Post
+import com.univpm.pinpointmvvm.uistate.PostUiState
 
 class OtherUserPostAdapter() :
     RecyclerView.Adapter<OtherUserPostAdapter.PostViewHolder>() {
 
-    var posts: List<Post> = emptyList()
+    var posts: List<PostUiState> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = ItemPostOtherUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -28,14 +30,22 @@ class OtherUserPostAdapter() :
     inner class PostViewHolder(private val binding: ItemPostOtherUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(post: Post) {
+        fun bind(post: PostUiState) {
             binding.apply {
                 postImage.load(post.imageUrl) {
                     crossfade(true)
                     transformations(SquareCropTransformation())
                 }
+                postUserPic.load(post.userPic) {
+                    crossfade(true)
+                    transformations(CircleCropTransformation())
+                }
                 postUsername.text = post.username
-                postDescription.text = post.description
+                if (post.description == "") {
+                    postDescription.isVisible = false
+                } else {
+                    postDescription.text = post.description
+                }
                 postDate.text = post.date.toString()
             }
         }

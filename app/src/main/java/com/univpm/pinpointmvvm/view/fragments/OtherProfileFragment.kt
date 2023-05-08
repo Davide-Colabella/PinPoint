@@ -12,7 +12,6 @@ import com.univpm.pinpointmvvm.databinding.FragmentOtherProfileBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.uistate.UserUiState
-import com.univpm.pinpointmvvm.view.adapter.CurrentUserPostAdapter
 import com.univpm.pinpointmvvm.view.adapter.OtherUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.OtherProfileViewModel
 import io.getstream.avatarview.coil.loadImage
@@ -57,6 +56,7 @@ class OtherProfileFragment : Fragment() {
                 userUiState.posts?.observe(requireActivity()) {
                     for (post in it) {
                         post.username = userUiState.username
+                        post.userPic = userUiState.image
                     }
                     otherUserPostAdapter.posts = it
                     otherUserPostAdapter.notifyDataSetChanged()

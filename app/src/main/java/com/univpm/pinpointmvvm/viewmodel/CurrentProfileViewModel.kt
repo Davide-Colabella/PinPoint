@@ -2,14 +2,11 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.model.data.Post
-import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.model.repo.UserRepository
+import com.univpm.pinpointmvvm.uistate.PostUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +51,7 @@ class CurrentProfileViewModel : ViewModel() {
         userRepository.logOut()
     }
 
-    fun deletePost(post: Post) {
+    fun deletePost(post: PostUiState) {
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.Default) {

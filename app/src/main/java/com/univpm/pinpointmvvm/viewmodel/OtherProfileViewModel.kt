@@ -3,9 +3,9 @@ package com.univpm.pinpointmvvm.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.model.data.Post
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.UserRepository
+import com.univpm.pinpointmvvm.uistate.PostUiState
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +36,7 @@ class OtherProfileViewModel(user: User) : ViewModel() {
         }
     }
 
-    fun deletePost(post: Post) {
+    fun deletePost(post: PostUiState) {
         userRepository.deletePost(post)
     }
 

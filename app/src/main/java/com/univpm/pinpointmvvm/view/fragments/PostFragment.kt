@@ -1,12 +1,14 @@
 package com.univpm.pinpointmvvm.view.fragments
 
-import android.graphics.Color
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -36,6 +38,35 @@ class PostFragment : Fragment() {
         fixAspectRatio = true,
     )
     private lateinit var binding: FragmentPostBinding
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            // Use the returned uri.
+            imageUri = result.uriContent!!
+            binding.imageviewPost.load(imageUri) {
+                crossfade(true)
+                //transformations(SquareCropTransformation())
+            }
+            Log.d("ImageCropper", imageUri.toString())
+        } else {
+            // An error occurred.
+            val exception = result.error
+            Log.d("ImageCropper", exception.toString())
+        }
+    }
+    private var isPermissionGranted: Boolean = false
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                isPermissionGranted = true
+                cropImage.launch(
+                    CropImageContractOptions(imageUri, options)
+                )
+            } else {
+                //TODO: Handle permission denied
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -57,8 +88,6 @@ class PostFragment : Fragment() {
             postViewModel.postUploadError.collect {
                 if (it.isNotBlank()) {
                     Snackbar.make(view, Constants.POST_UNSUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT)
-                        .setTextColor(Color.WHITE)
-                        .setBackgroundTint(Color.RED)
                         .show()
                 }
             }
@@ -71,8 +100,6 @@ class PostFragment : Fragment() {
             postViewModel.postUploadSuccess.collect {
                 if (it) {
                     Snackbar.make(view, Constants.POST_SUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT)
-                        .setTextColor(Color.WHITE)
-                        .setBackgroundTint(Color.GREEN)
                         .show()
                     closeFragment(requireActivity())
 
@@ -110,24 +137,40 @@ class PostFragment : Fragment() {
     //TODO spostare la logica di onGallery in PostViewModel
     //quando viene premuto il pulsante "sfoglia" si puo scegliere un'immagine dalla galleria
     private fun onGallery() {
-        val cropImage = registerForActivityResult(CropImageContract()) { result ->
-            if (result.isSuccessful) {
-                // Use the returned uri.
-                imageUri = result.uriContent!!
-                binding.imageviewPost.load(imageUri) {
-                    crossfade(true)
-                    //transformations(SquareCropTransformation())
+        binding.btnSfogliaGalleria.setOnClickListener {
+            if (imageUri != Uri.EMPTY) {
+                binding.imageviewPost.setImageDrawable(null)
+                imageUri = Uri.EMPTY
+            }
+            when {
+                checkPermissions() ->{
+                    cropImage.launch(
+                        CropImageContractOptions(imageUri, options)
+                    )
                 }
-                Log.d("ImageCropper", imageUri.toString())
-            } else {
-                // An error occurred.
-                val exception = result.error
-                Log.d("ImageCropper", exception.toString())
+                !isPermissionGranted -> {
+                    askForPermissions()
+                }
             }
         }
-        binding.btnSfogliaGalleria.setOnClickListener {
-            cropImage.launch(
-                CropImageContractOptions(imageUri, options)
+    }
+
+    private fun checkPermissions(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(), android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+                    requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun askForPermissions() {
+        if (!isPermissionGranted) {
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.CAMERA
+            )
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
             )
         }
     }

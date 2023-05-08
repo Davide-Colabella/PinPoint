@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.model.repo
 
+import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,8 +11,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.UploadTask
-import com.univpm.pinpointmvvm.model.data.Post
 import com.univpm.pinpointmvvm.model.data.User
+import com.univpm.pinpointmvvm.uistate.PostUiState
+import java.util.Locale
 
 class UserRepository {
     private val TAG = "UserRepositoryDegub"
@@ -110,16 +112,20 @@ class UserRepository {
         FirebaseAuth.getInstance().signOut()
     }
 
-    fun getPostOfUser(user: User): LiveData<List<Post>> {
-        var resultList: MutableLiveData<List<Post>> = MutableLiveData()
+    fun getPostOfUser(user: User): LiveData<List<PostUiState>> {
+        val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
 
         DatabaseSettings.dbPosts.child(user.uid!!)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
-                        it.getValue(Post::class.java)!!
+                        it.getValue(PostUiState::class.java)!!
                     }.apply {
-                        resultList.value = this.sortedByDescending { it.date }
+                        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        resultList.value = this.sortedByDescending { post ->
+                            val date = dateFormat.parse(post.date)
+                            date.time
+                        }
                     }
                 }
 
@@ -132,15 +138,19 @@ class UserRepository {
         return resultList
     }
 
-    fun getPostOfUser(): LiveData<List<Post>> {
-        var resultList: MutableLiveData<List<Post>> = MutableLiveData()
+    fun getPostOfUser(): LiveData<List<PostUiState>> {
+        val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
         DatabaseSettings.dbCurrentUserPosts.apply {
             addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
-                        it.getValue(Post::class.java)!!
+                        it.getValue(PostUiState::class.java)!!
                     }.apply {
-                        resultList.value = this.sortedByDescending { it.date }
+                        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        resultList.value = this.sortedByDescending { post ->
+                            val date = dateFormat.parse(post.date)
+                            date.time
+                        }
                     }
                 }
 
@@ -154,14 +164,14 @@ class UserRepository {
     }
 
 
-    fun deletePost(postToDelete: Post): Task<Void>? {
+    fun deletePost(postToDelete: PostUiState): Task<Void>? {
         var task: Task<Void>? = null
         DatabaseSettings.dbCurrentUserPosts
             .orderByChild("imageUrl").equalTo(postToDelete.imageUrl).apply {
                 addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         for (postSnapshot in snapshot.children) {
-                            val post = postSnapshot.getValue(Post::class.java)
+                            val post = postSnapshot.getValue(PostUiState::class.java)
                             if (post?.imageUrl == postToDelete.imageUrl) {
                                 // Elimina il post dal database e dallo storage
                                 val postId = postSnapshot.key

@@ -68,6 +68,7 @@ class CurrentProfileFragment : Fragment() {
         uiState.posts?.observe(viewLifecycleOwner) { posts ->
             for (post in posts) {
                 post.username = uiState.username
+                post.userPic = uiState.image
             }
             currentUserPostAdapter.posts = posts
             currentUserPostAdapter.notifyDataSetChanged()

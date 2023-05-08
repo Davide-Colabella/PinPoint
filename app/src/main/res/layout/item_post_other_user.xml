@@ -10,12 +10,20 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <io.getstream.avatarview.AvatarView
+            android:id="@+id/post_user_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:avatarViewBorderColor="@color/black"
+            app:avatarViewBorderWidth="3dp"
+            app:avatarViewPlaceholder="@drawable/ic_profile" />
+
         <TextView
             android:id="@+id/post_username"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.95"
-            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
             android:text="@string/username"
             android:textStyle="bold" />
 
@@ -33,8 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/post_image"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
         android:text="@string/descrizione" />
 
     <TextView
@@ -42,6 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/date"
+        android:paddingTop="10dp"
         android:layout_below="@+id/post_description"
         android:paddingBottom="10dp"/>
 

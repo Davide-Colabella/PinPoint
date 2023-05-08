@@ -1,7 +1,10 @@
 package com.univpm.pinpointmvvm.viewmodel
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -18,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
@@ -38,10 +42,10 @@ map.setLatLngBoundsForCameraTarget(mapBounds)
  */
 
 
-@SuppressLint("MissingPermission", "StaticFieldLeak", "PotentialBehaviorOverride")
+@SuppressLint("StaticFieldLeak", "PotentialBehaviorOverride")
 class HomeViewModel(
     private val supportMapFragment: SupportMapFragment,
-    private val fragment: FragmentActivity,
+    private val fragment: FragmentActivity
 ) : ViewModel() {
 
     private lateinit var position: LatLng
@@ -134,19 +138,40 @@ class HomeViewModel(
     private fun mapSetUi() {
         map.apply {
             val cameraPosition = CameraPosition.Builder()
-                .tilt(45.0f)
                 .target(position)
                 .zoom(18.0f)
                 .build()
 
             moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
+            if (ActivityCompat.checkSelfPermission(
+                    fragment,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    fragment,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
             isMyLocationEnabled = true
             isIndoorEnabled = false
             isBuildingsEnabled = true
             uiSettings.isTiltGesturesEnabled = false
             uiSettings.isCompassEnabled = true
             uiSettings.isMapToolbarEnabled = false
+            val styleJson = """
+                                    [
+                                      {
+                                        "featureType": "poi",
+                                        "elementType": "labels",
+                                        "stylers": [
+                                          { "visibility": "off" }
+                                        ]
+                                      }
+                                    ]
+                                """.trimIndent()
+            map.setMapStyle(MapStyleOptions(styleJson))
         }
     }
 
