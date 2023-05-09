@@ -1,7 +1,11 @@
 package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.univpm.pinpointmvvm.uistate.UserUiState
@@ -62,6 +66,13 @@ class CurrentProfileViewModel : ViewModel() {
                 _postDeleteError.value = e.message.toString()
             }
         }
+    }
+
+    fun viewOnGoogleMap(it: PostUiState, context: Context) {
+        val locationString = "${it.latitude},${it.longitude}"
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
+        intent.setPackage("com.google.android.apps.maps")
+        startActivity(context, intent, null)
     }
 
 }

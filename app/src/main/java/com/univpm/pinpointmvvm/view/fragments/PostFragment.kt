@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
+import com.univpm.pinpointmvvm.model.services.Localization
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 
@@ -87,7 +88,11 @@ class PostFragment : Fragment() {
         lifecycleScope.launch {
             postViewModel.postUploadError.collect {
                 if (it.isNotBlank()) {
-                    Snackbar.make(view, Constants.POST_UNSUCCESSFULLY_UPLOADED, Snackbar.LENGTH_SHORT)
+                    Snackbar.make(
+                        view,
+                        Constants.POST_UNSUCCESSFULLY_UPLOADED,
+                        Snackbar.LENGTH_SHORT
+                    )
                         .show()
                 }
             }
@@ -128,7 +133,10 @@ class PostFragment : Fragment() {
         binding.btnSalvaImmagine.setOnClickListener {
             if (binding.imageviewPost.drawable != null) {
                 binding.edittextDescrizione.text.toString().apply {
-                    postViewModel.uploadPost(imageUri, this)
+                    lifecycleScope.launch {
+                        val currentPosition = Localization(requireActivity()).getLastLocation()
+                        postViewModel.uploadPost(imageUri, this@apply, currentPosition)
+                    }
                 }
             }
         }
@@ -143,11 +151,12 @@ class PostFragment : Fragment() {
                 imageUri = Uri.EMPTY
             }
             when {
-                checkPermissions() ->{
+                checkPermissions() -> {
                     cropImage.launch(
                         CropImageContractOptions(imageUri, options)
                     )
                 }
+
                 !isPermissionGranted -> {
                     askForPermissions()
                 }

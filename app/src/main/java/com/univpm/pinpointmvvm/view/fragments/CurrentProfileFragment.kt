@@ -36,9 +36,11 @@ class CurrentProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        currentUserPostAdapter = CurrentUserPostAdapter{
+        currentUserPostAdapter = CurrentUserPostAdapter({
             viewModel.deletePost(it)
-        }
+        },{
+            viewModel.viewOnGoogleMap(it, requireContext())
+        })
         viewBinding = FragmentCurrentProfileBinding.inflate(inflater, container, false).apply {
             editProfileButton.setOnClickListener {
                 startActivity(Intent(context, AccountEditActivity::class.java))

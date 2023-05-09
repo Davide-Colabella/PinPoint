@@ -3,6 +3,7 @@ package com.univpm.pinpointmvvm.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.model.repo.PostRepository
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 class PostViewModel : ViewModel() {
 
@@ -20,13 +22,14 @@ class PostViewModel : ViewModel() {
     private val _postUploadError = MutableStateFlow("")
     val postUploadError: StateFlow<String> = _postUploadError.asStateFlow()
 
-    fun uploadPost(imageUri: Uri, description: String) {
+    fun uploadPost(imageUri: Uri, description: String, position : LatLng) {
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.Default) {
                     postRepository.uploadPost(
                         imageUri = imageUri,
-                        description = description
+                        description = description,
+                        position = position,
                     )
                 }
                 _postUploadSuccess.value = true

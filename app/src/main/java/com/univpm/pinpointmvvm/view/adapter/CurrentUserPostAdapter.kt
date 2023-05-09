@@ -10,13 +10,14 @@ import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostCurrentUserBinding
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
-class CurrentUserPostAdapter(private val listener: (PostUiState) -> Unit) :
+class CurrentUserPostAdapter(private val deleteListener: (PostUiState) -> Unit, private  val positionListener : (PostUiState) -> Unit) :
     RecyclerView.Adapter<CurrentUserPostAdapter.PostViewHolder>() {
 
     var posts: List<PostUiState> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = ItemPostCurrentUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemPostCurrentUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding)
     }
 
@@ -46,8 +47,17 @@ class CurrentUserPostAdapter(private val listener: (PostUiState) -> Unit) :
                 } else {
                     postDescription.text = post.description
                 }
+
+                if (post.latitude.isNullOrBlank() || post.longitude.isNullOrBlank()) {
+                    postPosition.text = ""
+                } else {
+                    postPosition.text = post.latitude + post.longitude
+                }
+
                 postDate.text = post.date.toString()
-                deletePostBtn.setOnClickListener { listener(post) }
+                deletePostBtn.setOnClickListener { deleteListener(post) }
+                postPosition.setOnClickListener { positionListener(post) }
+
             }
         }
     }

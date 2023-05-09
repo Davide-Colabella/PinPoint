@@ -10,13 +10,14 @@ import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostOtherUserBinding
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
-class OtherUserPostAdapter() :
+class OtherUserPostAdapter(private val listener: (PostUiState) -> Unit) :
     RecyclerView.Adapter<OtherUserPostAdapter.PostViewHolder>() {
 
     var posts: List<PostUiState> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = ItemPostOtherUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemPostOtherUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding)
     }
 
@@ -41,12 +42,20 @@ class OtherUserPostAdapter() :
                     transformations(CircleCropTransformation())
                 }
                 postUsername.text = post.username
-                if (post.description == "") {
+                if (post.description.isNullOrBlank()) {
                     postDescription.isVisible = false
                 } else {
                     postDescription.text = post.description
                 }
+
+                if (post.latitude.isNullOrBlank() || post.longitude.isNullOrBlank()) {
+                    postPosition.text = ""
+                } else {
+                    postPosition.text = post.latitude + post.longitude
+                }
+
                 postDate.text = post.date.toString()
+                postPosition.setOnClickListener { listener(post) }
             }
         }
     }

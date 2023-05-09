@@ -1,6 +1,7 @@
 package com.univpm.pinpointmvvm.model.repo
 
 import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.UploadTask
 import com.univpm.pinpointmvvm.model.data.Post
@@ -10,14 +11,16 @@ import java.util.Locale
 
 class PostRepository() {
 
-    fun uploadPost(imageUri: Uri, description: String): Task<Void>? {
+    fun uploadPost(imageUri: Uri, description: String, position : LatLng): Task<Void>? {
         var task : Task<Void>? = null
         pushPostOnDb(imageUri).addOnSuccessListener { uri ->
             val post = Post(
                 imageUrl = uri.toString(),
                 description = description,
                 date = Date().toString(),
-                userId = DatabaseSettings.currentUserUid
+                userId = DatabaseSettings.currentUserUid,
+                longitude = position.longitude.toString(),
+                latitude = position.latitude.toString(),
             )
             task = DatabaseSettings.dbCurrentUserPosts.push().setValue(post)
         }

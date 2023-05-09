@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class OtherProfileFragment : Fragment() {
     private lateinit var viewBinding: FragmentOtherProfileBinding
     private lateinit var user: User
-    private var otherUserPostAdapter = OtherUserPostAdapter()
+    private lateinit var otherUserPostAdapter : OtherUserPostAdapter
 
     companion object {
         fun newInstance() = OtherProfileFragment()
@@ -32,7 +32,6 @@ class OtherProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         viewBinding = FragmentOtherProfileBinding.inflate(layoutInflater)
         user = requireArguments().getParcelable(Constants.USER_OBJECT_PARCEL)!!
 
@@ -41,7 +40,9 @@ class OtherProfileFragment : Fragment() {
             this,
             otherProfileViewModelFactory
         )[OtherProfileViewModel::class.java].apply {
-            
+            otherUserPostAdapter = OtherUserPostAdapter {
+                this.viewOnGoogleMap(it, requireContext())
+            }
             observeListOfPosts(this.uiState)
             profileUiSetup(this.uiState)
         }

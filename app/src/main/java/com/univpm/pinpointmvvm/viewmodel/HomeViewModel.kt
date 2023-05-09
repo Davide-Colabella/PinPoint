@@ -109,7 +109,7 @@ class HomeViewModel(
         localization.startUpdates { location ->
             position = LatLng(location!!.latitude, location.longitude)
             val currentZoom = map.cameraPosition.zoom
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, currentZoom))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, currentZoom))
         }
     }
 
@@ -157,7 +157,7 @@ class HomeViewModel(
             isMyLocationEnabled = true
             isIndoorEnabled = false
             isBuildingsEnabled = true
-            uiSettings.isTiltGesturesEnabled = false
+            uiSettings.isTiltGesturesEnabled = true
             uiSettings.isCompassEnabled = true
             uiSettings.isMapToolbarEnabled = false
             val styleJson = """
@@ -171,7 +171,7 @@ class HomeViewModel(
                                       }
                                     ]
                                 """.trimIndent()
-            map.setMapStyle(MapStyleOptions(styleJson))
+            setMapStyle(MapStyleOptions(styleJson))
         }
     }
 

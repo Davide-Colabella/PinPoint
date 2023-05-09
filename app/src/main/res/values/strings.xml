@@ -90,11 +90,12 @@
     <string name="no_posts_found">NO POST</string>
     <string name="nuovo_post">Nuovo Post</string>
     <string name="descrizione">Descrizione</string>
-    <string name="date" />
+    <string name="date">Data</string>
     <string name="home_nvabar_item">Home</string>
     <string name="search_nvabar_item">Search</string>
     <string name="post_nvabar_item">Post</string>
     <string name="profile_nvabar_item">Profile</string>
     <string name="nothing_nvabar_item">Nothing</string>
     <string name="cancella_post">Cancella Post</string>
+    <string name="position">Posizione</string>
 </resources>
