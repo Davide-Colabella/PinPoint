@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +53,9 @@ class HomeViewModel(
     private lateinit var map: GoogleMap
     private val userRepository = UserRepository()
     private val localization: Localization = Localization(fragment)
-    private val users: LiveData<List<User>> = userRepository.fetchAllUsersOnDatabase()
+    private val _users : MutableLiveData<List<User>> = userRepository.fetchAllUsersOnDatabase()
+    private val users: LiveData<List<User>> = _users
+
 
     init {
         /*
@@ -78,28 +81,27 @@ class HomeViewModel(
         val imageLoader = Coil.imageLoader(fragment)
         users.observe(fragment) { userList ->
             map.clear()
-            if (map.cameraPosition.zoom > 15.0f) {
-                userList.forEach { user ->
-                    val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
-                    val marker = map.addMarker(
-                        MarkerOptions()
-                            .position(position)
-                            .title(user.username)
+            userList.forEach { user ->
+                val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
+
+                val marker = map.addMarker(
+                    MarkerOptions()
+                        .position(position)
+                        .title(user.username)
+                )
+                marker!!.tag = user
+                val request = ImageRequest.Builder(fragment)
+                    .data(user.image)
+                    .transformations(
+                        CircleCropTransformation(),
+                        CropTransformation(CropTransformation.CropType.CENTER)
                     )
-                    marker!!.tag = user
-                    val request = ImageRequest.Builder(fragment)
-                        .data(user.image)
-                        .transformations(
-                            CircleCropTransformation(),
-                            CropTransformation(CropTransformation.CropType.CENTER)
-                        )
-                        .size(150)
-                        .target { drawable ->
-                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
-                        }
-                        .build()
-                    imageLoader.enqueue(request)
-                }
+                    .size(150)
+                    .target { drawable ->
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                    }
+                    .build()
+                imageLoader.enqueue(request)
             }
         }
     }

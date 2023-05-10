@@ -18,7 +18,7 @@ import java.util.Locale
 class UserRepository {
     private val TAG = "UserRepositoryDegub"
 
-    fun fetchAllUsersOnDatabase(): LiveData<List<User>> {
+    fun fetchAllUsersOnDatabase():  MutableLiveData<List<User>> {
         val usersLiveData = MutableLiveData<List<User>>()
         val _usersList = mutableListOf<User>()
 
