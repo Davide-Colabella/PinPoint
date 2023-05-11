@@ -15,12 +15,12 @@
 
         <io.getstream.avatarview.AvatarView
             android:id="@+id/user_profile_image_search"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:padding="5dp"
-            app:avatarViewPlaceholder="@drawable/ic_profile"
             app:avatarViewBorderColor="@color/black"
-            app:avatarViewBorderWidth="3dp" />
+            app:avatarViewBorderWidth="3dp"
+            app:avatarViewPlaceholder="@drawable/ic_profile" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -32,14 +32,17 @@
                 android:id="@+id/username_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
                 android:text="@string/username"
-                android:layout_marginBottom="6dp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/fullname_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/full_name" />
+                android:text="@string/full_name"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

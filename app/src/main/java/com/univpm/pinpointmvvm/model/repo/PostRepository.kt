@@ -18,11 +18,11 @@ class PostRepository() {
                 imageUrl = uri.toString(),
                 description = description,
                 date = Date().toString(),
-                userId = DatabaseSettings.currentUserUid,
+                userId = DatabaseSettings.auth.value?.currentUser?.uid,
                 longitude = position.longitude.toString(),
                 latitude = position.latitude.toString(),
             )
-            task = DatabaseSettings.dbCurrentUserPosts.push().setValue(post)
+            task = DatabaseSettings.dbCurrentUserPosts.value?.push()?.setValue(post)
         }
 
         return task
@@ -30,7 +30,7 @@ class PostRepository() {
 
     private fun pushPostOnDb(imageUri: Uri): Task<Uri> {
         val formattedDateTime = SimpleDateFormat("dd-MM-yyyy-HH-mm-ss", Locale.ITALIAN).format(Date())
-        val fileRef = DatabaseSettings.storagePosts.child(DatabaseSettings.currentUserUid)
+        val fileRef = DatabaseSettings.storagePosts.child(DatabaseSettings.auth.value?.currentUser?.uid!!)
             .child("$formattedDateTime.jpg")
         val uploadTask: UploadTask = fileRef.putFile(imageUri)
         return uploadTask.continueWithTask { task ->

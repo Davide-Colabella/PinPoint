@@ -13,6 +13,10 @@ class SignUpRepository {
     suspend fun signUp(email: String, password: String, fullname: String, username: String, bio: String, profilePic: String): Result<String> {
         return try {
             auth.createUserWithEmailAndPassword(email, password).await()
+            //da qui
+            val firebaseAuth = FirebaseAuth.getInstance()
+            DatabaseSettings.auth.value = firebaseAuth
+            //a  qui
             val currentUser = auth.currentUser!!
             val userId = currentUser.uid
             val user = User(userId, fullname, username, email, profilePic, bio)

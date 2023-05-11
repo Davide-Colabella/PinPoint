@@ -5,56 +5,57 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
 import com.univpm.pinpointmvvm.databinding.ActivitySignInBinding
+import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
 import com.univpm.pinpointmvvm.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 
 class SignInActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySignInBinding
-    private lateinit var viewmodel: SignInViewModel
+    private lateinit var viewBinding: ActivitySignInBinding
+    private var viewModel = SignInViewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewmodel = SignInViewModel()
-        binding = ActivitySignInBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        viewBinding = ActivitySignInBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
-        binding.inSignupButton.setOnClickListener {
+        viewBinding.inSignupButton.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        binding.inLoginButton.setOnClickListener {
+        viewBinding.inLoginButton.setOnClickListener {
             when {
-                binding.emailLogin.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.emailLogin.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert email",
                     Snackbar.LENGTH_SHORT
                 ).show()
 
-                binding.passwordLogin.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.passwordLogin.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert password",
                     Snackbar.LENGTH_SHORT
                 ).show()
 
                 else -> {
-                    viewmodel.loginUser(
-                        binding.emailLogin.text.toString().trim(),
-                        binding.passwordLogin.text.toString().trim()
+                    viewModel.loginUser(
+                        viewBinding.emailLogin.text.toString().trim(),
+                        viewBinding.passwordLogin.text.toString().trim()
                     )
                 }
             }
         }
 
         lifecycleScope.launch {
-            viewmodel.uiState.collect { state ->
+            viewModel.uiState.collect { state ->
                 if (state.message != null) {
                     startActivity(Intent(this@SignInActivity, MainActivity::class.java))
                     finish()
                 } else if (state.error != null) {
-                    Snackbar.make(binding.root, state.error, Snackbar.LENGTH_SHORT)
+                    Snackbar.make(viewBinding.root, state.error, Snackbar.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -64,7 +65,9 @@ class SignInActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        if (viewmodel.isLoggedIn()) {
+        if (viewModel.isLoggedIn()) {
+            val firebaseAuth = FirebaseAuth.getInstance()
+            DatabaseSettings.auth.value = firebaseAuth
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

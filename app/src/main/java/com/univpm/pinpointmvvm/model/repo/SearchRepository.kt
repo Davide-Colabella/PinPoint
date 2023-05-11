@@ -22,7 +22,7 @@ private val TAG = "SearchRepositoryDebug"
                 }.apply {
                     for (user in this) {
                         if (user.username!!.lowercase().startsWith(query.lowercase())
-                            && user.uid != DatabaseSettings.currentUserUid
+                            && user.uid != DatabaseSettings.auth.value?.currentUser?.uid
                         ) {
                             arrayOfUserThatMatch.add(user)
                         }

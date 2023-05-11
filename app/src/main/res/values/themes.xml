@@ -1,8 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.PinPointMVVM" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/pp_light_cyan</item>
+        <item name="colorPrimaryDark">@color/pp_light_red</item>
+        <item name="colorAccent">@color/pp_light_yellow</item>
     </style>
 
     <style name="Theme.PinPointMVVM" parent="Base.Theme.PinPointMVVM" />

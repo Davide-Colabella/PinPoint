@@ -51,7 +51,8 @@ class OtherUserPostAdapter(private val listener: (PostUiState) -> Unit) :
                 if (post.latitude.isNullOrBlank() || post.longitude.isNullOrBlank()) {
                     postPosition.text = ""
                 } else {
-                    postPosition.text = post.latitude + post.longitude
+                    val positionToString = "(${post.latitude}, ${post.longitude}"
+                    postPosition.text = positionToString
                 }
 
                 postDate.text = post.date.toString()

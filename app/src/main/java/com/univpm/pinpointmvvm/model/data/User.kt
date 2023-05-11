@@ -11,6 +11,6 @@ data class User(
     val email: String? = null,
     val image: String? = null,
     val bio: String? = null,
-    val latitude: String? = null,
-    val longitude: String? = null,
+    var latitude: String? = null,
+    var longitude: String? = null,
 ) : Parcelable

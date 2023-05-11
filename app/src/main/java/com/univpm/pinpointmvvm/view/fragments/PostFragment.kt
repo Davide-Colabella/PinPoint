@@ -79,7 +79,7 @@ class PostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onGallery()
-        onUploadPost(view)
+        onUploadPost()
         observeUploadPostSuccess(view)
         observeUploadPostError(view)
     }
@@ -129,7 +129,7 @@ class PostFragment : Fragment() {
     }
 
     //Quando viene premuto il pulsante "salva" aggiunge il post sul database
-    private fun onUploadPost(view: View) {
+    private fun onUploadPost() {
         binding.btnSalvaImmagine.setOnClickListener {
             if (binding.imageviewPost.drawable != null) {
                 binding.edittextDescrizione.text.toString().apply {

@@ -11,48 +11,47 @@ import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySignUpBinding
-    private lateinit var viewmodel: SignUpViewModel
+    private lateinit var viewBinding: ActivitySignUpBinding
+    private var viewModel = SignUpViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewmodel = SignUpViewModel()
-        binding = ActivitySignUpBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        viewBinding = ActivitySignUpBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
-        binding.upSignInButton.setOnClickListener {
+        viewBinding.upSignInButton.setOnClickListener {
             startActivity(Intent(this, SignInActivity::class.java))
         }
 
-        binding.upSignUpButton.setOnClickListener {
+        viewBinding.upSignUpButton.setOnClickListener {
             when {
-                binding.fullnameSignup.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.fullnameSignup.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert full name",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                binding.usernameSignup.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.usernameSignup.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert username",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                binding.emailSignup.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.emailSignup.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert email",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                binding.passwordSignup.text.toString().isEmpty() -> Snackbar.make(
-                    binding.root,
+                viewBinding.passwordSignup.text.toString().isEmpty() -> Snackbar.make(
+                    viewBinding.root,
                     "Insert password",
                     Snackbar.LENGTH_SHORT
                 ).show()
                 else -> {
                     lifecycleScope.launch {
-                        viewmodel.signUpUser(
-                            binding.emailSignup.text.toString(),
-                            binding.passwordSignup.text.toString(),
-                            binding.fullnameSignup.text.toString(),
-                            binding.usernameSignup.text.toString()
+                        viewModel.signUpUser(
+                            viewBinding.emailSignup.text.toString(),
+                            viewBinding.passwordSignup.text.toString(),
+                            viewBinding.fullnameSignup.text.toString(),
+                            viewBinding.usernameSignup.text.toString()
                         )
                     }
                 }
@@ -60,8 +59,8 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewmodel.uiState.collect { state ->
-                binding.progressBarSignUp.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+            viewModel.uiState.collect { state ->
+                viewBinding.progressBarSignUp.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                 if (state.message != null) {
                     startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                     finish()

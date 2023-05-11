@@ -18,36 +18,37 @@ import java.util.Locale
 class UserRepository {
     private val TAG = "UserRepositoryDegub"
 
-    fun fetchAllUsersOnDatabase():  MutableLiveData<List<User>> {
-        val usersLiveData = MutableLiveData<List<User>>()
-        val _usersList = mutableListOf<User>()
-
+    fun fetchAllUsersOnDatabase(users: MutableLiveData<List<User>>) {
         DatabaseSettings.dbUsers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for (userSnap in snapshot.children) {
-                    userSnap.getValue(User::class.java).apply {
-                        if (this != null) {
-                            if (this.uid != DatabaseSettings.currentUserUid) {
-                                _usersList.add(this)
-                            }
-                        }
+                val updatedUsers = mutableListOf<User>()
+                for (childSnapshot in snapshot.children) {
+                    val userKey = childSnapshot.key
+                    val existingUser = users.value?.find { it.uid == userKey }
+                    if (existingUser != null) {
+                        existingUser.latitude =
+                            childSnapshot.child("latitude").getValue(String::class.java)
+                        existingUser.longitude =
+                            childSnapshot.child("longitude").getValue(String::class.java)
+                        updatedUsers.add(existingUser)
+                    }else {
+                        val newUser = childSnapshot.getValue(User::class.java)
+                        updatedUsers.add(newUser!!)
                     }
-
                 }
-                usersLiveData.postValue(_usersList)
+                users.value = updatedUsers
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("MapRepository", "Error fetching users", error.toException())
             }
         })
-
-        return usersLiveData
     }
 
     fun listenForUserInfoChanges(onUserInfoChanged: (String, String, String, String) -> Unit) {
 
-        DatabaseSettings.dbCurrentUser.addValueEventListener(object : ValueEventListener {
+        DatabaseSettings.dbCurrentUser.value?.addValueEventListener(object :
+            ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 snapshot.getValue(User::class.java)?.apply {
@@ -80,23 +81,23 @@ class UserRepository {
     }
 
     fun updateProfile(latitude: String, longitude: String) {
-        DatabaseSettings.dbCurrentUser.child("latitude").setValue(latitude)
-        DatabaseSettings.dbCurrentUser.child("longitude").setValue(longitude)
+        DatabaseSettings.dbCurrentUser.value?.child("latitude")?.setValue(latitude)
+        DatabaseSettings.dbCurrentUser.value?.child("longitude")?.setValue(longitude)
     }
 
     fun updateProfile(username: String, name: String, bio: String, imageUri: Uri = Uri.EMPTY) {
-        DatabaseSettings.dbCurrentUser.child("fullname").setValue(name)
-        DatabaseSettings.dbCurrentUser.child("username").setValue(username)
-        DatabaseSettings.dbCurrentUser.child("bio").setValue(bio)
+        DatabaseSettings.dbCurrentUser.value?.child("fullname")?.setValue(name)
+        DatabaseSettings.dbCurrentUser.value?.child("username")?.setValue(username)
+        DatabaseSettings.dbCurrentUser.value?.child("bio")?.setValue(bio)
         setProfileImage(imageUri).addOnSuccessListener { uri ->
-            DatabaseSettings.dbCurrentUser.child("image").setValue(uri.toString())
+            DatabaseSettings.dbCurrentUser.value?.child("image")?.setValue(uri.toString())
         }
     }
 
 
     private fun setProfileImage(imageUri: Uri): Task<Uri> {
         val fileRef =
-            DatabaseSettings.storageProfileImage.child(DatabaseSettings.currentUserUid + ".jpg")
+            DatabaseSettings.storageProfileImage.child(DatabaseSettings.auth.value?.currentUser?.uid + ".jpg")
         val uploadTask: UploadTask = fileRef.putFile(imageUri)
         return uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
@@ -121,7 +122,8 @@ class UserRepository {
                     snapshot.children.map {
                         it.getValue(PostUiState::class.java)!!
                     }.apply {
-                        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val dateFormat =
+                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                         resultList.value = this.sortedByDescending { post ->
                             val date = dateFormat.parse(post.date)
                             date.time
@@ -140,13 +142,14 @@ class UserRepository {
 
     fun getPostOfUser(): LiveData<List<PostUiState>> {
         val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
-        DatabaseSettings.dbCurrentUserPosts.apply {
+        DatabaseSettings.dbCurrentUserPosts.value?.apply {
             addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
                         it.getValue(PostUiState::class.java)!!
                     }.apply {
-                        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val dateFormat =
+                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                         resultList.value = this.sortedByDescending { post ->
                             val date = dateFormat.parse(post.date)
                             date.time
@@ -166,8 +169,8 @@ class UserRepository {
 
     fun deletePost(postToDelete: PostUiState): Task<Void>? {
         var task: Task<Void>? = null
-        DatabaseSettings.dbCurrentUserPosts
-            .orderByChild("imageUrl").equalTo(postToDelete.imageUrl).apply {
+        DatabaseSettings.dbCurrentUserPosts.value
+            ?.orderByChild("imageUrl")?.equalTo(postToDelete.imageUrl)?.apply {
                 addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         for (postSnapshot in snapshot.children) {
