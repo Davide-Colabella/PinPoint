@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.Coil
 import coil.ImageLoader
@@ -18,7 +18,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentHomeBinding
 import com.univpm.pinpointmvvm.model.utils.Localization
+import com.univpm.pinpointmvvm.uistate.HomeUiState
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -26,57 +30,58 @@ class HomeFragment : Fragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
-
-    private lateinit var localization: Localization
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val localization: Localization by lazy { Localization(requireActivity()) }
     private lateinit var supportMapFragment: SupportMapFragment
     private lateinit var map: GoogleMap
     private lateinit var position: LatLng
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var viewModel: HomeViewModel
     private lateinit var binding: FragmentHomeBinding
-    private var isPermissionGranted: Boolean = false
+    private val imageLoader: ImageLoader by lazy {Coil.imageLoader(requireContext())}
+    private val viewModel: HomeViewModel by viewModels()
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            isPermissionGranted = true
+            _uiState.value = HomeUiState.permissionGranted()
         } else {
-            //TODO: Handle permission denied
+            _uiState.value = HomeUiState.permissionNotGranted()
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
-        imageLoader = Coil.imageLoader(requireContext())
         supportMapFragment =
             (childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment)
 
         lifecycleScope.launch {
-            when {
-                checkPermissions() -> {
-                    localization = Localization(requireActivity())
-                    position = localization.getLastLocation()
-                    supportMapFragment.getMapAsync {
-                        map = it
-                        map.apply {
-                            mapAddMarkers()
-                            viewModel.apply {
-                                mapSetUi(map, position, requireActivity())
-                                mapSnippetClick(requireActivity(), map)
-                                mapLocationUpdates(localization, map)
-                            }
-                        }
-                    }
-                }
-                !isPermissionGranted -> {
-                    askForPermissions()
+            uiState.collect { state ->
+                if (state.permissionGranted) {
+                    init()
+                } else {
+                    requestPermissions()
                 }
             }
         }
         return binding.root
+    }
+
+    private suspend fun init() {
+        position = localization.getLastLocation()
+        supportMapFragment.getMapAsync {
+            map = it
+            map.apply {
+                mapAddMarkers()
+                viewModel.apply {
+                    mapSetUi(map, position, requireActivity())
+                    mapSnippetClick(requireActivity(), map)
+                    mapLocationUpdates(localization, map)
+                }
+            }
+        }
     }
 
     private fun mapAddMarkers() {
@@ -86,22 +91,12 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun checkPermissions(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun askForPermissions() {
-        if (!isPermissionGranted) {
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        }
+    private fun requestPermissions() {
+        requestPermissionLauncher.launch(
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        requestPermissionLauncher.launch(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
     }
 }

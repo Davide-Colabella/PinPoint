@@ -28,7 +28,12 @@ import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.model.utils.Localization
+import com.univpm.pinpointmvvm.uistate.HomeUiState
+import com.univpm.pinpointmvvm.uistate.SignInUiState
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /*
 private lateinit var mapBounds: LatLngBounds
@@ -46,7 +51,6 @@ class HomeViewModel : ViewModel() {
     private val userRepository = UserRepository()
     private val _users: MutableLiveData<List<User>> = MutableLiveData()
     val users: LiveData<List<User>> = _users
-
 
     init {
         userRepository.fetchAllUsersOnDatabase(_users)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivitySignInBinding
-    private val viewModel: SignInViewModel by lazy { ViewModelProvider(this)[SignInViewModel::class.java] }
+    private val viewModel: SignInViewModel by viewModels()
     private val inputValidator: InputValidator<ActivitySignInBinding> by lazy {
         InputValidator(
             viewBinding

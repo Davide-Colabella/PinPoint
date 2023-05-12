@@ -8,13 +8,14 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
-class Localization(private val activity: Activity) : LocationListener {
+class Localization(private val activity: FragmentActivity) : LocationListener {
     private var userRepository = UserRepository()
     private val locationManager: LocationManager =
         activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager

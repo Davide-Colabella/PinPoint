@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivitySignUpBinding
-    private val viewModel: SignUpViewModel by lazy { ViewModelProvider(this)[SignUpViewModel::class.java] }
+    private val viewModel: SignUpViewModel by viewModels()
     private val inputValidator: InputValidator<ActivitySignUpBinding> by lazy { InputValidator(viewBinding) }
     private val errorMessages = mapOf(
         "fullname" to "Inserisci il nome completo. Solo caratteri alfabetici.",

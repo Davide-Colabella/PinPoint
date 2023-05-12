@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,14 +20,13 @@ import kotlinx.coroutines.launch
 
 class AccountEditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountEditBinding
-    private lateinit var viewModel :  CurrentProfileViewModel
+    private val viewModel :  CurrentProfileViewModel by viewModels()
     private var imageUri: Uri? = Uri.EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(this)[CurrentProfileViewModel::class.java]
 
         setUpUi()
         val result = cropImage()
