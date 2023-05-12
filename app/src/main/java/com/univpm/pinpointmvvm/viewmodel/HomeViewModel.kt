@@ -27,7 +27,7 @@ import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.UserRepository
-import com.univpm.pinpointmvvm.model.services.Localization
+import com.univpm.pinpointmvvm.model.utils.Localization
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 
 /*

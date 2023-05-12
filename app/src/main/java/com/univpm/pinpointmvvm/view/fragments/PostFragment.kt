@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
-import com.univpm.pinpointmvvm.model.services.Localization
+import com.univpm.pinpointmvvm.model.utils.Localization
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 
