@@ -17,7 +17,7 @@ class SignUpViewModel : ViewModel() {
     fun signUpUser(email: String, password: String, fullname: String, username: String) {
         viewModelScope.launch {
             _uiState.value = SignUpUiState.loading()
-            val result = repository.signUp(email, password, fullname, username, bio = "Hi there! I'm using Pinpoint.", profilePic = "https://firebasestorage.googleapis.com/v0/b/pinpointmvvm.appspot.com/o/Default%20Images%2Fprofile_picture.png?alt=media&token=b27db6c2-9178-405e-ac23-a8e1e7fa0e28")
+            val result = repository.signUp(email, password, fullname, username, bio = "Hi there! I'm using Pinpoint.", profilePic = "https://firebasestorage.googleapis.com/v0/b/pinpointmvvm.appspot.com/o/Default%20Images%2FProfilePicture.png?alt=media&token=780391e3-37ee-4352-8367-f4c08b0f809d")
             if (result.isSuccess) {
                 _uiState.value = SignUpUiState.success(result.getOrNull()!!)
             } else {

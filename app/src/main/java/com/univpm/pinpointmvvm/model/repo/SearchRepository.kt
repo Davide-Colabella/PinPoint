@@ -13,7 +13,7 @@ class SearchRepository {
 private val TAG = "SearchRepositoryDebug"
     fun getUserList(query: String) : MutableLiveData<List<User>> {
         val resultList: MutableLiveData<List<User>> = MutableLiveData()
-        var arrayOfUserThatMatch = mutableListOf<User>()
+        val arrayOfUserThatMatch = mutableListOf<User>()
 
         DatabaseSettings.dbUsers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

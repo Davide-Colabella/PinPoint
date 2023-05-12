@@ -1,6 +1,5 @@
 package com.univpm.pinpointmvvm.view.fragments
 
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -131,12 +129,13 @@ class PostFragment : Fragment() {
     //Quando viene premuto il pulsante "salva" aggiunge il post sul database
     private fun onUploadPost() {
         binding.btnSalvaImmagine.setOnClickListener {
-            if (binding.imageviewPost.drawable != null) {
-                binding.edittextDescrizione.text.toString().apply {
-                    lifecycleScope.launch {
-                        val currentPosition = Localization(requireActivity()).getLastLocation()
-                        postViewModel.uploadPost(imageUri, this@apply, currentPosition)
-                    }
+            if (imageUri != Uri.EMPTY) {
+                lifecycleScope.launch {
+                    postViewModel.uploadPost(
+                        imageUri,
+                        binding.edittextDescrizione.text.toString(),
+                        Localization(requireActivity()).getLastLocation()
+                    )
                 }
             }
         }
@@ -151,26 +150,15 @@ class PostFragment : Fragment() {
                 imageUri = Uri.EMPTY
             }
             when {
-                checkPermissions() -> {
-                    cropImage.launch(
-                        CropImageContractOptions(imageUri, options)
-                    )
-                }
+                isPermissionGranted -> cropImage.launch(
+                    CropImageContractOptions(imageUri, options)
+                )
 
                 !isPermissionGranted -> {
                     askForPermissions()
                 }
             }
         }
-    }
-
-    private fun checkPermissions(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(), android.Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(
-                    requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun askForPermissions() {

@@ -12,7 +12,7 @@
         android:id="@+id/progressBarSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 
     <ImageView
         android:id="@+id/logo"
@@ -31,13 +31,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="20dp"
-        android:background="@color/white"
         android:hint="@string/full_name"
         android:inputType="textPersonName"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black" />
+        android:padding="10dp" />
 
     <EditText
         android:id="@+id/username_signup"
@@ -47,13 +44,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="20dp"
-        android:background="@color/white"
         android:hint="@string/username"
         android:inputType="text"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black" />
+        android:padding="10dp" />
 
     <EditText
         android:id="@+id/email_signup"
@@ -63,13 +57,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="20dp"
-        android:background="@color/white"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black" />
+        android:padding="10dp" />
 
     <EditText
         android:id="@+id/password_signup"
@@ -79,13 +70,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="6dp"
         android:layout_marginRight="20dp"
-        android:background="@color/white"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        android:padding="10dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black" />
+        android:padding="10dp" />
 
     <Button
         android:id="@+id/up_sign_up_button"
@@ -109,7 +97,6 @@
         android:layout_marginTop="6dp"
         android:layout_marginBottom="16dp"
         android:text="@string/yes_account"
-        android:textColor="@color/white"
         android:textAllCaps="false"
         android:textSize="17sp" />
 

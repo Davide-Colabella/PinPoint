@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import coil.Coil
 import coil.ImageLoader
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.R
@@ -22,7 +21,7 @@ import com.univpm.pinpointmvvm.model.services.Localization
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(), OnMapReadyCallback {
+class HomeFragment : Fragment() {
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -55,8 +54,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         supportMapFragment =
             (childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment)
 
-
-
         lifecycleScope.launch {
             when {
                 checkPermissions() -> {
@@ -74,15 +71,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         }
                     }
                 }
-
                 !isPermissionGranted -> {
                     askForPermissions()
                 }
             }
-
-
         }
-
         return binding.root
     }
 
@@ -111,20 +104,4 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         }
     }
-
-    override fun onMapReady(p0: GoogleMap) {
-        map = p0
-        map.apply {
-            mapAddMarkers()
-            viewModel.apply {
-                mapSetUi(map, position, requireActivity())
-                mapSnippetClick(requireActivity(), map)
-                mapLocationUpdates(localization, map)
-            }
-        }
-
-    }
-
-
 }
-

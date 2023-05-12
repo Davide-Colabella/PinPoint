@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
@@ -55,17 +56,28 @@ class HomeViewModel : ViewModel() {
     fun addMarkers(
         imageLoader: ImageLoader, homeFragment: FragmentActivity, map: GoogleMap, usersList: List<User>
     ) {
+        val markers = mutableListOf<Marker>()
+        var loadedImages = 0
         map.clear()
         usersList.forEach { user ->
             val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
             val marker = map.addMarker(
                 MarkerOptions().position(position).title(user.username)
             )
-            marker!!.tag = user
+            marker!!.isVisible = false
+            marker.tag = user
+            markers.add(marker)
             val request = ImageRequest.Builder(homeFragment).data(user.image).transformations(
                 CircleCropTransformation(), CropTransformation(CropTransformation.CropType.CENTER)
             ).size(150).target { drawable ->
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                loadedImages++
+                if (loadedImages == usersList.size) {
+                    // All images have been loaded, add the markers to the map
+                    markers.forEach { mapMarker ->
+                        mapMarker.isVisible = true
+                    }
+                }
             }.build()
             imageLoader.enqueue(request)
         }

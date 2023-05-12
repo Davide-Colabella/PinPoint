@@ -12,10 +12,8 @@ import com.univpm.pinpointmvvm.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 
 class SignInActivity : AppCompatActivity() {
-
     private lateinit var viewBinding: ActivitySignInBinding
     private var viewModel = SignInViewModel()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

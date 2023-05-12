@@ -23,27 +23,29 @@ class UserRepository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val updatedUsers = mutableListOf<User>()
                 for (childSnapshot in snapshot.children) {
-                    val userKey = childSnapshot.key
-                    val existingUser = users.value?.find { it.uid == userKey }
-                    if (existingUser != null) {
-                        existingUser.latitude =
-                            childSnapshot.child("latitude").getValue(String::class.java)
-                        existingUser.longitude =
-                            childSnapshot.child("longitude").getValue(String::class.java)
-                        updatedUsers.add(existingUser)
-                    }else {
-                        val newUser = childSnapshot.getValue(User::class.java)
-                        updatedUsers.add(newUser!!)
+                    if (childSnapshot.key != DatabaseSettings.auth.value!!.currentUser!!.uid) {
+                        val userKey = childSnapshot.key
+                        val existingUser = users.value?.find { it.uid == userKey }
+                        if (existingUser != null) {
+                            existingUser.latitude =
+                                childSnapshot.child("latitude").getValue(String::class.java)
+                            existingUser.longitude =
+                                childSnapshot.child("longitude").getValue(String::class.java)
+                            updatedUsers.add(existingUser)
+                        } else {
+                            val newUser = childSnapshot.getValue(User::class.java)
+                            updatedUsers.add(newUser!!)
+                        }
                     }
                 }
-                users.value = updatedUsers
+                users.postValue(updatedUsers)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("MapRepository", "Error fetching users", error.toException())
             }
-        })
-    }
+            })
+        }
 
     fun listenForUserInfoChanges(onUserInfoChanged: (String, String, String, String) -> Unit) {
 
