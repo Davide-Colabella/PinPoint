@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cerca_utente">Cerca utente...</string>
+    <string name="content_description_end_icon">Icona descrizione</string>
+    <string name="discard_changes">Annulla</string>
+    <string name="save_changes">Salva</string>
+    <string name="searchbar_hint">Username...</string>
+    <string name="search_bar_desc">Search bar</string>
 </resources>

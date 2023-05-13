@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.set
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.load
@@ -45,9 +46,9 @@ class AccountEditActivity : AppCompatActivity() {
         binding.saveAccountSettingsBtn.setOnClickListener {
             imageUri?.let { it1 ->
                 viewModel.updateProfile(
-                    name = binding.accountNameAccountSettings.text.toString(),
-                    username = binding.accountUsernameAccountSettings.text.toString(),
-                    bio = binding.accountBioAccountSettings.text.toString(),
+                    name = binding.accountNameAccountSettings.editText?.text.toString(),
+                    username = binding.accountUsernameAccountSettings.editText?.text.toString(),
+                    bio = binding.accountBioAccountSettings.editText?.text.toString(),
                     imageUri = it1
                 )
             }
@@ -92,9 +93,9 @@ class AccountEditActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 binding.apply {
-                    accountUsernameAccountSettings.setText(uiState.username)
-                    accountNameAccountSettings.setText(uiState.fullname)
-                    accountBioAccountSettings.setText(uiState.bio)
+                    accountUsernameAccountSettings.editText?.setText(uiState.username)
+                    accountNameAccountSettings.editText?.setText(uiState.fullname)
+                    accountBioAccountSettings.editText?.setText(uiState.bio)
                     profileImageAccountSettings.load(uiState.image) {
                         placeholder(R.drawable.ic_profile)
                         error(R.drawable.ic_profile)

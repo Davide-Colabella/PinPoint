@@ -19,7 +19,7 @@ class SearchViewModel : ViewModel() {
 
     }
 
-    fun searchUser(query: String) {
+    fun searchUser(query: CharSequence?) {
         viewModelScope.launch {
             _uiState.update { searchUiState ->
                 searchUiState.copy(

@@ -12,4 +12,6 @@
     <color name="pp_light_yellow">#FFFFEA</color>
     <color name="pp_light_red">#FF5E5B</color>
     <color name="pp_light_cyan">#00CECB</color>
+    <color name="pp_light_green">#4CAF50</color>
+    <color name="pp_yellow">#FFC107</color>
 </resources>

@@ -7,23 +7,27 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.univpm.pinpointmvvm.databinding.ActivitySignUpBinding
 import com.univpm.pinpointmvvm.model.utils.InputValidator
+import com.univpm.pinpointmvvm.model.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
+    private val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
+    private val USERNAME_ERROR = "Inserisci l'username. Non immettere degli spazi."
+    private val EMAIL_ERROR = "Inserisci un'e-mail valida"
+    private val PASSWORD_ERROR = "Inserisci una password di almeno 6 caratteri"
+
     private lateinit var viewBinding: ActivitySignUpBinding
     private val viewModel: SignUpViewModel by viewModels()
-    private val inputValidator: InputValidator<ActivitySignUpBinding> by lazy { InputValidator(viewBinding) }
-    private val errorMessages = mapOf(
-        "fullname" to "Inserisci il nome completo. Solo caratteri alfabetici.",
-        "username" to "Inserisci l'username. Non immettere degli spazi.",
-        "email" to "Inserisci un'e-mail valida",
-        "password" to "Inserisci una password"
-    )
+    private val inputValidator: InputValidator<ActivitySignUpBinding> by lazy {
+        InputValidator(
+            viewBinding
+        )
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +46,8 @@ class SignUpActivity : AppCompatActivity() {
                 if (state.isLoggedIn) {
                     startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                     finish()
-                }else if(state.error != null){
-                    inputValidator.snackbarError(state.error)
+                } else if (state.error != null) {
+                    SnackbarManager.onFailure(state.error, this@SignUpActivity, viewBinding.root)
                 }
             }
 
@@ -53,26 +57,34 @@ class SignUpActivity : AppCompatActivity() {
     private fun signUpButtonListener() {
         viewBinding.upSignUpButton.setOnClickListener {
             hideKeyboard()
-            val fullname = viewBinding.fullnameSignup.text.toString()
-            val username = viewBinding.usernameSignup.text.toString()
-            val email = viewBinding.emailSignup.text.toString()
-            val password = viewBinding.passwordSignup.text.toString()
+            val fullname = viewBinding.fullnameSignup.editText?.text.toString()
+            val username = viewBinding.usernameSignup.editText?.text.toString()
+            val email = viewBinding.emailSignup.editText?.text.toString()
+            val password = viewBinding.passwordSignup.editText?.text.toString()
 
             when {
-                !inputValidator.isValidFullName(fullname) -> inputValidator.snackbarError(
-                    errorMessages["fullname"]!!
+                !inputValidator.isValidFullName(fullname) -> SnackbarManager.onWarning(
+                    FULLNAME_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
-                !inputValidator.isValidUsername(username) -> inputValidator.snackbarError(
-                    errorMessages["username"]!!
+                !inputValidator.isValidUsername(username) -> SnackbarManager.onWarning(
+                    USERNAME_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
-                !inputValidator.isValidEmail(email) -> inputValidator.snackbarError(
-                    errorMessages["email"]!!
+                !inputValidator.isValidEmail(email) -> SnackbarManager.onWarning(
+                    EMAIL_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
-                !inputValidator.isValidPassword(password) -> inputValidator.snackbarError(
-                    errorMessages["password"]!!
+                !inputValidator.isValidPassword(password) -> SnackbarManager.onWarning(
+                    PASSWORD_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
                 else -> {

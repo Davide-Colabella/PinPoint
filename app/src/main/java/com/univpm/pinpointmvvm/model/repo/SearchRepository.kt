@@ -11,7 +11,7 @@ import com.univpm.pinpointmvvm.model.data.User
 class SearchRepository {
 
 private val TAG = "SearchRepositoryDebug"
-    fun getUserList(query: String) : MutableLiveData<List<User>> {
+    fun getUserList(query: CharSequence?) : MutableLiveData<List<User>> {
         val resultList: MutableLiveData<List<User>> = MutableLiveData()
         val arrayOfUserThatMatch = mutableListOf<User>()
 
@@ -21,7 +21,7 @@ private val TAG = "SearchRepositoryDebug"
                     it.getValue(User::class.java)!!
                 }.apply {
                     for (user in this) {
-                        if (user.username!!.lowercase().startsWith(query.lowercase())
+                        if (user.username!!.lowercase().startsWith(query.toString().lowercase())
                             && user.uid != DatabaseSettings.auth.value?.currentUser?.uid
                         ) {
                             arrayOfUserThatMatch.add(user)

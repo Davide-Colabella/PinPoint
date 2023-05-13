@@ -1,7 +1,6 @@
 package com.univpm.pinpointmvvm.view.fragments
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentCurrentProfileBinding
-import com.univpm.pinpointmvvm.model.constants.Constants
+import com.univpm.pinpointmvvm.model.utils.SnackbarManager
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
@@ -28,10 +26,12 @@ class CurrentProfileFragment : Fragment() {
         fun newInstance() = CurrentProfileFragment()
     }
 
+    private val POST_SUCCESSFULLY_DELETED = "Il post è stato correttamente cancellato"
+    private val POST_UNSUCCESSFULLY_DELETED = "Il post non è stato correttamente cancellato"
     private val viewModel: CurrentProfileViewModel by viewModels()
     private lateinit var viewBinding: FragmentCurrentProfileBinding
-    private val currentUserPostAdapter : CurrentUserPostAdapter by lazy {
-        CurrentUserPostAdapter( deleteListener = {
+    private val currentUserPostAdapter: CurrentUserPostAdapter by lazy {
+        CurrentUserPostAdapter(deleteListener = {
             viewModel.deletePost(it)
         }, positionListener = {
             viewModel.viewOnGoogleMap(it, requireContext())
@@ -39,8 +39,7 @@ class CurrentProfileFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         viewBinding = FragmentCurrentProfileBinding.inflate(inflater, container, false).apply {
             editProfileButton.setOnClickListener {
@@ -107,10 +106,8 @@ class CurrentProfileFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.postDeleteError.collect {
                 if (it.isNotBlank()) {
-                    Snackbar.make(view, Constants.POST_SUCCESSFULLY_DELETED, Snackbar.LENGTH_SHORT)
-                        .setTextColor(Color.WHITE)
-                        .setBackgroundTint(Color.RED)
-                        .show()
+                    val error = "$POST_UNSUCCESSFULLY_DELETED: \n$it"
+                    SnackbarManager.onFailure(error, this@CurrentProfileFragment)
                 }
             }
 
@@ -121,11 +118,9 @@ class CurrentProfileFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.postDeleteSuccess.collect {
                 if (it) {
-                    Snackbar.make(view, Constants.POST_UNSUCCESSFULLY_DELETED, Snackbar.LENGTH_SHORT)
-                        .setTextColor(Color.WHITE)
-                        .setBackgroundTint(Color.GREEN)
-                        .show()
-
+                    SnackbarManager.onSuccess(
+                        POST_SUCCESSFULLY_DELETED, this@CurrentProfileFragment
+                    )
                 }
             }
 

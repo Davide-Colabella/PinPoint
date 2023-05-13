@@ -6,17 +6,19 @@ import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.univpm.pinpointmvvm.databinding.ActivitySignInBinding
 import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
 import com.univpm.pinpointmvvm.model.utils.InputValidator
+import com.univpm.pinpointmvvm.model.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 
 class SignInActivity : AppCompatActivity() {
 
+    private val EMAIL_ERROR = "Inserisci un'e-mail valida"
+    private val PASSWORD_ERROR = "Inserisci una password"
     private lateinit var viewBinding: ActivitySignInBinding
     private val viewModel: SignInViewModel by viewModels()
     private val inputValidator: InputValidator<ActivitySignInBinding> by lazy {
@@ -24,11 +26,6 @@ class SignInActivity : AppCompatActivity() {
             viewBinding
         )
     }
-    private val errorMessages = mapOf(
-        "email" to "Inserisci un'e-mail valida",
-        "password" to "Inserisci una password",
-        "login" to "Login non riuscito"
-    )
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +42,7 @@ class SignInActivity : AppCompatActivity() {
                     startActivity(Intent(this@SignInActivity, MainActivity::class.java))
                     finish()
                 } else if (state.error != null) {
-                    inputValidator.snackbarError(state.error)
+                    SnackbarManager.onFailure(state.error, this@SignInActivity, viewBinding.root)
                 }
             }
         }
@@ -54,15 +51,19 @@ class SignInActivity : AppCompatActivity() {
     private fun signUpButtonListener() {
         viewBinding.inLoginButton.setOnClickListener {
             hideKeyboard()
-            val email = viewBinding.emailLogin.text.toString()
-            val password = viewBinding.passwordLogin.text.toString()
+            val email = viewBinding.emailLogin.editText?.text.toString()
+            val password = viewBinding.passwordLogin.editText?.text.toString()
             when {
-                !inputValidator.isValidEmail(email) -> inputValidator.snackbarError(
-                    errorMessages["email"]!!
+                !inputValidator.isValidEmail(email) -> SnackbarManager.onWarning(
+                    EMAIL_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
-                !inputValidator.isValidPassword(password) -> inputValidator.snackbarError(
-                    errorMessages["password"]!!
+                !inputValidator.isValidPassword(password) -> SnackbarManager.onWarning(
+                    PASSWORD_ERROR,
+                    this,
+                    viewBinding.root
                 )
 
                 else -> {
