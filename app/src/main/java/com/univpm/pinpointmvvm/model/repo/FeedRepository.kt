@@ -38,13 +38,11 @@ class FeedRepository {
                         })
                     child.children.map { obj ->
                         obj.getValue(PostUiState::class.java)
-                    }.apply {
-                        this.forEach { postUiState ->
-                            if (postUiState != null) {
-                                postUiState.username = usernameForCurrentPost.value
-                                postUiState.userPic = userpicForCurrentPost.value
-                                postList.add(postUiState)
-                            }
+                    }.onEach { postUiState ->
+                        if (postUiState != null) {
+                            postUiState.username = usernameForCurrentPost.value
+                            postUiState.userPic = userpicForCurrentPost.value
+                            postList.add(postUiState)
                         }
                     }
                 }
