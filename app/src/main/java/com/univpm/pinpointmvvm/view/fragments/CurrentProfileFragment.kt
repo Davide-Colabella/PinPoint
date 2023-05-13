@@ -31,9 +31,9 @@ class CurrentProfileFragment : Fragment() {
     private val viewModel: CurrentProfileViewModel by viewModels()
     private lateinit var viewBinding: FragmentCurrentProfileBinding
     private val currentUserPostAdapter : CurrentUserPostAdapter by lazy {
-        CurrentUserPostAdapter({
+        CurrentUserPostAdapter( deleteListener = {
             viewModel.deletePost(it)
-        },{
+        }, positionListener = {
             viewModel.viewOnGoogleMap(it, requireContext())
         })
     }

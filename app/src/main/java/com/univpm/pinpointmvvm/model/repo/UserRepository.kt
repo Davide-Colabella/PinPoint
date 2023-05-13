@@ -143,33 +143,6 @@ class UserRepository {
         return resultList
     }
 
-    fun getPostOfUser(): LiveData<List<PostUiState>> {
-        val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
-        DatabaseSettings.dbCurrentUserPosts.value?.addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.map {
-                    it.getValue(PostUiState::class.java)!!
-                }.apply {
-                    val dateFormat =
-                        SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-                    resultList.value = this.sortedByDescending { post ->
-                        val date = dateFormat.parse(post.date)
-                        date.time
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
-            }
-        })
-
-
-        return resultList
-    }
-
-
     fun deletePost(postToDelete: PostUiState): Task<Void>? {
         var task: Task<Void>? = null
         DatabaseSettings.dbCurrentUserPosts.value
@@ -196,11 +169,38 @@ class UserRepository {
         return task
     }
 
+
     fun followUser(user: User) {
         DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
             .child("following").child(user.uid!!).setValue(true)
         DatabaseSettings.dbFollows.child(user.uid).child("followers")
             .child(DatabaseSettings.auth.value!!.currentUser!!.uid).setValue(true)
+    }
+
+    fun getPostOfUser(): LiveData<List<PostUiState>> {
+        val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
+        DatabaseSettings.dbCurrentUserPosts.value?.addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.map {
+                    it.getValue(PostUiState::class.java)!!
+                }.apply {
+                    val dateFormat =
+                        SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                    resultList.value = this.sortedByDescending { post ->
+                        val date = dateFormat.parse(post.date)
+                        date.time
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
+            }
+        })
+
+
+        return resultList
     }
 
     fun unfollowUser(user: User) {

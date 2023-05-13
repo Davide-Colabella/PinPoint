@@ -30,7 +30,6 @@ class FeedAdapter(
         val post = posts[position]
         holder.bind(post)
     }
-
     inner class PostViewHolder(private val binding: ItemFeedBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

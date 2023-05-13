@@ -64,8 +64,8 @@ class CurrentProfileViewModel : ViewModel() {
         }
     }
 
-    fun viewOnGoogleMap(it: PostUiState, context: Context) {
-        val locationString = "${it.latitude},${it.longitude}"
+    fun viewOnGoogleMap(postUiState: PostUiState, context: Context) {
+        val locationString = "${postUiState.latitude},${postUiState.longitude}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
         intent.setPackage("com.google.android.apps.maps")
         startActivity(context, intent, null)

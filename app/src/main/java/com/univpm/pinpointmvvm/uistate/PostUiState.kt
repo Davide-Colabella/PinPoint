@@ -3,6 +3,7 @@ package com.univpm.pinpointmvvm.uistate
 import com.google.android.gms.maps.model.LatLng
 
 data class PostUiState(
+    val userId : String? = null,
     val imageUrl: String? = null,
     var userPic: String? = null,
     var username: String? = null,
