@@ -9,7 +9,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.databinding.UserListviewItemBinding
+import com.univpm.pinpointmvvm.databinding.ItemUserSearchedBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
@@ -20,7 +20,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         val binding =
-            UserListviewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemUserSearchedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SearchViewHolder(binding)
     }
 
@@ -47,8 +47,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.frame_layout, destinationFragment).commit()
             findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                selectedItemId = R.id.nothing
-
+                selectedItemId = 0
             }
         }
     }
@@ -59,7 +58,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class SearchViewHolder(private val binding: UserListviewItemBinding) :
+    inner class SearchViewHolder(private val binding: ItemUserSearchedBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(user: User) {

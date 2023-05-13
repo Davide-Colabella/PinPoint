@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,12 @@ import kotlinx.coroutines.launch
 class OtherProfileFragment : Fragment() {
     private lateinit var viewBinding: FragmentOtherProfileBinding
     private lateinit var user: User
-    private lateinit var otherUserPostAdapter : OtherUserPostAdapter
+    private val viewModel: OtherProfileViewModel by viewModels{ OtherProfileViewModel.OtherProfileViewModelFactory(user) }
+    private val otherUserPostAdapter: OtherUserPostAdapter by lazy {
+        OtherUserPostAdapter {
+            viewModel.viewOnGoogleMap(it, requireContext())
+        }
+    }
 
     companion object {
         fun newInstance() = OtherProfileFragment()
@@ -35,39 +41,39 @@ class OtherProfileFragment : Fragment() {
         viewBinding = FragmentOtherProfileBinding.inflate(layoutInflater)
         user = requireArguments().getParcelable(Constants.USER_OBJECT_PARCEL)!!
 
-        val otherProfileViewModelFactory = OtherProfileViewModel.OtherProfileViewModelFactory(user)
-        ViewModelProvider(
-            this,
-            otherProfileViewModelFactory
-        )[OtherProfileViewModel::class.java].apply {
-            otherUserPostAdapter = OtherUserPostAdapter {
-                this.viewOnGoogleMap(it, requireContext())
-            }
-            this.checkFollowing(user).observe(
-                requireActivity()
-            ) { isFollowing ->
-                if (isFollowing) {
-                    viewBinding.followButton.text = "Segui già"
-                } else {
-                    viewBinding.followButton.text = "Segui"
-                }
-            }
-            viewBinding.followButton.setOnClickListener {
-                if (viewBinding.followButton.text.toString() == "Segui")
-                    this.followUser(user)
-                else if (viewBinding.followButton.text.toString() == "Segui già")
-                    this.unfollowUser(user)
-            }
-            observeListOfPosts(this.uiState)
-            profileUiSetup(this.uiState)
-        }
+        checkFollowing()
+        followButtonListener()
+        observeListOfPosts()
+        profileUiSetup()
+
 
         return viewBinding.root
     }
 
-    private fun observeListOfPosts(state: StateFlow<UserUiState>) {
+    private fun followButtonListener() {
+        viewBinding.followButton.setOnClickListener {
+            if (viewBinding.followButton.text.toString() == "Segui")
+                viewModel.followUser(user)
+            else if (viewBinding.followButton.text.toString() == "Segui già")
+                viewModel.unfollowUser(user)
+        }
+    }
+
+    private fun checkFollowing() {
+        viewModel.checkFollowing(user).observe(
+            requireActivity()
+        ) { isFollowing ->
+            if (isFollowing) {
+                viewBinding.followButton.text = "Segui già"
+            } else {
+                viewBinding.followButton.text = "Segui"
+            }
+        }
+    }
+
+    private fun observeListOfPosts() {
         lifecycleScope.launch {
-            state.collect{userUiState ->
+            viewModel.uiState.collect { userUiState ->
                 userUiState.posts?.observe(requireActivity()) {
                     for (post in it) {
                         post.username = userUiState.username
@@ -82,9 +88,9 @@ class OtherProfileFragment : Fragment() {
 
     }
 
-    private fun profileUiSetup(state: StateFlow<UserUiState>) {
+    private fun profileUiSetup() {
         lifecycleScope.launch {
-            state.collect {
+            viewModel.uiState.collect {
                 viewBinding.apply {
                     profileActivityProfileImage.loadImage(it.image)
                     profileActivityBio.text = it.bio

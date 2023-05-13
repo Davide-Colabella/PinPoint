@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:id="@+id/header_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <io.getstream.avatarview.AvatarView
+            android:id="@+id/post_user_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:avatarViewBorderColor="@color/black"
+            app:avatarViewBorderWidth="3dp"
+            app:avatarViewPlaceholder="@drawable/ic_profile" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/post_username"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="4dp"
+                android:textSize="16sp"
+                android:text="@string/username"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/post_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:textSize="12sp"
+                android:text="@string/position" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header_image"
+        android:contentDescription="@string/post" />
+
+    <TextView
+        android:id="@+id/post_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/post_image"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/descrizione" />
+
+    <TextView
+        android:id="@+id/post_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/post_description"
+        android:padding="10dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/date" />
+
+
+</RelativeLayout>

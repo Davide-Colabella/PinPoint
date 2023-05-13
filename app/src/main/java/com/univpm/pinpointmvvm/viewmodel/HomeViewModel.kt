@@ -112,7 +112,7 @@ class HomeViewModel : ViewModel() {
                     .replace(R.id.frame_layout, destinationFragment).commit()
 
                 findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                    selectedItemId = R.id.nothing
+                    selectedItemId = 0
                 }
             }
         }

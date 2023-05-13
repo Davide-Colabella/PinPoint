@@ -1,15 +1,14 @@
 package com.univpm.pinpointmvvm.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.uistate.PostUiState
+import com.univpm.pinpointmvvm.uistate.UserUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@SuppressLint("StaticFieldLeak")
 class CurrentProfileViewModel : ViewModel() {
     private val userRepository = UserRepository()
     private val _uiState = MutableStateFlow(UserUiState())
@@ -52,9 +50,6 @@ class CurrentProfileViewModel : ViewModel() {
         userRepository.updateProfile(username, name, bio, imageUri)
     }
 
-    fun logOut() {
-        userRepository.logOut()
-    }
 
     fun deletePost(post: PostUiState) {
         viewModelScope.launch {

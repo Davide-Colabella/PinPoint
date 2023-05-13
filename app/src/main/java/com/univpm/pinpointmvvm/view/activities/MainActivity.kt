@@ -8,6 +8,7 @@ import com.univpm.pinpointmvvm.databinding.ActivityMainBinding
 import com.univpm.pinpointmvvm.view.fragments.HomeFragment
 import com.univpm.pinpointmvvm.view.fragments.PostFragment
 import com.univpm.pinpointmvvm.view.fragments.CurrentProfileFragment
+import com.univpm.pinpointmvvm.view.fragments.FeedFragment
 import com.univpm.pinpointmvvm.view.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity(){
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity(){
                 R.id.profile -> replaceFragment(CurrentProfileFragment.newInstance())
                 R.id.search -> replaceFragment(SearchFragment.newInstance())
                 R.id.post -> replaceFragment(PostFragment.newInstance())
+                R.id.feed -> replaceFragment(FeedFragment.newInstance())
                 else -> {}
             }
             true

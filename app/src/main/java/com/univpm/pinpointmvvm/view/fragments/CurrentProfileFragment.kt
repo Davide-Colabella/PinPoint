@@ -30,17 +30,18 @@ class CurrentProfileFragment : Fragment() {
 
     private val viewModel: CurrentProfileViewModel by viewModels()
     private lateinit var viewBinding: FragmentCurrentProfileBinding
-    private lateinit var currentUserPostAdapter : CurrentUserPostAdapter
+    private val currentUserPostAdapter : CurrentUserPostAdapter by lazy {
+        CurrentUserPostAdapter({
+            viewModel.deletePost(it)
+        },{
+            viewModel.viewOnGoogleMap(it, requireContext())
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        currentUserPostAdapter = CurrentUserPostAdapter({
-            viewModel.deletePost(it)
-        },{
-            viewModel.viewOnGoogleMap(it, requireContext())
-        })
         viewBinding = FragmentCurrentProfileBinding.inflate(inflater, container, false).apply {
             editProfileButton.setOnClickListener {
                 startActivity(Intent(context, AccountEditActivity::class.java))
