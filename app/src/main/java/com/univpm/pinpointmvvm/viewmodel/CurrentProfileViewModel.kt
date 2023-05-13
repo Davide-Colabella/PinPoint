@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,7 +39,9 @@ class CurrentProfileViewModel : ViewModel() {
                         username = username,
                         bio = bio,
                         image = image,
-                        posts = userRepository.getPostOfUser()
+                        posts = userRepository.getPostOfUser(),
+                        followers = userRepository.getFollowersOfCurrentUser(),
+                        following = userRepository.getFollowingOfCurrentUser()
                     )
                 }
             }

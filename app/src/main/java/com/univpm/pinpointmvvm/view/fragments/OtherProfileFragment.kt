@@ -43,13 +43,27 @@ class OtherProfileFragment : Fragment() {
             otherUserPostAdapter = OtherUserPostAdapter {
                 this.viewOnGoogleMap(it, requireContext())
             }
+            this.checkFollowing(user).observe(
+                requireActivity()
+            ) { isFollowing ->
+                if (isFollowing) {
+                    viewBinding.followButton.text = "Segui già"
+                } else {
+                    viewBinding.followButton.text = "Segui"
+                }
+            }
+            viewBinding.followButton.setOnClickListener {
+                if (viewBinding.followButton.text.toString() == "Segui")
+                    this.followUser(user)
+                else if (viewBinding.followButton.text.toString() == "Segui già")
+                    this.unfollowUser(user)
+            }
             observeListOfPosts(this.uiState)
             profileUiSetup(this.uiState)
         }
 
         return viewBinding.root
     }
-
 
     private fun observeListOfPosts(state: StateFlow<UserUiState>) {
         lifecycleScope.launch {
@@ -60,6 +74,7 @@ class OtherProfileFragment : Fragment() {
                         post.userPic = userUiState.image
                     }
                     otherUserPostAdapter.posts = it
+                    viewBinding.totalPosts.text = it.size.toString()
                     otherUserPostAdapter.notifyDataSetChanged()
                 }
             }
@@ -80,6 +95,12 @@ class OtherProfileFragment : Fragment() {
                         setHasFixedSize(true)
                         adapter = otherUserPostAdapter
                     }
+                }
+                it.followers?.observe(requireActivity()) { followers ->
+                    viewBinding.totalFollowers.text = followers.toString()
+                }
+                it.following?.observe(requireActivity()) { following ->
+                    viewBinding.totalFollowing.text = following.toString()
                 }
             }
         }

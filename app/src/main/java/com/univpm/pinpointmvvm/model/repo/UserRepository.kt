@@ -195,4 +195,94 @@ class UserRepository {
         return task
     }
 
+    fun followUser(user: User) {
+        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
+            .child("following").child(user.uid!!).setValue(true)
+        DatabaseSettings.dbFollows.child(user.uid).child("followers").child(DatabaseSettings.auth.value!!.currentUser!!.uid).setValue(true)
+    }
+
+    fun unfollowUser(user: User) {
+        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
+            .child("following").child(user.uid!!).removeValue()
+        DatabaseSettings.dbFollows.child(user.uid).child("followers").child(DatabaseSettings.auth.value!!.currentUser!!.uid).removeValue()
+    }
+
+    fun getFollowersOfUser(user: User): LiveData<Int> {
+        val followersLiveData = MutableLiveData<Int>()
+        DatabaseSettings.dbFollows.child(user.uid!!).child("followers")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val followers = snapshot.childrenCount.toInt()
+                    followersLiveData.value = followers
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "getFollowersOfUser:onCancelled", error.toException())
+                }
+            })
+        return followersLiveData
+    }
+
+
+    fun getFollowingOfUser(user: User): LiveData<Int> {
+        val followingLiveData = MutableLiveData<Int>()
+        DatabaseSettings.dbFollows.child(user.uid!!).child("following")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val following = snapshot.childrenCount.toInt()
+                    followingLiveData.value = following
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "getFollowingOfUser:onCancelled", error.toException())
+                }
+            })
+        return followingLiveData
+    }
+
+    fun getFollowersOfCurrentUser(): LiveData<Int> {
+        val followersLiveData = MutableLiveData<Int>()
+        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid).child("followers")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val followers = snapshot.childrenCount.toInt()
+                    followersLiveData.value = followers
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "getFollowersOfUser:onCancelled", error.toException())
+                }
+            })
+        return followersLiveData
+    }
+
+    fun getFollowingOfCurrentUser(): LiveData<Int> {
+        val followingLiveData = MutableLiveData<Int>()
+        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid).child("following")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val following = snapshot.childrenCount.toInt()
+                    followingLiveData.value = following
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "getFollowingOfUser:onCancelled", error.toException())
+                }
+            })
+        return followingLiveData
+    }
+
+    fun checkFollowing(user: User): LiveData<Boolean> {
+        var following = MutableLiveData<Boolean>()
+        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid).child("following")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    following.value = snapshot.child(user.uid!!).exists()
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "checkFollowing:onCancelled", error.toException())
+                }
+            })
+        return following
+    }
 }

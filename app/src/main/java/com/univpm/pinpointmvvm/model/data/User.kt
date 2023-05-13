@@ -9,7 +9,7 @@ data class User(
     val fullname: String? = null,
     val username: String? = null,
     val email: String? = null,
-    val image: String? = "https://firebasestorage.googleapis.com/v0/b/pinpointmvvm.appspot.com/o/Default%20Images%2Fprofile_picture.png?alt=media&token=b27db6c2-9178-405e-ac23-a8e1e7fa0e28",
+    val image: String? = "https://firebasestorage.googleapis.com/v0/b/pinpointmvvm.appspot.com/o/Default%20Images%2FProfilePicture.png?alt=media&token=780391e3-37ee-4352-8367-f4c08b0f809d",
     val bio: String? = "Hi there! I'm using Pinpoint.",
     var latitude: String? = null,
     var longitude: String? = null,

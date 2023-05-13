@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OtherProfileViewModel(user: User) : ViewModel() {
-
-
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
     private val userRepository = UserRepository()
@@ -34,6 +33,8 @@ class OtherProfileViewModel(user: User) : ViewModel() {
                         bio = bio,
                         image = image,
                         posts = userRepository.getPostOfUser(user),
+                        followers = userRepository.getFollowersOfUser(user),
+                        following = userRepository.getFollowingOfUser(user)
                     )
                 }
             }
@@ -45,6 +46,18 @@ class OtherProfileViewModel(user: User) : ViewModel() {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
         intent.setPackage("com.google.android.apps.maps")
         startActivity(context,intent, null)
+    }
+
+    fun followUser(user: User) {
+        userRepository.followUser(user)
+    }
+
+    fun unfollowUser(user: User) {
+        userRepository.unfollowUser(user)
+    }
+
+    fun checkFollowing(user: User): LiveData<Boolean> {
+        return userRepository.checkFollowing(user)
     }
 
     class OtherProfileViewModelFactory(

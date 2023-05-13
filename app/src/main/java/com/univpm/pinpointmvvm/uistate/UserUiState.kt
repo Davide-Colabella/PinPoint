@@ -9,5 +9,7 @@ data class UserUiState(
     val bio: String? = null,
     val image: String? = null,
     val posts: LiveData<List<PostUiState>>? = null,
+    val followers: LiveData<Int>? = null,
+    val following: LiveData<Int>? = null,
 )
 

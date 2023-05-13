@@ -73,6 +73,7 @@ class CurrentProfileFragment : Fragment() {
                 post.userPic = uiState.image
             }
             currentUserPostAdapter.posts = posts
+            viewBinding.totalPosts.text = posts.size.toString()
             currentUserPostAdapter.notifyDataSetChanged()
         }
     }
@@ -92,6 +93,12 @@ class CurrentProfileFragment : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = currentUserPostAdapter
             }
+        }
+        uiState.followers?.observe(viewLifecycleOwner) { followers ->
+            viewBinding.totalFollowers.text = followers.toString()
+        }
+        uiState.following?.observe(viewLifecycleOwner) { following ->
+            viewBinding.totalFollowing.text = following.toString()
         }
     }
 
