@@ -38,14 +38,12 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-
     fun viewOnGoogleMap(postUiState: PostUiState, context: Context) {
         val locationString = "${postUiState.latitude},${postUiState.longitude}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
         intent.setPackage("com.google.android.apps.maps")
         ContextCompat.startActivity(context, intent, null)
     }
-
 
     fun goToUserClickedProfile(user: User, fragment: FragmentActivity) {
         val bundle = Bundle().apply {
@@ -63,6 +61,4 @@ class FeedViewModel : ViewModel() {
             }
         }
     }
-
-
 }

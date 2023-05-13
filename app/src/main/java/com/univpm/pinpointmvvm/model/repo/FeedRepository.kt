@@ -20,15 +20,18 @@ class FeedRepository {
     //allora faccio in modo di ottenere tutti i dati necessari
     fun getAllPosts(allUsers: MutableList<User>): LiveData<List<PostUiState>> {
         val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
-        val postList: MutableList<PostUiState> = mutableListOf()
+
+        val currentUser = DatabaseSettings.auth.value?.currentUser
+        val currentUserId = currentUser?.uid
 
         DatabaseSettings.dbPosts.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val postList: MutableList<PostUiState> = mutableListOf()
                 snapshot.children.forEach { child ->
                     child.children.map { obj ->
                         obj.getValue(PostUiState::class.java)
                     }.forEach { postUiState ->
-                        if (postUiState != null ) {
+                        if (postUiState != null && postUiState.userId != currentUserId) {
                             postList.add(postUiState)
                         }
                     }
@@ -36,12 +39,13 @@ class FeedRepository {
 
                 postList.forEach { postState ->
                     allUsers.forEach { user ->
-                        if (postState.userId.equals(user.uid)) {
+                        if (postState.userId == user.uid) {
                             postState.username = user.username
                             postState.userPic = user.image
                         }
                     }
                 }
+
                 resultList.value = postList.toList().sortedByDescending { post ->
                     val date = SimpleDateFormat(
                         "EEE MMM dd HH:mm:ss zzz yyyy",
@@ -54,13 +58,12 @@ class FeedRepository {
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "getAllPosts:onCancelled", error.toException())
             }
-
-
         })
-
 
         return resultList
     }
+
+
 
     fun getAllUsers(): MutableList<User> {
         val allUsers: MutableList<User> = mutableListOf()
@@ -75,11 +78,8 @@ class FeedRepository {
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "getAllUsers:onCancelled", error.toException())
             }
-
         })
-
         return allUsers
     }
-
 
 }
