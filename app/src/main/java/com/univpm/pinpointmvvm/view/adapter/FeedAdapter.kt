@@ -10,9 +10,14 @@ import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemFeedBinding
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
+interface ImageLoadListener {
+    fun onImageLoaded()
+}
+
 class FeedAdapter(
     private val positionListener: (PostUiState) -> Unit,
-    private val usernameListener: (PostUiState) -> Unit
+    private val usernameListener: (PostUiState) -> Unit,
+    private val imageLoadListener: ImageLoadListener
 ) :
     RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
 
@@ -38,10 +43,16 @@ class FeedAdapter(
                 postImage.load(post.imageUrl) {
                     crossfade(true)
                     transformations(SquareCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUserPic.load(post.userPic) {
                     crossfade(true)
                     transformations(CircleCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUsername.text = post.username
                 if (post.description.isNullOrBlank()) {

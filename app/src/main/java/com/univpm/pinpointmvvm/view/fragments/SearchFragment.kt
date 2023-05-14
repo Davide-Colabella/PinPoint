@@ -1,16 +1,15 @@
 package com.univpm.pinpointmvvm.view.fragments
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.univpm.pinpointmvvm.databinding.FragmentSearch2Binding
+import com.univpm.pinpointmvvm.databinding.FragmentSearchBinding
 import com.univpm.pinpointmvvm.uistate.SearchUiState
 import com.univpm.pinpointmvvm.view.adapter.SearchAdapter
 import com.univpm.pinpointmvvm.viewmodel.SearchViewModel
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
-    private lateinit var viewBinding: FragmentSearch2Binding
+    private lateinit var viewBinding: FragmentSearchBinding
     private var searchAdapter = SearchAdapter()
 
     companion object {
@@ -28,7 +27,7 @@ class SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        viewBinding = FragmentSearch2Binding.inflate(inflater, container, false)
+        viewBinding = FragmentSearchBinding.inflate(inflater, container, false)
         ViewModelProvider(this)[SearchViewModel::class.java].apply {
             searchViewListener(this)
             observeListOfUserSearched(this.uiState)
@@ -59,18 +58,19 @@ class SearchFragment : Fragment() {
 
 
     private fun searchViewListener(viewModel: SearchViewModel) {
-
-        /*viewBinding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
+        viewBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
+                if (!newText.isNullOrBlank()) {
+                    viewModel.searchUser(newText)
+                } else {
+                    searchAdapter.clearList()
+                }
+                return false
             }
-        })*/
-
-        //viewBinding.searchBar.textView.addTextChangedListener()
+        })
     }
-
 }

@@ -7,12 +7,6 @@
     android:background="@drawable/gradient_background"
     tools:context=".view.activities.SignUpActivity">
 
-    <ProgressBar
-        android:id="@+id/progressBarSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
     <ImageView
         android:id="@+id/logo"
         android:layout_width="250dp"
@@ -73,7 +67,6 @@
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/password_signup"
         android:layout_width="match_parent"
@@ -89,7 +82,6 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
-
 
     <Button
         android:id="@+id/up_sign_up_button"
@@ -115,5 +107,14 @@
         android:text="@string/yes_account"
         android:textAllCaps="false"
         android:textSize="17sp" />
+
+    <include layout="@layout/overlay"
+        android:id="@+id/overlay"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

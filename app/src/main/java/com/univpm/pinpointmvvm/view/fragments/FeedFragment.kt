@@ -10,27 +10,32 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.databinding.FragmentFeedBinding
 import com.univpm.pinpointmvvm.view.adapter.FeedAdapter
+import com.univpm.pinpointmvvm.view.adapter.ImageLoadListener
 import com.univpm.pinpointmvvm.viewmodel.FeedViewModel
 import kotlinx.coroutines.launch
 
-class FeedFragment : Fragment() {
+class FeedFragment : Fragment(), ImageLoadListener {
     private lateinit var viewBinding: FragmentFeedBinding
     private val viewModel: FeedViewModel by viewModels()
     private val feedAdapter: FeedAdapter by lazy {
-        FeedAdapter(positionListener = {
-            viewModel.viewOnGoogleMap(it, requireContext())
-        }, usernameListener = {
-            //TODO aggiungere l'intent a far visualizzare il profilo dell'utente cliccato
-        })
+        FeedAdapter(
+            positionListener = {
+                viewModel.viewOnGoogleMap(it, requireContext())
+            },
+            usernameListener = {
+                //TODO aggiungere l'intent a far visualizzare il profilo dell'utente cliccato
+            },
+            imageLoadListener = this
+        )
     }
+    private var numImagesLoaded = 0
 
     companion object {
         fun newInstance() = FeedFragment()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         viewBinding = FragmentFeedBinding.inflate(inflater, container, false)
         setupUi()
@@ -44,7 +49,6 @@ class FeedFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = feedAdapter
         }
-
     }
 
     private fun observeListOfPosts() {
@@ -56,7 +60,13 @@ class FeedFragment : Fragment() {
                 }
             }
         }
-
     }
 
+    override fun onImageLoaded() {
+        numImagesLoaded++
+        if (numImagesLoaded >= feedAdapter.itemCount) {
+            viewBinding.progressBarFeed.visibility = View.GONE
+            viewBinding.feedRecyclerview.visibility = View.VISIBLE
+        }
+    }
 }

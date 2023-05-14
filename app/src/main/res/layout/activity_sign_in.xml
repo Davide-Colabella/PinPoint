@@ -75,4 +75,14 @@
         android:textAllCaps="false"
         android:textSize="17sp" />
 
+
+    <include layout="@layout/overlay"
+        android:id="@+id/overlay"/>
+
+    <ProgressBar
+        android:id="@+id/progressBarSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>

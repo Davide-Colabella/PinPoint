@@ -4,17 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
-import com.univpm.pinpointmvvm.uistate.AccountSettingsUiState
-import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.viewmodel.AccountSettingsViewModel
-import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class AccountSettingsActivity : AppCompatActivity() {
@@ -30,7 +22,7 @@ class AccountSettingsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.uiState.collect{
                 if(it.isLoggedOut){
-                    startActivity(Intent(this@AccountSettingsActivity, SignInActivity::class.java))
+                    startActivity(Intent(this@AccountSettingsActivity, SignInActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
                     finish()
                 }
             }

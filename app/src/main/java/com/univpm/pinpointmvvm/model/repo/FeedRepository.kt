@@ -4,8 +4,6 @@ import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -18,7 +16,11 @@ class FeedRepository {
 
     //qui sorge il problema che ad ogni post non è associato il profile_pic e l'username del post
     //allora faccio in modo di ottenere tutti i dati necessari
-    fun getAllPosts(allUsers: MutableList<User>): LiveData<List<PostUiState>> {
+    fun getAllPosts(
+        allUsers: MutableList<User>,
+        onSuccess: (LiveData<List<PostUiState>>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
         val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
 
         val currentUser = DatabaseSettings.auth.value?.currentUser
@@ -53,16 +55,15 @@ class FeedRepository {
                     ).parse(post.date)
                     date.time
                 }
+
+                onSuccess(resultList)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "getAllPosts:onCancelled", error.toException())
+                onError(error.toException())
             }
         })
-
-        return resultList
     }
-
 
 
     fun getAllUsers(): MutableList<User> {

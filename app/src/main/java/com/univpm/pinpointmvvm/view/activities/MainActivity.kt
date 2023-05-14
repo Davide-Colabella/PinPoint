@@ -44,15 +44,10 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frame_layout, fragment)
             commit()
         }
     }
-
-
-
-
 }

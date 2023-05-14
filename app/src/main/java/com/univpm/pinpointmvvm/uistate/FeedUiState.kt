@@ -1,15 +1,17 @@
 package com.univpm.pinpointmvvm.uistate
 
 import androidx.lifecycle.LiveData
-import com.univpm.pinpointmvvm.model.data.User
 
 data class FeedUiState(
-    val isLoading : Boolean = true,
+    val isLoading : Boolean = false,
+    val isLoaded: Boolean = false,
+    val error: String? = null,
     val posts: LiveData<List<PostUiState>>? = null,
 ) {
 
-
-    companion object{
-        fun isNoLongerLoading() = FeedUiState(isLoading = false)
+    companion object {
+        fun loading() = FeedUiState(isLoading = true)
+        fun success() = FeedUiState(isLoaded = true, isLoading = false)
+        fun error(toString: String) = FeedUiState(error = toString)
     }
 }

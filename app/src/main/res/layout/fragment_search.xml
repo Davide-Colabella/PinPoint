@@ -41,14 +41,20 @@
         android:background="@drawable/searchview_background"
         android:closeIcon="@drawable/ic_close"
         android:elevation="2dp"
+        android:iconifiedByDefault="false"
         android:padding="10dp" />
 
-    <!-- RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_view"
-        android:padding="10dp" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_view" >
+
+        <!-- RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" />
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

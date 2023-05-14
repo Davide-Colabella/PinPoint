@@ -37,16 +37,18 @@ class SignUpActivity : AppCompatActivity() {
         signInButtonListener()
         signUpButtonListener()
 
-
-
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                viewBinding.progressBarSignUp.visibility =
-                    if (state.isLoading) View.VISIBLE else View.GONE
+                if (state.isLoading) {
+                    disableUI()
+                } else {
+                    enableUI()
+                }
                 if (state.isLoggedIn) {
                     startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                     finish()
                 } else if (state.error != null) {
+                    enableUI()
                     SnackbarManager.onFailure(state.error, this@SignUpActivity, viewBinding.root)
                 }
             }
@@ -54,13 +56,39 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    private fun enableUI() {
+        viewBinding.apply {
+            progressBarSignUp.visibility = View.GONE
+            overlay.overlay.visibility = View.GONE
+            fullnameSignup.isEnabled = true
+            usernameSignup.isEnabled = true
+            emailSignup.isEnabled = true
+            passwordSignup.isEnabled = true
+            upSignInButton.isEnabled = true
+            upSignUpButton.isEnabled = true
+        }
+    }
+
+    private fun disableUI() {
+        viewBinding.apply {
+            progressBarSignUp.visibility = View.VISIBLE
+            overlay.overlay.visibility = View.VISIBLE
+            fullnameSignup.isEnabled = false
+            usernameSignup.isEnabled = false
+            emailSignup.isEnabled = false
+            passwordSignup.isEnabled = false
+            upSignInButton.isEnabled = false
+            upSignUpButton.isEnabled = false
+        }
+    }
+
     private fun signUpButtonListener() {
         viewBinding.upSignUpButton.setOnClickListener {
             hideKeyboard()
-            val fullname = viewBinding.fullnameSignup.editText?.text.toString()
-            val username = viewBinding.usernameSignup.editText?.text.toString()
-            val email = viewBinding.emailSignup.editText?.text.toString()
-            val password = viewBinding.passwordSignup.editText?.text.toString()
+            val fullname = viewBinding.fullnameSignup.editText?.text.toString().trim()
+            val username = viewBinding.usernameSignup.editText?.text.toString().trim()
+            val email = viewBinding.emailSignup.editText?.text.toString().trim()
+            val password = viewBinding.passwordSignup.editText?.text.toString().trim()
 
             when {
                 !inputValidator.isValidFullName(fullname) -> SnackbarManager.onWarning(

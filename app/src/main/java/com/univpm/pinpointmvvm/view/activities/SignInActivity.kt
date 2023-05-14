@@ -38,21 +38,49 @@ class SignInActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
+                if (state.isLoading) {
+                    disableUi()
+                } else {
+                    enableUi()
+                }
                 if (state.isLoggedIn) {
                     startActivity(Intent(this@SignInActivity, MainActivity::class.java))
                     finish()
                 } else if (state.error != null) {
+                    enableUi()
                     SnackbarManager.onFailure(state.error, this@SignInActivity, viewBinding.root)
                 }
             }
         }
     }
 
-    private fun signUpButtonListener() {
+    private fun enableUi() {
+        viewBinding.apply {
+            progressBarSignIn.visibility = android.view.View.GONE
+            overlay.overlay.visibility = android.view.View.GONE
+            emailLogin.isEnabled = true
+            passwordLogin.isEnabled = true
+            inLoginButton.isEnabled = true
+            inSignupButton.isEnabled = true
+        }
+    }
+
+    private fun disableUi() {
+        viewBinding.apply {
+            progressBarSignIn.visibility = android.view.View.VISIBLE
+            overlay.overlay.visibility = android.view.View.VISIBLE
+            emailLogin.isEnabled = false
+            passwordLogin.isEnabled = false
+            inLoginButton.isEnabled = false
+            inSignupButton.isEnabled = false
+        }
+    }
+
+    private fun signInButtonListener() {
         viewBinding.inLoginButton.setOnClickListener {
             hideKeyboard()
-            val email = viewBinding.emailLogin.editText?.text.toString()
-            val password = viewBinding.passwordLogin.editText?.text.toString()
+            val email = viewBinding.emailLogin.editText?.text.toString().trim()
+            val password = viewBinding.passwordLogin.editText?.text.toString().trim()
             when {
                 !inputValidator.isValidEmail(email) -> SnackbarManager.onWarning(
                     EMAIL_ERROR,
@@ -76,10 +104,10 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    private fun signInButtonListener() {
+    private fun signUpButtonListener() {
         viewBinding.inSignupButton.setOnClickListener {
             hideKeyboard()
-            startActivity(Intent(this, SignUpActivity::class.java))
+            startActivity(Intent(this, SignUpActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
     }
 

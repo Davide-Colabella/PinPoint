@@ -30,11 +30,19 @@ class FeedViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _uiState.update { state ->
-                state.copy(
-                    posts = feedRepository.getAllPosts(allUsers),
-                )
-            }
+            _uiState.value = FeedUiState.loading()
+            feedRepository.getAllPosts(
+                allUsers,
+                onSuccess = {
+                    _uiState.value = FeedUiState.success()
+                    _uiState.update { state ->
+                        state.copy(posts = it)
+                    }
+                },
+                onError = {
+                    _uiState.value = FeedUiState.error(it.toString())
+                }
+            )
         }
     }
 
