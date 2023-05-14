@@ -109,7 +109,7 @@ class HomeViewModel : ViewModel() {
             }
             homeFragment.apply {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame_layout, destinationFragment).commit()
+                    .replace(R.id.frame_layout, destinationFragment).addToBackStack(null).commit()
 
                 findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
                     selectedItemId = 0
@@ -152,7 +152,4 @@ class HomeViewModel : ViewModel() {
             setMapStyle(MapStyleOptions(styleJson))
         }
     }
-
-
-
 }

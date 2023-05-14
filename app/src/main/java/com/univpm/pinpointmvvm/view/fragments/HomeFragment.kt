@@ -30,6 +30,7 @@ class HomeFragment : Fragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
+
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
     private val localization: Localization by lazy { Localization(requireActivity()) }
@@ -89,7 +90,6 @@ class HomeFragment : Fragment() {
             viewModel.addMarkers(imageLoader, requireActivity(), map, it)
         }
     }
-
 
     private fun requestPermissions() {
         requestPermissionLauncher.launch(
