@@ -64,8 +64,8 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeDeletePostSuccess(view)
-        observeDeletePostError(view)
+        observeDeletePostSuccess()
+        observeDeletePostError()
     }
 
 
@@ -75,6 +75,8 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
                 viewBinding.progressBarCurrentProfile.visibility = View.GONE
                 viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
                 viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+                viewBinding.noPostsTextView.visibility = View.VISIBLE
+                viewBinding.postRecyclerView.visibility = View.GONE
             } else {
 
                 for (post in posts) {
@@ -112,7 +114,7 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
-    private fun observeDeletePostError(view: View) {
+    private fun observeDeletePostError() {
         lifecycleScope.launch {
             viewModel.postDeleteError.collect {
                 if (it.isNotBlank()) {
@@ -124,7 +126,7 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
-    private fun observeDeletePostSuccess(view: View) {
+    private fun observeDeletePostSuccess() {
         lifecycleScope.launch {
             viewModel.postDeleteSuccess.collect {
                 if (it) {

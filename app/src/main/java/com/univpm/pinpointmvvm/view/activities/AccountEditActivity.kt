@@ -3,11 +3,9 @@ package com.univpm.pinpointmvvm.view.activities
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.set
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -20,9 +18,44 @@ import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
 class AccountEditActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityAccountEditBinding
     private val viewModel :  CurrentProfileViewModel by viewModels()
     private var imageUri: Uri? = Uri.EMPTY
+    private val options = CropImageOptions(
+        allowFlipping = false,
+        fixAspectRatio = true,
+    )
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            // Use the returned uri.
+            imageUri = result.uriContent!!
+            binding.profileImageAccountSettings.load(imageUri) {
+                crossfade(true)
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
+                transformations(CircleCropTransformation())
+            }
+            Log.d("ImageCropper", imageUri.toString())
+        } else {
+            // An error occurred.
+            val exception = result.error
+            Log.d("ImageCropper", exception.toString())
+        }
+    }
+    private var isPermissionGranted: Boolean = false
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            isPermissionGranted = true
+            cropImage.launch(
+                CropImageContractOptions(imageUri, options)
+            )
+        } else {
+            //TODO: Handle permission denied
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +63,37 @@ class AccountEditActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setUpUi()
-        val result = cropImage()
-        changeProfileImage(result)
+        changeProfileImage()
         save()
         discard()
+    }
+
+    private fun changeProfileImage() {
+        binding.changeProfileImage.setOnClickListener {
+            if (imageUri != Uri.EMPTY) {
+                binding.profileImageAccountSettings.setImageDrawable(null)
+                imageUri = Uri.EMPTY
+            }
+            when {
+                isPermissionGranted -> cropImage.launch(
+                    CropImageContractOptions(imageUri, options)
+                )
+
+                !isPermissionGranted -> {
+                    askForPermissions()
+                }
+            }
+        }
+    }
+    private fun askForPermissions() {
+        if (!isPermissionGranted) {
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.CAMERA
+            )
+            requestPermissionLauncher.launch(
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        }
     }
 
     private fun discard() {
@@ -56,38 +116,6 @@ class AccountEditActivity : AppCompatActivity() {
             finish()
         }
     }
-
-    private fun changeProfileImage(result: ActivityResultLauncher<CropImageContractOptions>) {
-        binding.changeProfileImage.setOnClickListener {
-            val options = CropImageOptions(
-                allowFlipping = false,
-                fixAspectRatio = true,
-            )
-            result.launch(
-                CropImageContractOptions(imageUri, options)
-            )
-        }
-    }
-
-    private fun cropImage() = registerForActivityResult(CropImageContract()) { result ->
-            if (result.isSuccessful) {
-                // Use the returned uri.
-                imageUri = result.uriContent!!
-                binding.profileImageAccountSettings.load(imageUri) {
-                    crossfade(true)
-                    placeholder(R.drawable.ic_profile)
-                    error(R.drawable.ic_profile)
-                    transformations(CircleCropTransformation())
-                }
-                Log.d("ImageCropper", imageUri.toString())
-            } else {
-                // An error occurred.
-                val exception = result.error
-                Log.d("ImageCropper", exception.toString())
-            }
-        }
-
-
 
     private fun setUpUi() {
         lifecycleScope.launch {

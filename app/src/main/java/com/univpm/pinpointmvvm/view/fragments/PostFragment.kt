@@ -2,7 +2,6 @@ package com.univpm.pinpointmvvm.view.fragments
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,13 +42,10 @@ class PostFragment : Fragment() {
             imageUri = result.uriContent!!
             viewBinding.imageviewPost.load(imageUri) {
                 crossfade(true)
-                //transformations(SquareCropTransformation())
             }
-            Log.d("ImageCropper", imageUri.toString())
         } else {
             // An error occurred.
             val exception = result.error
-            Log.d("ImageCropper", exception.toString())
         }
     }
     private var isPermissionGranted: Boolean = false

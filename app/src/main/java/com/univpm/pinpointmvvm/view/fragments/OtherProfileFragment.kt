@@ -6,18 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.databinding.FragmentOtherProfileBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
-import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.adapter.OtherUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.OtherProfileViewModel
 import io.getstream.avatarview.coil.loadImage
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class OtherProfileFragment : Fragment(), ImageLoadListener {
@@ -87,6 +84,8 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                         viewBinding.progressBarOtherProfile.visibility = View.GONE
                         viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
                         viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+                        viewBinding.noPostsTextView.visibility = View.VISIBLE
+                        viewBinding.postList.visibility = View.GONE
                     } else {
                         for (post in it) {
                             post.username = userUiState.username

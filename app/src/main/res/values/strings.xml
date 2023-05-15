@@ -98,7 +98,7 @@
     <string name="nothing_nvabar_item">Nothing</string>
     <string name="cancella_post">Cancella Post</string>
     <string name="position">Posizione</string>
-    <string name="cerca_utente">Cerca utente...</string>
+    <string name="cerca_utente">Cerca utente…</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -197,6 +197,7 @@
     <string name="modifica_profilo">Modifica profilo</string>
     <string name="impostazioni">Impostazioni</string>
     <string name="cerca">Cerca</string>
-    <string name="searchbar_hint">Username...</string>
+    <string name="searchbar_hint">Username…</string>
     <string name="search_bar_desc">Search bar</string>
+    <string name="no_posts">Nessun Post</string>
 </resources>

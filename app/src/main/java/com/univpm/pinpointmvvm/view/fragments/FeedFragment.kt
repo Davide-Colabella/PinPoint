@@ -1,6 +1,7 @@
 package com.univpm.pinpointmvvm.view.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,14 +19,11 @@ class FeedFragment : Fragment(), ImageLoadListener {
     private lateinit var viewBinding: FragmentFeedBinding
     private val viewModel: FeedViewModel by viewModels()
     private val feedAdapter: FeedAdapter by lazy {
-        FeedAdapter(
-            positionListener = {
-                viewModel.viewOnGoogleMap(it, requireContext())
-            },
-            usernameListener = {
-                //TODO aggiungere l'intent a far visualizzare il profilo dell'utente cliccato
-            },
-            imageLoadListener = this
+        FeedAdapter(positionListener = {
+            viewModel.viewOnGoogleMap(it, requireContext())
+        }, usernameListener = {
+            //TODO aggiungere l'intent a far visualizzare il profilo dell'utente cliccato
+        }, imageLoadListener = this
         )
     }
     private var numImagesLoaded = 0
@@ -55,8 +53,14 @@ class FeedFragment : Fragment(), ImageLoadListener {
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 state.posts?.observe(requireActivity()) {
-                    feedAdapter.posts = it
-                    feedAdapter.notifyDataSetChanged()
+                    Log.d("FeedFragment", "observeListOfPosts: $it")
+                    if (it.isEmpty()) {
+                        viewBinding.progressBarFeed.visibility = View.GONE
+                        viewBinding.noPostsTextView.visibility = View.VISIBLE
+                    } else {
+                        feedAdapter.posts = it
+                        feedAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
