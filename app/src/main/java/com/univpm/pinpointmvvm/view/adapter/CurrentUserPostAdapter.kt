@@ -8,10 +8,15 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostCurrentUserBinding
+import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
-class CurrentUserPostAdapter(private val deleteListener: (PostUiState) -> Unit, private  val positionListener : (PostUiState) -> Unit) :
-    RecyclerView.Adapter<CurrentUserPostAdapter.PostViewHolder>() {
+
+class CurrentUserPostAdapter(
+    private val deleteListener: (PostUiState) -> Unit,
+    private val positionListener: (PostUiState) -> Unit,
+    private val imageLoadListener: ImageLoadListener
+) : RecyclerView.Adapter<CurrentUserPostAdapter.PostViewHolder>() {
 
     var posts: List<PostUiState> = emptyList()
 
@@ -36,10 +41,16 @@ class CurrentUserPostAdapter(private val deleteListener: (PostUiState) -> Unit, 
                 postImage.load(post.imageUrl) {
                     crossfade(true)
                     transformations(SquareCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUserPic.load(post.userPic) {
                     crossfade(true)
                     transformations(CircleCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUsername.text = post.username
                 if (post.description == "") {

@@ -13,6 +13,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentCurrentProfileBinding
+import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.model.utils.SnackbarManager
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
@@ -21,7 +22,7 @@ import com.univpm.pinpointmvvm.view.adapter.CurrentUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
-class CurrentProfileFragment : Fragment() {
+class CurrentProfileFragment : Fragment(), ImageLoadListener {
     companion object {
         fun newInstance() = CurrentProfileFragment()
     }
@@ -35,8 +36,10 @@ class CurrentProfileFragment : Fragment() {
             viewModel.deletePost(it)
         }, positionListener = {
             viewModel.viewOnGoogleMap(it, requireContext())
-        })
+        }, imageLoadListener = this
+        )
     }
+    private var numImagesLoaded = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -68,13 +71,20 @@ class CurrentProfileFragment : Fragment() {
 
     private fun observeListOfPosts(uiState: UserUiState) {
         uiState.posts?.observe(viewLifecycleOwner) { posts ->
-            for (post in posts) {
-                post.username = uiState.username
-                post.userPic = uiState.image
+            if (posts.isEmpty()) {
+                viewBinding.progressBarCurrentProfile.visibility = View.GONE
+                viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
+                viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+            } else {
+
+                for (post in posts) {
+                    post.username = uiState.username
+                    post.userPic = uiState.image
+                }
+                currentUserPostAdapter.posts = posts
+                viewBinding.totalPosts.text = posts.size.toString()
+                currentUserPostAdapter.notifyDataSetChanged()
             }
-            currentUserPostAdapter.posts = posts
-            viewBinding.totalPosts.text = posts.size.toString()
-            currentUserPostAdapter.notifyDataSetChanged()
         }
     }
 
@@ -128,5 +138,12 @@ class CurrentProfileFragment : Fragment() {
 
     }
 
-
+    override fun onImageLoaded() {
+        numImagesLoaded++
+        if (numImagesLoaded >= currentUserPostAdapter.itemCount) {
+            viewBinding.progressBarCurrentProfile.visibility = View.GONE
+            viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
+            viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+        }
+    }
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.databinding.FragmentOtherProfileBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
+import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.adapter.OtherUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.OtherProfileViewModel
@@ -19,15 +20,22 @@ import io.getstream.avatarview.coil.loadImage
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class OtherProfileFragment : Fragment() {
+class OtherProfileFragment : Fragment(), ImageLoadListener {
     private lateinit var viewBinding: FragmentOtherProfileBinding
     private lateinit var user: User
-    private val viewModel: OtherProfileViewModel by viewModels{ OtherProfileViewModel.OtherProfileViewModelFactory(user) }
-    private val otherUserPostAdapter: OtherUserPostAdapter by lazy {
-        OtherUserPostAdapter {
-            viewModel.viewOnGoogleMap(it, requireContext())
-        }
+    private val viewModel: OtherProfileViewModel by viewModels {
+        OtherProfileViewModel.OtherProfileViewModelFactory(
+            user
+        )
     }
+    private val otherUserPostAdapter: OtherUserPostAdapter by lazy {
+        OtherUserPostAdapter(
+            listener = {
+                viewModel.viewOnGoogleMap(it, requireContext())
+            }, imageLoadListener = this
+        )
+    }
+    private var numImagesLoaded = 0
 
     companion object {
         fun newInstance() = OtherProfileFragment()
@@ -75,13 +83,19 @@ class OtherProfileFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.uiState.collect { userUiState ->
                 userUiState.posts?.observe(requireActivity()) {
-                    for (post in it) {
-                        post.username = userUiState.username
-                        post.userPic = userUiState.image
+                    if (it.isEmpty()) {
+                        viewBinding.progressBarOtherProfile.visibility = View.GONE
+                        viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
+                        viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+                    } else {
+                        for (post in it) {
+                            post.username = userUiState.username
+                            post.userPic = userUiState.image
+                        }
+                        otherUserPostAdapter.posts = it
+                        viewBinding.totalPosts.text = it.size.toString()
+                        otherUserPostAdapter.notifyDataSetChanged()
                     }
-                    otherUserPostAdapter.posts = it
-                    viewBinding.totalPosts.text = it.size.toString()
-                    otherUserPostAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -112,4 +126,12 @@ class OtherProfileFragment : Fragment() {
         }
     }
 
+    override fun onImageLoaded() {
+        numImagesLoaded++
+        if (numImagesLoaded >= otherUserPostAdapter.itemCount) {
+            viewBinding.progressBarOtherProfile.visibility = View.GONE
+            viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
+            viewBinding.nestedScrollViewProfile.visibility = View.VISIBLE
+        }
+    }
 }

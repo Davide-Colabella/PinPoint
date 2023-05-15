@@ -8,6 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout_profile"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -41,6 +42,8 @@
 
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_profile"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/app_bar_layout_profile" >
@@ -198,5 +201,12 @@
     </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBarOtherProfile"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

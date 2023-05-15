@@ -8,9 +8,13 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemPostOtherUserBinding
+import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
-class OtherUserPostAdapter(private val listener: (PostUiState) -> Unit) :
+class OtherUserPostAdapter(
+    private val listener: (PostUiState) -> Unit,
+    private val imageLoadListener: ImageLoadListener
+    ) :
     RecyclerView.Adapter<OtherUserPostAdapter.PostViewHolder>() {
 
     var posts: List<PostUiState> = emptyList()
@@ -36,10 +40,16 @@ class OtherUserPostAdapter(private val listener: (PostUiState) -> Unit) :
                 postImage.load(post.imageUrl) {
                     crossfade(true)
                     transformations(SquareCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUserPic.load(post.userPic) {
                     crossfade(true)
                     transformations(CircleCropTransformation())
+                    listener(onSuccess = { _, _ ->
+                        imageLoadListener.onImageLoaded()
+                    })
                 }
                 postUsername.text = post.username
                 if (post.description.isNullOrBlank()) {

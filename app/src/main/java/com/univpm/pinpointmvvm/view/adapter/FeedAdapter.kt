@@ -8,24 +8,19 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.databinding.ItemFeedBinding
+import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
-
-interface ImageLoadListener {
-    fun onImageLoaded()
-}
 
 class FeedAdapter(
     private val positionListener: (PostUiState) -> Unit,
     private val usernameListener: (PostUiState) -> Unit,
     private val imageLoadListener: ImageLoadListener
-) :
-    RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
+) : RecyclerView.Adapter<FeedAdapter.PostViewHolder>() {
 
     var posts: List<PostUiState> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding =
-            ItemFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding)
     }
 
@@ -35,6 +30,7 @@ class FeedAdapter(
         val post = posts[position]
         holder.bind(post)
     }
+
     inner class PostViewHolder(private val binding: ItemFeedBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
