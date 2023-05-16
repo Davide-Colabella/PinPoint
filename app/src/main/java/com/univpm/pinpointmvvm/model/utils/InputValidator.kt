@@ -16,7 +16,7 @@ class InputValidator<T : ViewBinding>(
 
     // Verifica se il fullname contiene solo lettere dell'alfabeto, spazi e non è vuoto
     fun isValidFullName(fullName: String): Boolean {
-        val regex = Regex("^[a-zA-Z\\s]+$")
+        val regex = Regex("^[\\p{L}\\s]+$")
         return fullName.isNotBlank() && regex.matches(fullName)
     }
 
