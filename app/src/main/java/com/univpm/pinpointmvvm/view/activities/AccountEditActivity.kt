@@ -14,13 +14,20 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountEditBinding
+import com.univpm.pinpointmvvm.model.utils.InputValidator
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
 class AccountEditActivity : AppCompatActivity() {
 
+    companion object{
+        private const val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
+        private const val USERNAME_ERROR = "Inserisci l'username. Non immettere degli spazi."
+    }
+
+    private val inputValidator = InputValidator()
     private lateinit var binding: ActivityAccountEditBinding
-    private val viewModel :  CurrentProfileViewModel by viewModels()
+    private val viewModel: CurrentProfileViewModel by viewModels()
     private var imageUri: Uri? = Uri.EMPTY
     private val options = CropImageOptions(
         allowFlipping = false,
@@ -85,6 +92,7 @@ class AccountEditActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun askForPermissions() {
         if (!isPermissionGranted) {
             requestPermissionLauncher.launch(
@@ -104,14 +112,25 @@ class AccountEditActivity : AppCompatActivity() {
 
     private fun save() {
         binding.saveAccountSettingsBtn.setOnClickListener {
-            imageUri?.let { it1 ->
-                viewModel.updateProfile(
-                    name = binding.accountNameAccountSettings.editText?.text.toString(),
-                    username = binding.accountUsernameAccountSettings.editText?.text.toString(),
-                    bio = binding.accountBioAccountSettings.editText?.text.toString(),
-                    imageUri = it1
-                )
+            val name = binding.accountNameAccountSettings.editText?.text.toString()
+            val fullname = binding.accountUsernameAccountSettings.editText?.text.toString()
+            val bio = binding.accountBioAccountSettings.editText?.text.toString()
+
+            when {
+                !inputValidator.isValidFullName(fullname) -> binding.accountUsernameAccountSettings.error = FULLNAME_ERROR
+                !inputValidator.isValidUsername(name) -> binding.accountNameAccountSettings.error = USERNAME_ERROR
+                else -> {
+                    imageUri?.let { uri ->
+                        viewModel.updateProfile(
+                            name = name,
+                            username = fullname,
+                            bio = bio,
+                            imageUri = uri
+                        )
+                    }
+                }
             }
+
 
             finish()
         }

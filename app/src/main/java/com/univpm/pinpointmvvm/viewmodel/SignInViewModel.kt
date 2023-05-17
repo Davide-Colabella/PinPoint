@@ -16,12 +16,11 @@ class SignInViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
 
-    fun loginUser(email: String, password: String) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = SignInUiState.loading()
             val result = repository.signIn(email, password)
             if (result.isSuccess) {
-                DatabaseSettings.auth.value = FirebaseAuth.getInstance()
                 _uiState.value = SignInUiState.success()
             } else{
                 _uiState.value = SignInUiState.error(result.exceptionOrNull()!!.message!!)

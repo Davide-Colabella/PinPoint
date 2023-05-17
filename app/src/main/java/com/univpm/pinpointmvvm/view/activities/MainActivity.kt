@@ -5,13 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityMainBinding
-import com.univpm.pinpointmvvm.view.fragments.HomeFragment
-import com.univpm.pinpointmvvm.view.fragments.PostFragment
 import com.univpm.pinpointmvvm.view.fragments.CurrentProfileFragment
 import com.univpm.pinpointmvvm.view.fragments.FeedFragment
+import com.univpm.pinpointmvvm.view.fragments.HomeFragment
+import com.univpm.pinpointmvvm.view.fragments.PostFragment
 import com.univpm.pinpointmvvm.view.fragments.SearchFragment
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,4 +51,6 @@ class MainActivity : AppCompatActivity(){
             commit()
         }
     }
+
+
 }

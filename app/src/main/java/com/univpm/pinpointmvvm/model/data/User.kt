@@ -11,6 +11,6 @@ data class User(
     val email: String? = null,
     val image: String? = "https://firebasestorage.googleapis.com/v0/b/pinpointmvvm.appspot.com/o/Default%20Images%2FProfilePicture.png?alt=media&token=780391e3-37ee-4352-8367-f4c08b0f809d",
     val bio: String? = "Hi there! I'm using Pinpoint.",
-    var latitude: String? = "43.3364943",
-    var longitude: String? = "12.9076016",
+    var latitude: String? = "41.9027835",
+    var longitude: String? = "12.4963655",
 ) : Parcelable

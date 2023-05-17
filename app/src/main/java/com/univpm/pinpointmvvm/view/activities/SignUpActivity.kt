@@ -15,18 +15,16 @@ import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
-    private val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
-    private val USERNAME_ERROR = "Inserisci l'username. Non immettere degli spazi."
-    private val EMAIL_ERROR = "Inserisci un'e-mail valida"
-    private val PASSWORD_ERROR = "Inserisci una password di almeno 6 caratteri"
+    companion object {
+        private const val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
+        private const val USERNAME_ERROR = "Inserisci l'username. Non immettere degli spazi."
+        private const val EMAIL_ERROR = "Inserisci un'e-mail valida"
+        private const val PASSWORD_ERROR = "Inserisci una password di almeno 6 caratteri"
+    }
 
     private lateinit var viewBinding: ActivitySignUpBinding
     private val viewModel: SignUpViewModel by viewModels()
-    private val inputValidator: InputValidator<ActivitySignUpBinding> by lazy {
-        InputValidator(
-            viewBinding
-        )
-    }
+    private val inputValidator = InputValidator()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,20 +32,17 @@ class SignUpActivity : AppCompatActivity() {
         viewBinding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        signInButtonListener()
-        signUpButtonListener()
+        viewBinding.upSignUpButton.setOnClickListener(signUpClick())
+        viewBinding.upSignInButton.setOnClickListener(signInClick())
 
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                if (state.isLoading) {
-                    disableUI()
-                } else {
-                    enableUI()
-                }
+                if (state.isLoading) disableUI() else enableUI()
                 if (state.isLoggedIn) {
                     startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
                     finish()
-                } else if (state.error != null) {
+                }
+                if (state.error != null) {
                     enableUI()
                     SnackbarManager.onFailure(state.error, this@SignUpActivity, viewBinding.root)
                 }
@@ -82,38 +77,32 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun signUpButtonListener() {
-        viewBinding.upSignUpButton.setOnClickListener {
+    private fun signInClick(): View.OnClickListener {
+        return View.OnClickListener {
+            startActivity(Intent(this@SignUpActivity, SignInActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun signUpClick(): View.OnClickListener {
+        return View.OnClickListener {
             hideKeyboard()
-            val fullname = viewBinding.fullnameSignup.editText?.text.toString().trim()
-            val username = viewBinding.usernameSignup.editText?.text.toString().trim()
-            val email = viewBinding.emailSignup.editText?.text.toString().trim()
-            val password = viewBinding.passwordSignup.editText?.text.toString().trim()
+            val fullname = viewBinding.fullnameSignup.editText?.text.toString()
+            val username = viewBinding.usernameSignup.editText?.text.toString()
+            val email = viewBinding.emailSignup.editText?.text.toString()
+            val password = viewBinding.passwordSignup.editText?.text.toString()
 
             when {
-                !inputValidator.isValidFullName(fullname) -> SnackbarManager.onWarning(
-                    FULLNAME_ERROR,
-                    this,
-                    viewBinding.root
-                )
+                !inputValidator.isValidFullName(fullname) -> viewBinding.fullnameSignup.error =
+                    FULLNAME_ERROR
 
-                !inputValidator.isValidUsername(username) -> SnackbarManager.onWarning(
-                    USERNAME_ERROR,
-                    this,
-                    viewBinding.root
-                )
+                !inputValidator.isValidUsername(username) -> viewBinding.usernameSignup.error =
+                    USERNAME_ERROR
 
-                !inputValidator.isValidEmail(email) -> SnackbarManager.onWarning(
-                    EMAIL_ERROR,
-                    this,
-                    viewBinding.root
-                )
+                !inputValidator.isValidEmail(email) -> viewBinding.emailSignup.error = EMAIL_ERROR
 
-                !inputValidator.isValidPassword(password) -> SnackbarManager.onWarning(
-                    PASSWORD_ERROR,
-                    this,
-                    viewBinding.root
-                )
+                !inputValidator.isValidPassword(password) -> viewBinding.passwordSignup.error =
+                    PASSWORD_ERROR
 
                 else -> {
                     lifecycleScope.launch {
@@ -128,14 +117,6 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun signInButtonListener() {
-        viewBinding.upSignInButton.setOnClickListener {
-            hideKeyboard()
-            startActivity(Intent(this, SignInActivity::class.java))
-        }
-    }
-
 
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

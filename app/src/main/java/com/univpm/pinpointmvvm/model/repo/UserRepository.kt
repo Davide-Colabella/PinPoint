@@ -10,20 +10,23 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.UploadTask
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.uistate.PostUiState
+import io.reactivex.rxjava3.plugins.RxJavaPlugins.onError
 import java.util.Locale
 
 class UserRepository {
-    private val TAG = "UserRepositoryDegub"
+    companion object {
+        private const val TAG = "UserRepositoryDegub"
+    }
 
+    private val dbSettings = DatabaseSettings()
     fun fetchAllUsersOnDatabase(users: MutableLiveData<List<User>>) {
-        DatabaseSettings.dbUsers.addValueEventListener(object : ValueEventListener {
+        dbSettings.dbUsers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val updatedUsers = mutableListOf<User>()
                 for (childSnapshot in snapshot.children) {
-                    if (childSnapshot.key != DatabaseSettings.auth.value!!.currentUser!!.uid) {
+                    if (childSnapshot.key != dbSettings.auth.uid) {
                         val userKey = childSnapshot.key
                         val existingUser = users.value?.find { it.uid == userKey }
                         if (existingUser != null) {
@@ -42,24 +45,26 @@ class UserRepository {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("MapRepository", "Error fetching users", error.toException())
+                onError(error.toException())
             }
         })
     }
 
     fun listenForUserInfoChanges(onUserInfoChanged: (String, String, String, String) -> Unit) {
 
-        DatabaseSettings.dbCurrentUser.value?.addValueEventListener(object :
-            ValueEventListener {
+        dbSettings.dbCurrentUser.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
                 snapshot.getValue(User::class.java)?.apply {
-                    onUserInfoChanged(fullname!!, username!!, bio!!, image!!)
+                    if (fullname != null && username != null && bio != null && image != null) {
+                        onUserInfoChanged(fullname, username, bio, image)
+                    }else{
+                        Log.d(TAG, "onDataChange: user info is null")
+                    }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.w("POST", "getPostsFromFirebase:onCancelled", error.toException())
+                onError(error.toException())
             }
         })
     }
@@ -67,7 +72,7 @@ class UserRepository {
     fun listenForUserInfoChanges(
         user: User, onUserInfoChanged: (String, String, String, String) -> Unit
     ) {
-        DatabaseSettings.dbUsers.child(user.uid!!)
+        dbSettings.dbUsers.child(user.uid!!)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -77,35 +82,34 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "listenForUserInfoChanges:onCancelled", error.toException())
+                    onError(error.toException())
+
                 }
             })
     }
 
     fun updateProfile(latitude: String, longitude: String) {
-        DatabaseSettings.dbCurrentUser.value?.child("latitude")?.setValue(latitude)
-        DatabaseSettings.dbCurrentUser.value?.child("longitude")?.setValue(longitude)
+        dbSettings.dbCurrentUser.child("latitude").setValue(latitude)
+        dbSettings.dbCurrentUser.child("longitude").setValue(longitude)
     }
 
     fun updateProfile(username: String, name: String, bio: String, imageUri: Uri = Uri.EMPTY) {
-        DatabaseSettings.dbCurrentUser.value?.child("fullname")?.setValue(name)
-        DatabaseSettings.dbCurrentUser.value?.child("username")?.setValue(username)
-        DatabaseSettings.dbCurrentUser.value?.child("bio")?.setValue(bio)
+        dbSettings.dbCurrentUser.child("fullname").setValue(name)
+        dbSettings.dbCurrentUser.child("username").setValue(username)
+        dbSettings.dbCurrentUser.child("bio").setValue(bio)
         setProfileImage(imageUri).addOnSuccessListener { uri ->
-            DatabaseSettings.dbCurrentUser.value?.child("image")?.setValue(uri.toString())
+            dbSettings.dbCurrentUser.child("image").setValue(uri.toString())
         }
     }
 
 
     private fun setProfileImage(imageUri: Uri): Task<Uri> {
-        val fileRef =
-            DatabaseSettings.storageProfileImage.child(DatabaseSettings.auth.value?.currentUser?.uid + ".jpg")
-        val uploadTask: UploadTask = fileRef.putFile(imageUri)
+        val fileRef = dbSettings.storageProfileImage
+            .child(dbSettings.auth.currentUser?.uid + ".jpg")
+        val uploadTask = fileRef.putFile(imageUri)
         return uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
-                task.exception?.let {
-                    throw it
-                }
+                task.exception?.let { throw it }
             }
             fileRef.downloadUrl
         }
@@ -113,13 +117,12 @@ class UserRepository {
 
     fun logOut() {
         FirebaseAuth.getInstance().signOut()
-        DatabaseSettings.auth.value = null
     }
 
     fun getPostOfUser(user: User): LiveData<List<PostUiState>> {
         val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
 
-        DatabaseSettings.dbPosts.child(user.uid!!)
+        dbSettings.dbPosts.child(user.uid!!)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.map {
@@ -135,7 +138,7 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
+                    onError(error.toException())
                 }
             })
 
@@ -145,9 +148,10 @@ class UserRepository {
 
     fun deletePost(postToDelete: PostUiState): Task<Void>? {
         var task: Task<Void>? = null
-        DatabaseSettings.dbCurrentUserPosts.value
-            ?.orderByChild("imageUrl")?.equalTo(postToDelete.imageUrl)
-            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+        dbSettings.dbCurrentUserPosts
+            .orderByChild("imageUrl")
+            .equalTo(postToDelete.imageUrl)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (postSnapshot in snapshot.children) {
                         val post = postSnapshot.getValue(PostUiState::class.java)
@@ -161,7 +165,7 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                    onError(error.toException())
                 }
             })
 
@@ -171,16 +175,22 @@ class UserRepository {
 
 
     fun followUser(user: User) {
-        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
-            .child("following").child(user.uid!!).setValue(true)
-        DatabaseSettings.dbFollows.child(user.uid).child("followers")
-            .child(DatabaseSettings.auth.value!!.currentUser!!.uid).setValue(true)
+        dbSettings.dbFollows
+            .child(dbSettings.auth.uid!!)
+            .child("following")
+            .child(user.uid!!)
+            .setValue(true)
+
+        dbSettings.dbFollows
+            .child(user.uid)
+            .child("followers")
+            .child(dbSettings.auth.uid!!)
+            .setValue(true)
     }
 
     fun getPostOfUser(): LiveData<List<PostUiState>> {
         val resultList: MutableLiveData<List<PostUiState>> = MutableLiveData()
-        DatabaseSettings.dbCurrentUserPosts.value?.addValueEventListener(object :
-            ValueEventListener {
+        dbSettings.dbCurrentUserPosts.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.map {
                     it.getValue(PostUiState::class.java)!!
@@ -195,57 +205,30 @@ class UserRepository {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "getPostOfUser:onCancelled", error.toException())
+                onError(error.toException())
             }
         })
-
-
         return resultList
     }
 
     fun unfollowUser(user: User) {
-        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
-            .child("following").child(user.uid!!).removeValue()
-        DatabaseSettings.dbFollows.child(user.uid).child("followers")
-            .child(DatabaseSettings.auth.value!!.currentUser!!.uid).removeValue()
+        dbSettings.dbFollows
+            .child(dbSettings.auth.uid!!)
+            .child("following")
+            .child(user.uid!!)
+            .removeValue()
+
+        dbSettings.dbFollows
+            .child(user.uid)
+            .child("followers")
+            .child(dbSettings.auth.uid!!)
+            .removeValue()
     }
 
     fun getFollowersOfUser(user: User): LiveData<Int> {
         val followersLiveData = MutableLiveData<Int>()
-        DatabaseSettings.dbFollows.child(user.uid!!).child("followers")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val followers = snapshot.childrenCount.toInt()
-                    followersLiveData.value = followers
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "getFollowersOfUser:onCancelled", error.toException())
-                }
-            })
-        return followersLiveData
-    }
-
-
-    fun getFollowingOfUser(user: User): LiveData<Int> {
-        val followingLiveData = MutableLiveData<Int>()
-        DatabaseSettings.dbFollows.child(user.uid!!).child("following")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val following = snapshot.childrenCount.toInt()
-                    followingLiveData.value = following
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "getFollowingOfUser:onCancelled", error.toException())
-                }
-            })
-        return followingLiveData
-    }
-
-    fun getFollowersOfCurrentUser(): LiveData<Int> {
-        val followersLiveData = MutableLiveData<Int>()
-        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
+        dbSettings.dbFollows
+            .child(user.uid!!)
             .child("followers")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -254,15 +237,18 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "getFollowersOfUser:onCancelled", error.toException())
+                    onError(error.toException())
                 }
             })
+
         return followersLiveData
     }
 
-    fun getFollowingOfCurrentUser(): LiveData<Int> {
+
+    fun getFollowingOfUser(user: User): LiveData<Int> {
         val followingLiveData = MutableLiveData<Int>()
-        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
+        dbSettings.dbFollows
+            .child(user.uid!!)
             .child("following")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -271,15 +257,52 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "getFollowingOfUser:onCancelled", error.toException())
+                    onError(error.toException())
+                }
+            })
+        return followingLiveData
+    }
+
+    fun getFollowersOfCurrentUser(): LiveData<Int> {
+        val followersLiveData = MutableLiveData<Int>()
+        dbSettings.dbFollows
+            .child(dbSettings.auth.uid!!)
+            .child("followers")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val followers = snapshot.childrenCount.toInt()
+                    followersLiveData.value = followers
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    onError(error.toException())
+                }
+            })
+        return followersLiveData
+    }
+
+    fun getFollowingOfCurrentUser(): LiveData<Int> {
+        val followingLiveData = MutableLiveData<Int>()
+        dbSettings.dbFollows
+            .child(dbSettings.auth.uid!!)
+            .child("following")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val following = snapshot.childrenCount.toInt()
+                    followingLiveData.value = following
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    onError(error.toException())
                 }
             })
         return followingLiveData
     }
 
     fun checkFollowing(user: User): LiveData<Boolean> {
-        var following = MutableLiveData<Boolean>()
-        DatabaseSettings.dbFollows.child(DatabaseSettings.auth.value!!.currentUser!!.uid)
+        val following = MutableLiveData<Boolean>()
+        dbSettings.dbFollows
+            .child(dbSettings.auth.uid!!)
             .child("following")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -287,7 +310,7 @@ class UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.w(TAG, "checkFollowing:onCancelled", error.toException())
+                    onError(error.toException())
                 }
             })
         return following

@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 class FeedViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
-    private val feedRepository = FeedRepository()
+    private val feedRepository = FeedRepository.instance
     private val allUsers: MutableList<User> = feedRepository.getAllUsers()
 
     init {

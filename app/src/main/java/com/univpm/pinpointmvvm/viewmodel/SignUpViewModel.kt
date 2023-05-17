@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class SignUpViewModel : ViewModel() {
+    private val dbSettings : DatabaseSettings by lazy { DatabaseSettings()}
     private val repository = SignUpRepository()
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
@@ -24,15 +25,14 @@ class SignUpViewModel : ViewModel() {
             _uiState.value = SignUpUiState.loading()
             val result = repository.signUp(email, password)
             if (result.isSuccess) {
-                DatabaseSettings.auth.value = FirebaseAuth.getInstance()
-                Log.d("User", DatabaseSettings.auth.value!!.uid!!)
-                val user = User(
-                    uid = DatabaseSettings.auth.value!!.uid,
+                User(
+                    uid = dbSettings.auth.uid!!,
                     fullname = fullname,
                     username = username,
                     email = email
-                )
-                DatabaseSettings.dbCurrentUser.value!!.setValue(user).await()
+                ).apply {
+                    dbSettings.dbCurrentUser.setValue(this).await()
+                }
                 _uiState.value = SignUpUiState.success()
             } else {
                 _uiState.value = SignUpUiState.error(result.exceptionOrNull()!!.message!!)

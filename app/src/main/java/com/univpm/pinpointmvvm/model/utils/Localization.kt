@@ -1,72 +1,77 @@
 package com.univpm.pinpointmvvm.model.utils
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.model.repo.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
+import kotlinx.coroutines.withContext
 
-class Localization(private val activity: FragmentActivity) : LocationListener {
-    private var userRepository = UserRepository()
+class Localization(private val activity: Activity) : LocationListener {
+
+    companion object {
+        const val LATITUDE_DEFAULT = 41.9027835
+        const val LONGITUDE_DEFAULT = 12.4963655
+    }
+
+    //User Repository
+    private val userRepository = UserRepository()
+
+    //Permissions Manager & Shared Preferences
+    private val permissionsManager = PermissionsManager(activity)
+    private val sharedPreferences = SharedPreferences(activity)
+
+    //Location
+    private var location = Location("")
     private val locationManager: LocationManager =
         activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var listener: ((Location?) -> Unit)? = null
 
+
     suspend fun getLastLocation(): LatLng {
         return try {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-            var location = Location("")
-            if (ActivityCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-            } else {
+
+            if (permissionsManager.checkLocationPermission()) {
                 location = fusedLocationClient.lastLocation.await()
+                setCurrentUserPosition(location)
+                LatLng(location.latitude, location.longitude)
+            }else{
+                location = Location("")
+                location.longitude = LONGITUDE_DEFAULT
+                location.latitude = LATITUDE_DEFAULT
+                setCurrentUserPosition(location)
+                LatLng(LATITUDE_DEFAULT, LONGITUDE_DEFAULT)
             }
-            setCurrentUserPosition(location)
-            LatLng(location.latitude, location.longitude)
+
+
         } catch (e: Exception) {
-            LatLng(0.0, 0.0)
+            LatLng(LATITUDE_DEFAULT, LONGITUDE_DEFAULT)
         }
     }
 
-    fun startUpdates(listener: (Location?) -> Unit) {
+    suspend fun startUpdates(listener: (Location?) -> Unit) {
         this.listener = listener
-        if (ActivityCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
+
+        if (permissionsManager.checkLocationPermission()) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER, 1000L, 10f, this
+            )
         }
-        locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER, 1000L, 10f, this
-        )
     }
 
     fun stopUpdates() {

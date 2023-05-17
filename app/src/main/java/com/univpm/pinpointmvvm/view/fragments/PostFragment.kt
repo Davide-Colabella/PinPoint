@@ -18,6 +18,7 @@ import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
 import com.univpm.pinpointmvvm.model.utils.Localization
 import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.view.activities.MainActivity
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 
@@ -25,10 +26,10 @@ class PostFragment : Fragment() {
 
     companion object {
         fun newInstance() = PostFragment()
+        private const val POST_SUCCESSFULLY_UPLOADED = "Il post è stato caricato"
+        private const val POST_UNSUCCESSFULLY_UPLOADED = "Il post non è stato caricato"
     }
 
-    private val POST_SUCCESSFULLY_UPLOADED = "Il post è stato caricato"
-    private val POST_UNSUCCESSFULLY_UPLOADED = "Il post non è stato caricato"
     private var imageUri: Uri = Uri.EMPTY
     private val postViewModel: PostViewModel by viewModels()
     private val options = CropImageOptions(
@@ -125,7 +126,7 @@ class PostFragment : Fragment() {
                     postViewModel.uploadPost(
                         imageUri,
                         viewBinding.edittextDescrizione.editText?.text.toString(),
-                        Localization(requireActivity()).getLastLocation()
+                        Localization(requireActivity() as MainActivity).getLastLocation()
                     )
                 }
             }

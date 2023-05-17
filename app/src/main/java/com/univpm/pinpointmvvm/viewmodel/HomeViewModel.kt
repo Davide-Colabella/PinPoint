@@ -1,15 +1,14 @@
 package com.univpm.pinpointmvvm.viewmodel
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
+import android.app.Activity
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
@@ -28,26 +27,13 @@ import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.model.utils.Localization
-import com.univpm.pinpointmvvm.uistate.HomeUiState
-import com.univpm.pinpointmvvm.uistate.SignInUiState
+import com.univpm.pinpointmvvm.model.utils.PermissionsManager
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-
-/*
-private lateinit var mapBounds: LatLngBounds
-mapBounds = LatLngBounds(
-                LatLng(position.latitude, position.longitude),  // SW bounds
-                LatLng(position.latitude, position.longitude) // NE bounds
-            )
-map.setLatLngBoundsForCameraTarget(mapBounds)
- */
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("StaticFieldLeak", "PotentialBehaviorOverride")
 class HomeViewModel : ViewModel() {
-
     private val userRepository = UserRepository()
     private val _users: MutableLiveData<List<User>> = MutableLiveData()
     val users: LiveData<List<User>> = _users
@@ -58,7 +44,10 @@ class HomeViewModel : ViewModel() {
 
     //aggiunta dei marker sulla mappa
     fun addMarkers(
-        imageLoader: ImageLoader, homeFragment: FragmentActivity, map: GoogleMap, usersList: List<User>
+        imageLoader: ImageLoader,
+        homeFragment: FragmentActivity,
+        map: GoogleMap,
+        usersList: List<User>
     ) {
         val markers = mutableListOf<Marker>()
         var loadedImages = 0
@@ -89,11 +78,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun mapLocationUpdates(localization: Localization, map: GoogleMap) {
-        //inizio dell'aggiornamento della posizione
-        localization.startUpdates { location ->
-            val position = LatLng(location!!.latitude, location.longitude)
-            val currentZoom = map.cameraPosition.zoom
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, currentZoom))
+        viewModelScope.launch {
+            localization.startUpdates { location ->
+                val position = LatLng(location!!.latitude, location.longitude)
+                val currentZoom = map.cameraPosition.zoom
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, currentZoom))
+            }
         }
     }
 
@@ -118,21 +108,24 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun mapSetUi(map: GoogleMap, position : LatLng, homeFragment: FragmentActivity) {
+    fun mapSetUi(map: GoogleMap, position: LatLng, activity: Activity) {
         map.apply {
-            val cameraPosition = CameraPosition.Builder().target(position).zoom(18.0f).build()
-
-            moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
-            if (ActivityCompat.checkSelfPermission(
-                    homeFragment, Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    homeFragment, Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+            if (position.latitude.equals(Localization.LATITUDE_DEFAULT) && position.longitude.equals(
+                    Localization.LONGITUDE_DEFAULT
+                )
             ) {
-                return
+                val cameraPosition = CameraPosition.Builder().target(position).zoom(15.0f).build()
+                moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            } else {
+                val cameraPosition = CameraPosition.Builder().target(position).zoom(18.0f).build()
+                moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             }
-            isMyLocationEnabled = true
+
+            viewModelScope.launch {
+                if (PermissionsManager(activity).checkLocationPermission())
+                    isMyLocationEnabled = true
+            }
+
             isIndoorEnabled = false
             isBuildingsEnabled = true
             uiSettings.isTiltGesturesEnabled = true
