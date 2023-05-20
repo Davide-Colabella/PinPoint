@@ -44,15 +44,16 @@ object SnackbarManager {
         }
     }
 
-    fun onFailure(message: String, fragment: Fragment, view: View) {
-        Snackbar.make(
-            view,
-            message,
-            Snackbar.LENGTH_SHORT
-        ).setAnchorView(R.id.bottomNavigationView)
-            .setTextColor(Color.WHITE)
-            .setBackgroundTint(fragment.resources.getColor(R.color.pp_light_red))
-            .show()
+    fun onWarning(message: String, fragment: Fragment) {
+        fragment.view?.let {
+            Snackbar.make(
+                it,
+                message,
+                Snackbar.LENGTH_SHORT
+            ).setAnchorView(R.id.bottomNavigationView)
+                .setTextColor(Color.WHITE)
+                .setBackgroundTint(fragment.resources.getColor(R.color.pp_yellow))
+                .show()
+        }
     }
-
 }

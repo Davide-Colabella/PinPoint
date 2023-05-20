@@ -17,6 +17,11 @@ class PostViewModel : ViewModel() {
     val postUploadSuccess: StateFlow<Boolean> = _postUploadSuccess.asStateFlow()
     private val _postUploadError = MutableStateFlow("")
     val postUploadError: StateFlow<String> = _postUploadError.asStateFlow()
+    private val _locationEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val locationEnabled = _locationEnabled.asStateFlow()
+    private val _cameraEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val cameraEnabled = _cameraEnabled.asStateFlow()
+
 
     fun uploadPost(imageUri: Uri, description: String, position: LatLng) {
         viewModelScope.launch {
@@ -33,6 +38,14 @@ class PostViewModel : ViewModel() {
 
         }
 
+    }
+
+    fun setLocalizationEnabled(isGranted: Boolean) {
+        _locationEnabled.value = isGranted
+    }
+
+    fun setCameraEnabled(isGranted: Boolean) {
+        _cameraEnabled.value = isGranted
     }
 
 

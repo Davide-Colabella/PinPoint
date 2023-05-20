@@ -27,9 +27,9 @@
                     android:id="@+id/profile_settings_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
                     android:layout_centerVertical="true"
                     android:maxLines="1"
-                    android:layout_centerInParent="true"
                     android:text="@string/impostazioni"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -37,6 +37,14 @@
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/container_preferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout_settings" />
 
     <Button
         android:id="@+id/logout_btn"
@@ -46,6 +54,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
         android:text="@string/logout"
+        android:textColor="#5D4037"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

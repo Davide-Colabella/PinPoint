@@ -3,7 +3,7 @@ package com.univpm.pinpointmvvm.model.utils
 class InputValidator {
     // Verifica se il fullname contiene solo lettere dell'alfabeto, spazi e non è vuoto
     fun isValidFullName(fullName: String): Boolean {
-        val regex = Regex("^[\\p{L}\\s]+$")
+        val regex = Regex("^[a-zA-Z ]+\$")
         return fullName.isNotBlank() && regex.matches(fullName)
     }
 

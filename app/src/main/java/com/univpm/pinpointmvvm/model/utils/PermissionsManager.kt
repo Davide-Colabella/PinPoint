@@ -2,80 +2,60 @@ package com.univpm.pinpointmvvm.model.utils
 
 import android.Manifest
 import android.content.Context
-import com.gun0912.tedpermission.TedPermissionResult
+import androidx.preference.PreferenceManager
 import com.gun0912.tedpermission.coroutine.TedPermission
-import kotlinx.coroutines.coroutineScope
+import com.univpm.pinpointmvvm.view.fragments.PreferencesFragment
 
-class PermissionsManager(context: Context) {
-
+class PermissionsManager(private val context: Context) {
     companion object {
-        private val permissions = arrayOf(
-            Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION
+        private val locationPerms = arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
         )
     }
 
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val sharedPrefs = SharedPreferences(context)
-
-
-    suspend fun checkAllPermissions(): TedPermissionResult {
-        var permissionResults: TedPermissionResult
-        coroutineScope {
-            permissionResults =
-                if (sharedPrefs.isFirstDenied()) {
-                    sharedPrefs.setFirstDenied()
-                    TedPermission.create()
-                        .setPermissions(*permissions)
-                        .setDeniedTitle("Permessi negati")
-                        .setDeniedMessage("Dovresti accettare i permessi per poter utilizzare l'applicazione")
-                        .check()
-                } else {
-                    TedPermission.create()
-                        .setPermissions(*permissions)
-                        .check()
-                }
-        }
-        return permissionResults
-    }
-
     suspend fun checkCameraPermission(): Boolean {
-        var permissionResults: Boolean
-        coroutineScope {
-            permissionResults =
-                if (sharedPrefs.isFirstDenied()) {
-                    sharedPrefs.setFirstDenied()
-                    TedPermission.create()
-                        .setPermissions(Manifest.permission.CAMERA)
-                        .setDeniedTitle("Permessi alla camera negati")
-                        .setDeniedMessage("Dovresti accettare i permessi di accesso alla camera per poter utilizzare l'applicazione")
-                        .checkGranted()
-                } else {
-                    TedPermission.create()
-                        .setPermissions(Manifest.permission.CAMERA)
-                        .checkGranted()
+
+        return TedPermission.create()
+            .setPermissions(Manifest.permission.CAMERA)
+            .setDeniedTitle("Permessi alla camera negati")
+            .setDeniedMessage("Dovresti accettare i permessi di accesso alla camera per poter utilizzare l'applicazione")
+            .checkGranted()
+    }
+
+    private suspend fun checkLocationPermission(): Boolean {
+
+        val permissionResults: Boolean = if (sharedPrefs.isFirstRun()) {
+            TedPermission.create().setPermissions(*locationPerms)
+                .setDeniedTitle("Permessi alla localizzazione negati")
+                .setDeniedMessage("Dovresti accettare i permessi di accesso alla localizzazione per poter utilizzare l'applicazione")
+                .checkGranted().apply {
+                    setLocPref(this)
                 }
+        } else {
+            TedPermission.create().setPermissions(*locationPerms).checkGranted()
         }
         return permissionResults
     }
 
-    suspend fun checkLocationPermission(): Boolean {
-        var permissionResults: Boolean
-        coroutineScope {
-            permissionResults =
-                if (sharedPrefs.isFirstDenied()) {
-                    sharedPrefs.setFirstDenied()
-                    TedPermission.create()
-                        .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                        .setDeniedTitle("Permessi alla localizzazione negati")
-                        .setDeniedMessage("Dovresti accettare i permessi di accesso alla localizzazione per poter utilizzare l'applicazione")
-                        .checkGranted()
-                } else {
-                    TedPermission.create()
-                        .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
-                        .checkGranted()
-                }
-        }
-        return permissionResults
+    //setta lo switch della preferenza relativa alla posizione in base ai permessi dati al primo avvio
+    private fun setLocPref(permissionResults: Boolean) {
+        preferences.edit().putBoolean(PreferencesFragment.LOCATION_KEY, permissionResults)
+            .apply()
     }
 
+    // ritorna lo stato dello switch della preferenza relativa alla posizione
+    private fun getLocPref(): Boolean {
+        return preferences.getBoolean(PreferencesFragment.LOCATION_KEY, false)
+    }
+
+    suspend fun checkLocationPermissionForMap(): Boolean {
+        return if (checkLocationPermission()) {
+            getLocPref()
+        } else {
+            false
+        }
+    }
 
 }

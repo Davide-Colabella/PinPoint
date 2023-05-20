@@ -3,7 +3,6 @@ package com.univpm.pinpointmvvm.view.activities
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,16 +14,19 @@ import com.canhub.cropper.CropImageOptions
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountEditBinding
 import com.univpm.pinpointmvvm.model.utils.InputValidator
+import com.univpm.pinpointmvvm.model.utils.PermissionsManager
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
 class AccountEditActivity : AppCompatActivity() {
 
-    companion object{
+    companion object {
         private const val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
         private const val USERNAME_ERROR = "Inserisci l'username. Non immettere degli spazi."
     }
 
+    //Permissions
+    private val permissionsManager: PermissionsManager by lazy { PermissionsManager(this) }
     private val inputValidator = InputValidator()
     private lateinit var binding: ActivityAccountEditBinding
     private val viewModel: CurrentProfileViewModel by viewModels()
@@ -50,19 +52,7 @@ class AccountEditActivity : AppCompatActivity() {
             Log.d("ImageCropper", exception.toString())
         }
     }
-    private var isPermissionGranted: Boolean = false
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            isPermissionGranted = true
-            cropImage.launch(
-                CropImageContractOptions(imageUri, options)
-            )
-        } else {
-            //TODO: Handle permission denied
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,26 +71,14 @@ class AccountEditActivity : AppCompatActivity() {
                 binding.profileImageAccountSettings.setImageDrawable(null)
                 imageUri = Uri.EMPTY
             }
-            when {
-                isPermissionGranted -> cropImage.launch(
-                    CropImageContractOptions(imageUri, options)
-                )
-
-                !isPermissionGranted -> {
-                    askForPermissions()
+            lifecycleScope.launch {
+                if (permissionsManager.checkCameraPermission()) {
+                    cropImage.launch(
+                        CropImageContractOptions(imageUri, options)
+                    )
                 }
             }
-        }
-    }
 
-    private fun askForPermissions() {
-        if (!isPermissionGranted) {
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.CAMERA
-            )
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
         }
     }
 
@@ -112,27 +90,31 @@ class AccountEditActivity : AppCompatActivity() {
 
     private fun save() {
         binding.saveAccountSettingsBtn.setOnClickListener {
-            val name = binding.accountNameAccountSettings.editText?.text.toString()
-            val fullname = binding.accountUsernameAccountSettings.editText?.text.toString()
+            val fullname = binding.accountNameAccountSettings.editText?.text.toString()
+            val username = binding.accountUsernameAccountSettings.editText?.text.toString()
             val bio = binding.accountBioAccountSettings.editText?.text.toString()
 
             when {
-                !inputValidator.isValidFullName(fullname) -> binding.accountUsernameAccountSettings.error = FULLNAME_ERROR
-                !inputValidator.isValidUsername(name) -> binding.accountNameAccountSettings.error = USERNAME_ERROR
+                !inputValidator.isValidFullName(fullname) -> binding.accountNameAccountSettings.error =
+                    FULLNAME_ERROR
+
+                !inputValidator.isValidUsername(username) -> binding.accountUsernameAccountSettings.error =
+                    USERNAME_ERROR
+
                 else -> {
                     imageUri?.let { uri ->
-                        viewModel.updateProfile(
-                            name = name,
-                            username = fullname,
-                            bio = bio,
-                            imageUri = uri
-                        )
+                            viewModel.updateProfile(
+                                name = fullname,
+                                username = username,
+                                bio = bio,
+                                imageUri = uri,
+                            )
+
+                        finish()
                     }
                 }
             }
 
-
-            finish()
         }
     }
 

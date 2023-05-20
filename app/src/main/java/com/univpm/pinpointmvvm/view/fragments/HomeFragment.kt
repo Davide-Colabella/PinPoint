@@ -9,14 +9,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.Coil
 import coil.ImageLoader
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentHomeBinding
 import com.univpm.pinpointmvvm.model.utils.Localization
+import com.univpm.pinpointmvvm.model.utils.PermissionsManager
 import com.univpm.pinpointmvvm.model.utils.SnackbarManager
-import com.univpm.pinpointmvvm.view.activities.MainActivity
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
@@ -24,15 +23,17 @@ class HomeFragment : Fragment() {
 
     companion object {
         fun newInstance() = HomeFragment()
-        private const val DEFAULT_POSITION = "Errore di caricamente della posizione.\nControlla i permessi o attiva il GPS."
+        private const val DEFAULT_POSITION =
+            "Errore di caricamente della posizione.\nControlla i permessi o attiva il GPS."
     }
+
     //Localization
-    private val localization: Localization by lazy { Localization(requireActivity() as MainActivity) }
+    private val localization: Localization by lazy { Localization(requireActivity()) }
     private lateinit var position: LatLng
+    private val permissionsManager: PermissionsManager by lazy { PermissionsManager(requireActivity()) }
 
     //Map
     private lateinit var supportMapFragment: SupportMapFragment
-    private lateinit var map: GoogleMap
 
     //ViewModel
     private val viewModel: HomeViewModel by viewModels()
@@ -48,43 +49,51 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         viewBinding = FragmentHomeBinding.inflate(inflater, container, false)
-       supportMapFragment = childFragmentManager.findFragmentById(
+        supportMapFragment = childFragmentManager.findFragmentById(
             R.id.map_fragment
         ) as SupportMapFragment
+
+
         lifecycleScope.launch {
-            getLastPosition()
-            setupMap()
+            viewModel.setLocationEnabled(permissionsManager.checkLocationPermissionForMap())
+            viewModel.locationEnabled.collect {
+                if (it) {
+                    position = localization.getLastLocation()
+                    if (position.latitude == Localization.LATITUDE_DEFAULT && position.longitude == Localization.LONGITUDE_DEFAULT) {
+                        SnackbarManager.onWarning(
+                            DEFAULT_POSITION,
+                            this@HomeFragment
+                        )
+                    }
+                } else {
+                    position = LatLng(Localization.LATITUDE_DEFAULT, Localization.LONGITUDE_DEFAULT)
+                }
+                setupMap(it)
+            }
         }
+
         return viewBinding.root
     }
 
-    private suspend fun getLastPosition() {
-        position = localization.getLastLocation()
-        if (position.latitude.equals(Localization.LATITUDE_DEFAULT)
-            && position.longitude.equals(Localization.LONGITUDE_DEFAULT)
-        ) {
-            SnackbarManager.onFailure(DEFAULT_POSITION, this)
-        }
-    }
-
-    private fun setupMap() {
-        supportMapFragment.getMapAsync {
-            map = it
-            map.apply {
-                mapAddMarkers()
+    private fun setupMap(locationEnabled: Boolean) {
+        supportMapFragment.getMapAsync { map ->
+            if (locationEnabled) {
                 viewModel.apply {
-                    mapSetUi(map, position, requireActivity() as MainActivity)
+                    mapAddMarkers(imageLoader, requireActivity(), map, viewLifecycleOwner)
+                    mapSetUi(map, position, true)
                     mapSnippetClick(requireActivity(), map)
                     mapLocationUpdates(localization, map)
                 }
+            } else {
+                viewModel.mapSetUi(
+                    map,
+                    position,
+                    false
+                )
             }
+
         }
     }
 
-    private fun mapAddMarkers() {
-        viewModel.users.observe(viewLifecycleOwner) {
-            viewModel.addMarkers(imageLoader, requireActivity(), map, it)
-        }
-    }
 
 }

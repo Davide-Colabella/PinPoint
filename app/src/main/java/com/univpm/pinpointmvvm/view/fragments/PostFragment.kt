@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,8 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
 import com.univpm.pinpointmvvm.model.utils.Localization
+import com.univpm.pinpointmvvm.model.utils.PermissionsManager
 import com.univpm.pinpointmvvm.model.utils.SnackbarManager
-import com.univpm.pinpointmvvm.view.activities.MainActivity
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 
@@ -28,38 +27,38 @@ class PostFragment : Fragment() {
         fun newInstance() = PostFragment()
         private const val POST_SUCCESSFULLY_UPLOADED = "Il post è stato caricato"
         private const val POST_UNSUCCESSFULLY_UPLOADED = "Il post non è stato caricato"
+        private const val LOCATION_PERMISSION_REQUIRED =
+            "Per caricare un post devi abilitare la localizzazione"
+        private const val CAMERA_PERMISSION_REQUIRED: String =
+            "Per caricare un post devi abilitare la fotocamera"
     }
 
-    private var imageUri: Uri = Uri.EMPTY
-    private val postViewModel: PostViewModel by viewModels()
+    //Localization
+    private val localization: Localization by lazy { Localization(requireActivity()) }
+
+    //Permissions
+    private val permissionsManager: PermissionsManager by lazy { PermissionsManager(requireActivity()) }
+
+    //ViewModel
+    private val viewModel: PostViewModel by viewModels()
+
+    //viewBinding
+    private lateinit var viewBinding: FragmentPostBinding
+
+    //Image
+    private var imageUri = Uri.EMPTY
     private val options = CropImageOptions(
         allowFlipping = false,
         fixAspectRatio = true,
     )
-    private lateinit var viewBinding: FragmentPostBinding
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
-            // Use the returned uri.
             imageUri = result.uriContent!!
             viewBinding.imageviewPost.load(imageUri) {
                 crossfade(true)
             }
         } else {
-            // An error occurred.
-            val exception = result.error
-        }
-    }
-    private var isPermissionGranted: Boolean = false
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            isPermissionGranted = true
-            cropImage.launch(
-                CropImageContractOptions(imageUri, options)
-            )
-        } else {
-            //TODO: Handle permission denied
+            result.error
         }
     }
 
@@ -67,42 +66,55 @@ class PostFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         viewBinding = FragmentPostBinding.inflate(inflater, container, false)
+
+        lifecycleScope.launch {
+            viewModel.setLocalizationEnabled(permissionsManager.checkLocationPermissionForMap())
+            viewModel.locationEnabled.collect { locationIsGranted ->
+                if (locationIsGranted) {
+                    viewModel.setCameraEnabled(permissionsManager.checkCameraPermission())
+                    viewModel.cameraEnabled.collect { cameraIsGranted ->
+                        if (cameraIsGranted) {
+                            onScegliBtnClick()
+                            onUploadPost()
+                            observeUploadPostSuccess()
+                            observeUploadPostError()
+                        } else {
+                            SnackbarManager.onWarning(CAMERA_PERMISSION_REQUIRED, this@PostFragment)
+                        }
+
+                    }
+
+                } else {
+                    SnackbarManager.onWarning(LOCATION_PERMISSION_REQUIRED, this@PostFragment)
+                }
+            }
+
+
+        }
+
         return viewBinding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        onGallery()
-        onUploadPost()
-        observeUploadPostSuccess()
-        observeUploadPostError()
-    }
-
-    private fun observeUploadPostError() {
-        lifecycleScope.launch {
-            postViewModel.postUploadError.collect {
-                if (it.isNotBlank()) {
-                    val error = "$POST_UNSUCCESSFULLY_UPLOADED: \n$it"
-                    SnackbarManager.onFailure(error, this@PostFragment)
-                }
+    private suspend fun observeUploadPostError() {
+        viewModel.postUploadError.collect {
+            if (it.isNotBlank()) {
+                val error = "$POST_UNSUCCESSFULLY_UPLOADED: \n$it"
+                SnackbarManager.onFailure(error, this@PostFragment)
             }
         }
+
     }
 
-    private fun observeUploadPostSuccess() {
-        lifecycleScope.launch {
-            postViewModel.postUploadSuccess.collect {
-                if (it) {
-                    SnackbarManager.onSuccess(
-                        POST_SUCCESSFULLY_UPLOADED,
-                        this@PostFragment
-                    )
-                    closeFragment()
-                }
+    private suspend fun observeUploadPostSuccess() {
+        viewModel.postUploadSuccess.collect {
+            if (it) {
+                SnackbarManager.onSuccess(
+                    POST_SUCCESSFULLY_UPLOADED,
+                    this@PostFragment
+                )
+                closeFragment()
             }
-
         }
-
     }
 
 
@@ -123,44 +135,41 @@ class PostFragment : Fragment() {
         viewBinding.btnSalvaImmagine.setOnClickListener {
             if (imageUri != Uri.EMPTY) {
                 lifecycleScope.launch {
-                    postViewModel.uploadPost(
+                    val position = localization.getLastLocation()
+                    if (position.latitude == Localization.LATITUDE_DEFAULT && position.longitude == Localization.LONGITUDE_DEFAULT) {
+                        SnackbarManager.onFailure(
+                            "Non è stato possibile ottenere la posizione",
+                            this@PostFragment
+                        )
+                        return@launch
+                    }
+                    viewModel.uploadPost(
                         imageUri,
                         viewBinding.edittextDescrizione.editText?.text.toString(),
-                        Localization(requireActivity() as MainActivity).getLastLocation()
+                        position
                     )
                 }
             }
         }
     }
 
-    //TODO spostare la logica di onGallery in PostViewModel
     //quando viene premuto il pulsante "sfoglia" si puo scegliere un'immagine dalla galleria
-    private fun onGallery() {
+    private fun onScegliBtnClick() {
         viewBinding.btnSfogliaGalleria.setOnClickListener {
             if (imageUri != Uri.EMPTY) {
                 viewBinding.imageviewPost.setImageDrawable(null)
                 imageUri = Uri.EMPTY
             }
-            when {
-                isPermissionGranted -> cropImage.launch(
-                    CropImageContractOptions(imageUri, options)
-                )
-
-                !isPermissionGranted -> {
-                    askForPermissions()
+            lifecycleScope.launch {
+                if (permissionsManager.checkCameraPermission()) {
+                    cropImage.launch(
+                        CropImageContractOptions(imageUri, options)
+                    )
                 }
             }
+
         }
+
     }
 
-    private fun askForPermissions() {
-        if (!isPermissionGranted) {
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.CAMERA
-            )
-            requestPermissionLauncher.launch(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        }
-    }
 }
