@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Localizzazione">
+
+        <SwitchPreferenceCompat
+            app:key="localization_preference"
+            app:title="Abilita la posizione"
+            app:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Tema">
+        <ListPreference
+            android:defaultValue="2"
+            android:entries="@array/dark_mode_entries"
+            android:entryValues="@array/dark_mode_values"
+            android:key="list_preference_1"
+            app:useSimpleSummaryProvider="true"
+            android:title="Dark mode" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
