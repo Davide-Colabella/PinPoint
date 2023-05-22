@@ -47,10 +47,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         user = requireArguments().getParcelable(Constants.USER_OBJECT_PARCEL)!!
 
         checkFollowing()
+        checkBothUsersFollowing()
         followButtonListener()
-        observeListOfPosts()
         profileUiSetup()
-
 
         return viewBinding.root
     }
@@ -72,6 +71,31 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                 viewBinding.followButton.text = "Segui già"
             } else {
                 viewBinding.followButton.text = "Segui"
+            }
+        }
+    }
+
+    private fun checkBothUsersFollowing() {
+        viewModel.checkBothUsersFollowing(user).observe(
+            requireActivity()
+        ) { areBothFollowing ->
+            if (areBothFollowing) {
+                viewBinding.apply {
+                    progressBarOtherProfile.visibility = View.GONE
+                    appBarLayoutProfile.visibility = View.VISIBLE
+                    nestedScrollViewProfile.visibility = View.VISIBLE
+                    postList.visibility = View.VISIBLE
+                    notFriendsTextView.visibility = View.GONE
+                }
+                observeListOfPosts()
+            } else {
+                viewBinding.apply {
+                    progressBarOtherProfile.visibility = View.GONE
+                    appBarLayoutProfile.visibility = View.VISIBLE
+                    nestedScrollViewProfile.visibility = View.VISIBLE
+                    postList.visibility = View.GONE
+                    notFriendsTextView.visibility = View.VISIBLE
+                }
             }
         }
     }

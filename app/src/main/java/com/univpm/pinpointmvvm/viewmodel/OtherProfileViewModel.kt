@@ -60,6 +60,10 @@ class OtherProfileViewModel(user: User) : ViewModel() {
         return userRepository.checkFollowing(user)
     }
 
+    fun checkBothUsersFollowing(user: User): LiveData<Boolean> {
+        return userRepository.checkBothUsersFollowing(user)
+    }
+
     class OtherProfileViewModelFactory(
         private val user: User,
     ) : ViewModelProvider.Factory {

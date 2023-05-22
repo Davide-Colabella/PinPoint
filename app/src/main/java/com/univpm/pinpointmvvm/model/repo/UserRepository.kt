@@ -315,4 +315,55 @@ class UserRepository {
             })
         return following
     }
+
+    fun checkBothUsersFollowing(user: User): LiveData<Boolean> {
+        val bothFollowing = MutableLiveData<Boolean>()
+        val currentUserUid = dbSettings.auth.uid
+
+        if (currentUserUid != null) {
+            val currentUserFollowingRef = dbSettings.dbFollows
+                .child(currentUserUid)
+                .child("following")
+
+            val otherUserFollowingRef = currentUserFollowingRef.child(user.uid!!)
+
+            otherUserFollowingRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val isCurrentUserFollowingOtherUser = snapshot.exists()
+
+                    // Check if the other user follows the current user
+                    val otherUserFollowingCurrentUserRef = dbSettings.dbFollows
+                        .child(user.uid!!)
+                        .child("following")
+                        .child(currentUserUid)
+
+                    otherUserFollowingCurrentUserRef.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(innerSnapshot: DataSnapshot) {
+                            val isOtherUserFollowingCurrentUser = innerSnapshot.exists()
+
+                            // Check if both users follow each other
+                            val areBothFollowing = isCurrentUserFollowingOtherUser && isOtherUserFollowingCurrentUser
+
+                            bothFollowing.value = areBothFollowing
+                        }
+
+                        override fun onCancelled(innerError: DatabaseError) {
+                            // Handle inner error
+                            onError(innerError.toException())
+                        }
+                    })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                    onError(error.toException())
+                }
+            })
+        } else {
+            // Handle case when current user UID is null
+        }
+
+        return bothFollowing
+    }
+
 }

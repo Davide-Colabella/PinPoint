@@ -22,7 +22,7 @@ class FeedFragment : Fragment(), ImageLoadListener {
         FeedAdapter(positionListener = {
             viewModel.viewOnGoogleMap(it, requireContext())
         }, usernameListener = {
-            //TODO aggiungere l'intent a far visualizzare il profilo dell'utente cliccato
+            viewModel.goToUserClickedProfile(it, requireActivity())
         }, imageLoadListener = this
         )
     }

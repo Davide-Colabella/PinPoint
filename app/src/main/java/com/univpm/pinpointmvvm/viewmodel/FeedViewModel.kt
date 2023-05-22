@@ -53,7 +53,9 @@ class FeedViewModel : ViewModel() {
         ContextCompat.startActivity(context, intent, null)
     }
 
-    fun goToUserClickedProfile(user: User, fragment: FragmentActivity) {
+    fun goToUserClickedProfile(post: PostUiState, fragment: FragmentActivity) {
+        val user = allUsers.find { it.username == post.username }!!
+
         val bundle = Bundle().apply {
             putParcelable(Constants.USER_OBJECT_PARCEL, user)
         }
@@ -63,10 +65,12 @@ class FeedViewModel : ViewModel() {
 
         fragment.apply {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.frame_layout, destinationFragment).commit()
-            findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                selectedItemId = 0
-            }
+                .replace(R.id.frame_layout, destinationFragment)
+                .commit()
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+                .apply {
+                    selectedItemId = 0
+                }
         }
     }
 }
