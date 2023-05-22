@@ -85,6 +85,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                     appBarLayoutProfile.visibility = View.VISIBLE
                     nestedScrollViewProfile.visibility = View.VISIBLE
                     postList.visibility = View.VISIBLE
+                    noPostsTextView.visibility = View.VISIBLE
                     notFriendsTextView.visibility = View.GONE
                 }
                 observeListOfPosts()
@@ -94,6 +95,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                     appBarLayoutProfile.visibility = View.VISIBLE
                     nestedScrollViewProfile.visibility = View.VISIBLE
                     postList.visibility = View.GONE
+                    noPostsTextView.visibility = View.GONE
                     notFriendsTextView.visibility = View.VISIBLE
                 }
             }

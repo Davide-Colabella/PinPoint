@@ -27,8 +27,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
     }
 
-
-
     private fun applyDarkMode(selectedValue: String) {
         val nightMode = when (selectedValue) {
             "0" -> AppCompatDelegate.MODE_NIGHT_NO

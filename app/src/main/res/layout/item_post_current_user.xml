@@ -30,7 +30,7 @@
                 android:id="@+id/post_username"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="@string/username"
                 android:textSize="16sp"
                 android:textStyle="bold" />
