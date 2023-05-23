@@ -77,7 +77,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
 
     private fun checkBothUsersFollowing() {
         viewModel.checkBothUsersFollowing(user).observe(
-            requireActivity()
+            viewLifecycleOwner
         ) { areBothFollowing ->
             if (areBothFollowing) {
                 viewBinding.apply {
@@ -85,7 +85,6 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                     appBarLayoutProfile.visibility = View.VISIBLE
                     nestedScrollViewProfile.visibility = View.VISIBLE
                     postList.visibility = View.VISIBLE
-                    noPostsTextView.visibility = View.VISIBLE
                     notFriendsTextView.visibility = View.GONE
                 }
                 observeListOfPosts()
@@ -105,7 +104,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
     private fun observeListOfPosts() {
         lifecycleScope.launch {
             viewModel.uiState.collect { userUiState ->
-                userUiState.posts?.observe(requireActivity()) {
+                userUiState.posts?.observe(viewLifecycleOwner) {
                     if (it.isEmpty()) {
                         viewBinding.progressBarOtherProfile.visibility = View.GONE
                         viewBinding.appBarLayoutProfile.visibility = View.VISIBLE
@@ -118,7 +117,10 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
                             post.userPic = userUiState.image
                         }
                         otherUserPostAdapter.posts = it
-                        viewBinding.totalPosts.text = it.size.toString()
+                        viewBinding.apply {
+                            totalPosts.text = it.size.toString()
+                            noPostsTextView.visibility = View.GONE
+                        }
                         otherUserPostAdapter.notifyDataSetChanged()
                     }
                 }
