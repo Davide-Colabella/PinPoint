@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -125,6 +127,7 @@ class AccountEditActivity : AppCompatActivity() {
                     accountUsernameAccountSettings.editText?.setText(uiState.username)
                     accountNameAccountSettings.editText?.setText(uiState.fullname)
                     accountBioAccountSettings.editText?.setText(uiState.bio)
+                    profileImageAccountSettings.avatarBorderColor = getColorTheme()
                     profileImageAccountSettings.load(uiState.image) {
                         placeholder(R.drawable.ic_profile)
                         error(R.drawable.ic_profile)
@@ -132,6 +135,15 @@ class AccountEditActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getColorTheme(): Int {
+        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+            ContextCompat.getColor(this, R.color.primaryNight)
+        } else {
+            ContextCompat.getColor(this, R.color.primaryLight)
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.univpm.pinpointmvvm.viewmodel
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
@@ -20,7 +23,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
@@ -49,6 +51,7 @@ class HomeViewModel : ViewModel() {
         homeFragment: FragmentActivity,
         map: GoogleMap,
         viewLifecycleOwner: LifecycleOwner,
+        colorTheme: Int,
     ) {
         map.clear()
         users.observe(viewLifecycleOwner) { usersList ->
@@ -67,7 +70,10 @@ class HomeViewModel : ViewModel() {
                     CircleCropTransformation(),
                     CropTransformation(CropTransformation.CropType.CENTER)
                 ).size(150).target { drawable ->
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(drawable.toBitmap()))
+                    val originalBitmap = drawable.toBitmap()
+                    val borderedBitmap = addBorderToBitmap(originalBitmap, colorTheme)
+                    val markerIcon = BitmapDescriptorFactory.fromBitmap(borderedBitmap)
+                    marker.setIcon(markerIcon)
                     loadedImages++
                     if (loadedImages == usersList.size) {
                         markers.forEach { mapMarker ->
@@ -81,6 +87,32 @@ class HomeViewModel : ViewModel() {
         }
 
     }
+
+    private fun addBorderToBitmap(bitmap: Bitmap, colorTheme: Int): Bitmap {
+        val borderWidth = 5
+        val borderColor = colorTheme
+        val width = bitmap.width + borderWidth * 2
+        val height = bitmap.height + borderWidth * 2
+        val outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(outputBitmap)
+
+        val paint = Paint()
+        paint.color = borderColor
+        paint.style = Paint.Style.FILL
+        paint.isAntiAlias = true
+
+        val radius = Math.min(width, height) / 2f
+        val cx = width / 2f
+        val cy = height / 2f
+
+        canvas.drawCircle(cx, cy, radius, paint)
+        canvas.drawBitmap(bitmap, borderWidth.toFloat(), borderWidth.toFloat(), null)
+
+        return outputBitmap
+    }
+
+
+
 
     fun mapLocationUpdates(localization: Localization, map: GoogleMap) {
         localization.startUpdates { location ->

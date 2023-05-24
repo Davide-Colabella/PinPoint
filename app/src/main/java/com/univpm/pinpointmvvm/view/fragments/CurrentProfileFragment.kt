@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,10 +27,12 @@ import kotlinx.coroutines.launch
 class CurrentProfileFragment : Fragment(), ImageLoadListener {
     companion object {
         fun newInstance() = CurrentProfileFragment()
+        private const val POST_SUCCESSFULLY_DELETED = "Il post è stato correttamente cancellato"
+        private const val POST_UNSUCCESSFULLY_DELETED =
+            "Il post non è stato correttamente cancellato"
     }
 
-    private val POST_SUCCESSFULLY_DELETED = "Il post è stato correttamente cancellato"
-    private val POST_UNSUCCESSFULLY_DELETED = "Il post non è stato correttamente cancellato"
+
     private val viewModel: CurrentProfileViewModel by viewModels()
     private lateinit var viewBinding: FragmentCurrentProfileBinding
     private val currentUserPostAdapter: CurrentUserPostAdapter by lazy {
@@ -68,6 +72,14 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         observeDeletePostError()
     }
 
+    private fun getColorTheme(): Int {
+        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+            ContextCompat.getColor(requireContext(), R.color.primaryNight)
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.primaryLight)
+        }
+    }
 
     private fun observeListOfPosts(uiState: UserUiState) {
         uiState.posts?.observe(viewLifecycleOwner) { posts ->
@@ -96,6 +108,7 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
             profileFragmentFullName.text = uiState.fullname
             profileFragmentFullName.text = uiState.fullname
             profileFragmentBio.text = uiState.bio
+            profileFragmentProfileImage.avatarBorderColor = getColorTheme()
             profileFragmentProfileImage.load(uiState.image) {
                 placeholder(R.drawable.ic_profile)
                 error(R.drawable.ic_profile)

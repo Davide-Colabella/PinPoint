@@ -4,9 +4,9 @@
     <PreferenceCategory app:title="Localizzazione">
 
         <SwitchPreferenceCompat
+            app:defaultValue="false"
             app:key="localization_preference"
-            app:title="Abilita la posizione"
-            app:defaultValue="false"/>
+            app:title="Abilita la posizione" />
 
     </PreferenceCategory>
 
@@ -15,7 +15,7 @@
             android:defaultValue="2"
             android:entries="@array/dark_mode_entries"
             android:entryValues="@array/dark_mode_values"
-            android:key="list_preference_1"
+            android:key="list_theme_preference"
             app:useSimpleSummaryProvider="true"
             android:title="Dark mode" />
 

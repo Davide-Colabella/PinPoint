@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -67,6 +69,8 @@ class PostFragment : Fragment() {
     ): View {
         viewBinding = FragmentPostBinding.inflate(inflater, container, false)
 
+        changeDrawableTint()
+
         lifecycleScope.launch {
             viewModel.setLocalizationEnabled(permissionsManager.checkLocationPermissionForMap())
             viewModel.locationEnabled.collect { locationIsGranted ->
@@ -93,6 +97,15 @@ class PostFragment : Fragment() {
         }
 
         return viewBinding.root
+    }
+
+    private fun changeDrawableTint() {
+        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+            viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_night))
+        } else {
+            viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_light))
+        }
     }
 
     private suspend fun observeUploadPostError() {

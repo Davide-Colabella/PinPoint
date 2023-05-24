@@ -18,7 +18,6 @@
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:padding="5dp"
-            app:avatarViewBorderColor="@color/black"
             app:avatarViewBorderWidth="3dp"
             app:avatarViewPlaceholder="@drawable/ic_profile" />
 

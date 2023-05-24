@@ -66,7 +66,7 @@
                 android:id="@+id/profile_activity_profile_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                app:avatarViewBorderColor="@color/black"
+
                 app:avatarViewBorderWidth="3dp"
                 app:avatarViewPlaceholder="@drawable/ic_profile" />
 

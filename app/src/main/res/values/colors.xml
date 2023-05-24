@@ -9,9 +9,18 @@
     <color name="gray">#FF808080</color>
     
     <!-- Colori dell' app -->
-    <color name="pp_light_yellow">#FFFFEA</color>
-    <color name="pp_light_red">#FF5E5B</color>
-    <color name="pp_light_cyan">#00CECB</color>
+    <color name="accentNight">#F5E9CF</color>
+    <color name="primaryNight">#4D455D</color>
+    <color name="secondaryNight">#E96479</color>
+
+    <color name="accentLight">#FF5E5B</color>
+    <color name="secondaryLight">#F5E9CF</color>
+    <color name="primaryLight">#00CECB</color>
+    <!--<color name="primaryLight">#FF5E5B</color>
+    <color name="secondaryLight">#00CECB</color>
+    <color name="accentLight">#FFFFEA</color>-->
+
     <color name="pp_light_green">#4CAF50</color>
     <color name="pp_yellow">#FFC107</color>
+    <color name="pp_light_red">#FF5E5B</color>
 </resources>

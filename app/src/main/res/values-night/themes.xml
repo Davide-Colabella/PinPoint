@@ -1,8 +1,11 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.PinPointMVVM" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/pp_light_cyan</item>
-        <item name="colorPrimaryDark">@color/pp_light_red</item>
-        <item name="colorAccent">@color/pp_light_yellow</item>
+        <item name="colorPrimary">@color/secondaryNight</item>
+        <item name="colorPrimaryDark">@color/primaryNight</item>
+        <item name="colorAccent">@color/accentNight</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:editTextColor">@color/white</item>
     </style>
+
 </resources>

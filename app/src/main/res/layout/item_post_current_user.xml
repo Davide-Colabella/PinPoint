@@ -15,7 +15,7 @@
             android:id="@+id/post_user_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            app:avatarViewBorderColor="@color/black"
+
             app:avatarViewBorderWidth="3dp"
             app:avatarViewPlaceholder="@drawable/ic_profile" />
 

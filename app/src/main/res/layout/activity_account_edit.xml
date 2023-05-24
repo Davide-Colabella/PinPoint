@@ -30,7 +30,7 @@
             android:id="@+id/profile_image_account_settings"
             android:layout_width="170dp"
             android:layout_height="170dp"
-            app:avatarViewBorderColor="@color/black"
+
             app:avatarViewBorderWidth="4dp"
             app:avatarViewPlaceholder="@drawable/ic_profile" />
     </LinearLayout>

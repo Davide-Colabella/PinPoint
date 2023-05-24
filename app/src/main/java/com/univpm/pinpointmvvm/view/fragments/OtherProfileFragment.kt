@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentOtherProfileBinding
 import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
@@ -18,8 +21,8 @@ import io.getstream.avatarview.coil.loadImage
 import kotlinx.coroutines.launch
 
 class OtherProfileFragment : Fragment(), ImageLoadListener {
-    private lateinit var viewBinding: FragmentOtherProfileBinding
     private lateinit var user: User
+    private lateinit var viewBinding: FragmentOtherProfileBinding
     private val viewModel: OtherProfileViewModel by viewModels {
         OtherProfileViewModel.OtherProfileViewModelFactory(
             user
@@ -52,6 +55,15 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         profileUiSetup()
 
         return viewBinding.root
+    }
+
+    private fun getColorTheme(): Int {
+        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+        return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+            ContextCompat.getColor(requireContext(), R.color.primaryNight)
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.primaryLight)
+        }
     }
 
     private fun followButtonListener() {
@@ -134,6 +146,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
             viewModel.uiState.collect {
                 viewBinding.apply {
                     profileActivityProfileImage.loadImage(it.image)
+                    profileActivityProfileImage.avatarBorderColor = getColorTheme()
                     profileActivityBio.text = it.bio
                     profileActivityUsername.text = it.username
                     profileActivityFullName.text = it.fullname

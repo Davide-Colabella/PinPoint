@@ -43,7 +43,7 @@
         android:layout_height="400dp"
         android:layout_below="@+id/app_bar_layout_post"
         android:contentDescription="@string/anteprima_dell_immagine_selezionata"
-        android:src="@drawable/ic_camera" />
+        android:src="@drawable/ic_photo_light" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edittext_descrizione"

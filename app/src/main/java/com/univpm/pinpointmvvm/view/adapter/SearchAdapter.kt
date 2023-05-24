@@ -3,6 +3,8 @@ package com.univpm.pinpointmvvm.view.adapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -63,6 +65,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
         fun bind(user: User) {
             binding.apply {
+                userProfileImageSearch.avatarBorderColor = getColorTheme()
                 userProfileImageSearch.load(user.image) {
                     placeholder(R.drawable.ic_profile)
                     error(R.drawable.ic_profile)
@@ -70,6 +73,15 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
                 }
                 fullnameSearch.text = user.fullname
                 usernameSearch.text = user.username
+            }
+        }
+
+        private fun getColorTheme(): Int {
+            val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+            return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                ContextCompat.getColor(binding.root.context, R.color.primaryNight)
+            } else {
+                ContextCompat.getColor(binding.root.context, R.color.primaryLight)
             }
         }
     }

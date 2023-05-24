@@ -1,10 +1,13 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.PinPointMVVM" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/pp_light_cyan</item>
-        <item name="colorPrimaryDark">@color/pp_light_red</item>
-        <item name="colorAccent">@color/pp_light_yellow</item>
+        <item name="colorPrimary">@color/primaryLight</item>
+        <item name="colorPrimaryDark">@color/secondaryLight</item>
+        <item name="colorAccent">@color/accentLight</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="android:editTextColor">@color/black</item>
     </style>
 
+    <!-- Default Theme (Fallback) -->
     <style name="Theme.PinPointMVVM" parent="Base.Theme.PinPointMVVM" />
 </resources>
