@@ -1,5 +1,7 @@
 package com.univpm.pinpointmvvm.view.fragments
 
+import android.app.UiModeManager
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -100,11 +102,19 @@ class PostFragment : Fragment() {
     }
 
     private fun changeDrawableTint() {
-        val currentNightMode = AppCompatDelegate.getDefaultNightMode()
-        if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
-            viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_night))
-        } else {
-            viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_light))
+        when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_YES -> viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_night))
+            AppCompatDelegate.MODE_NIGHT_NO -> viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_light))
+            else -> {
+                val uiModeManager = requireActivity().getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+                val isSystemInDarkMode = uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES
+
+                if (isSystemInDarkMode) {
+                    viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_night))
+                } else {
+                    viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_light))
+                }
+            }
         }
     }
 

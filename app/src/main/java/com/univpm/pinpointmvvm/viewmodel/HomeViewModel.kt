@@ -53,11 +53,15 @@ class HomeViewModel : ViewModel() {
         viewLifecycleOwner: LifecycleOwner,
         colorTheme: Int,
     ) {
-        map.clear()
-        users.observe(viewLifecycleOwner) { usersList ->
 
+        users.observe(viewLifecycleOwner) { usersList ->
             val markers = mutableListOf<Marker>()
             var loadedImages = 0
+
+            if(map!=null){
+                map.clear()
+            }
+
             usersList.forEach { user ->
                 val position = LatLng(user.latitude!!.toDouble(), user.longitude!!.toDouble())
                 val marker = map.addMarker(

@@ -116,7 +116,7 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
     private fun observeListOfPosts() {
         lifecycleScope.launch {
             viewModel.uiState.collect { userUiState ->
-                userUiState.posts?.observe(viewLifecycleOwner) {
+                userUiState.posts?.observe(requireActivity()) {
                     if (it.isEmpty()) {
                         viewBinding.progressBarOtherProfile.visibility = View.GONE
                         viewBinding.appBarLayoutProfile.visibility = View.VISIBLE

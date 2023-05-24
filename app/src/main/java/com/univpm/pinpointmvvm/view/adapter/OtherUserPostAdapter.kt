@@ -2,11 +2,14 @@ package com.univpm.pinpointmvvm.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
+import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ItemPostOtherUserBinding
 import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
@@ -44,6 +47,7 @@ class OtherUserPostAdapter(
                         imageLoadListener.onImageLoaded()
                     })
                 }
+                postUserPic.avatarBorderColor = getColorTheme()
                 postUserPic.load(post.userPic) {
                     crossfade(true)
                     transformations(CircleCropTransformation())
@@ -67,6 +71,14 @@ class OtherUserPostAdapter(
 
                 postDate.text = post.date.toString()
                 postPosition.setOnClickListener { listener(post) }
+            }
+        }
+        private fun getColorTheme(): Int {
+            val currentNightMode = AppCompatDelegate.getDefaultNightMode()
+            return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                ContextCompat.getColor(binding.root.context, R.color.primaryNight)
+            } else {
+                ContextCompat.getColor(binding.root.context, R.color.primaryLight)
             }
         }
     }

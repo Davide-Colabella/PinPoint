@@ -46,9 +46,4 @@ class AccountSettingsActivity : AppCompatActivity() {
             viewModel.logOut()
         }
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
 }
