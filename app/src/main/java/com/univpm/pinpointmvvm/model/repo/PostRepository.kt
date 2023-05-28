@@ -36,11 +36,16 @@ class PostRepository {
     suspend fun uploadPost(imageUri: Uri, description: String, position: LatLng): Result<Boolean> =
         withContext(Dispatchers.IO) {
             try {
+                val date = Date()
+                val format = SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+                val formattedDate = format.format(date)
+
+
                 pushPostOnDb(imageUri).addOnSuccessListener { uri ->
                     val post = Post(
                         imageUrl = uri.toString(),
                         description = description,
-                        date = Date().toString(),
+                        date = formattedDate,
                         userId = dbSettings.auth.uid,
                         longitude = position.longitude.toString(),
                         latitude = position.latitude.toString(),
@@ -53,28 +58,13 @@ class PostRepository {
             }
         }
 
-    /* private fun pushPostOnDb(imageUri: Uri): Task<Uri> {
-         val formattedDateTime =
-             SimpleDateFormat("dd-MM-yyyy-HH-mm-ss", Locale.ITALIAN).format(Date())
-         val fileRef =
-             DatabaseSettings.storagePosts.child(DatabaseSettings.auth.value?.currentUser?.uid!!)
-                 .child("$formattedDateTime.jpg")
-         val uploadTask: UploadTask = fileRef.putFile(imageUri)
-         return uploadTask.continueWithTask { task ->
-             if (!task.isSuccessful) {
-                 task.exception?.let {
-                     throw it
-                 }
-             }
-             fileRef.downloadUrl
-         }
-     }*/
     private fun pushPostOnDb(imageUri: Uri): Task<Uri> {
-        val formattedDateTime = SimpleDateFormat("dd-MM-yyyy-HH-mm-ss", Locale.ITALIAN)
-            .format(Date())
+        val date = Date()
+        val format = SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+        val formattedDate = format.format(date)
         val fileRef = dbSettings.storagePosts
             .child(dbSettings.auth.uid!!)
-            .child("$formattedDateTime.jpg")
+            .child("$formattedDate.jpg")
 
         val uploadTask = fileRef.putFile(imageUri)
         return uploadTask.continueWithTask { task ->

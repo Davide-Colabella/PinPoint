@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
     private lateinit var viewBinding: FragmentSearchBinding
+    private lateinit var viewModel: SearchViewModel
     private var searchAdapter = SearchAdapter()
 
     companion object {
@@ -28,17 +29,17 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         viewBinding = FragmentSearchBinding.inflate(inflater, container, false)
-        ViewModelProvider(this)[SearchViewModel::class.java].apply {
-            searchViewListener(this)
-            observeListOfUserSearched(this.uiState)
-        }
+        viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+
+        searchViewListener()
+        observeListOfUserSearched()
         searchUiSetup()
         return viewBinding.root
     }
 
-    private fun observeListOfUserSearched(state: StateFlow<SearchUiState>) {
+    private fun observeListOfUserSearched() {
         lifecycleScope.launch {
-            state.collect { searchUiState ->
+            viewModel.uiState.collect { searchUiState ->
                 searchUiState.users?.observe(requireActivity()) {
                     searchAdapter.users = it
                     searchAdapter.notifyDataSetChanged()
@@ -57,7 +58,7 @@ class SearchFragment : Fragment() {
     }
 
 
-    private fun searchViewListener(viewModel: SearchViewModel) {
+    private fun searchViewListener() {
         viewBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false

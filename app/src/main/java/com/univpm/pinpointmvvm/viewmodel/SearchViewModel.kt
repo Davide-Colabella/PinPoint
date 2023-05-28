@@ -15,9 +15,6 @@ class SearchViewModel : ViewModel() {
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
     private val searchRepository = SearchRepository()
 
-    init {
-
-    }
 
     fun searchUser(query: CharSequence?) {
         viewModelScope.launch {

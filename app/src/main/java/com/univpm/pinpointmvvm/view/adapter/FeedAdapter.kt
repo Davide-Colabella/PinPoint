@@ -1,5 +1,6 @@
 package com.univpm.pinpointmvvm.view.adapter
 
+import android.provider.Settings.Secure.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
@@ -64,11 +65,10 @@ class FeedAdapter(
                 if (post.latitude.isNullOrBlank() || post.longitude.isNullOrBlank()) {
                     postPosition.text = ""
                 } else {
-                    val positionToString = "${post.latitude}, ${post.longitude}"
-                    postPosition.text = positionToString
+                    postPosition.text = "Mostra posizione"
                 }
-
-                postDate.text = post.date.toString()
+                val firstThreeNumbers = post.date!!.substring(0, post.date.lastIndexOf("-"))
+                postDate.text = firstThreeNumbers
                 postPosition.setOnClickListener { positionListener(post) }
                 postUsername.setOnClickListener { usernameListener(post) }
             }

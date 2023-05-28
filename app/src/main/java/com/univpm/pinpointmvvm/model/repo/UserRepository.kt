@@ -13,6 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import io.reactivex.rxjava3.plugins.RxJavaPlugins.onError
+import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
 class UserRepository {
@@ -75,7 +76,6 @@ class UserRepository {
         dbSettings.dbUsers.child(user.uid!!)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     snapshot.getValue(User::class.java)?.apply {
                         onUserInfoChanged(fullname!!, username!!, bio!!, image!!)
                     }
@@ -129,7 +129,7 @@ class UserRepository {
                         it.getValue(PostUiState::class.java)!!
                     }.apply {
                         val dateFormat =
-                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                            SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
                         resultList.value = this.sortedByDescending { post ->
                             val date = dateFormat.parse(post.date)
                             date.time
@@ -156,10 +156,8 @@ class UserRepository {
                     for (postSnapshot in snapshot.children) {
                         val post = postSnapshot.getValue(PostUiState::class.java)
                         if (post?.imageUrl == postToDelete.imageUrl) {
-                            // Elimina il post dal database e dallo storage
-                            val postId = postSnapshot.key
+                            dbSettings.storagePosts.child(postToDelete.userId!!).child("${postToDelete.date}.jpg").delete()
                             task = postSnapshot.ref.removeValue()
-                            //FirebaseStorage.getInstance().getReference("Post/$postId.jpg").delete()
                         }
                     }
                 }
@@ -196,7 +194,7 @@ class UserRepository {
                     it.getValue(PostUiState::class.java)!!
                 }.apply {
                     val dateFormat =
-                        SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
                     resultList.value = this.sortedByDescending { post ->
                         val date = dateFormat.parse(post.date)
                         date.time

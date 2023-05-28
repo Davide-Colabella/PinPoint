@@ -65,11 +65,10 @@ class OtherUserPostAdapter(
                 if (post.latitude.isNullOrBlank() || post.longitude.isNullOrBlank()) {
                     postPosition.text = ""
                 } else {
-                    val positionToString = "${post.latitude}, ${post.longitude}"
-                    postPosition.text = positionToString
+                    postPosition.text = "Mostra posizione"
                 }
-
-                postDate.text = post.date.toString()
+                val firstThreeNumbers = post.date!!.substring(0, post.date.lastIndexOf("-"))
+                postDate.text = firstThreeNumbers
                 postPosition.setOnClickListener { listener(post) }
             }
         }
