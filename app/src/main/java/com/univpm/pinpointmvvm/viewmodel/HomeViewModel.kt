@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.model.repo.UserRepository
 import com.univpm.pinpointmvvm.model.utils.Localization
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 
-@SuppressLint("StaticFieldLeak", "PotentialBehaviorOverride")
 class HomeViewModel : ViewModel() {
     private val userRepository = UserRepository()
     private val _users: MutableLiveData<List<User>> = MutableLiveData()
@@ -133,7 +131,7 @@ class HomeViewModel : ViewModel() {
             val user = marker.tag as User
             user.let {
                 val bundle = Bundle().apply {
-                    putParcelable(Constants.USER_OBJECT_PARCEL, user)
+                    putParcelable(User.USER_OBJECT_PARCEL, user)
                 }
                 val fragment = OtherProfileFragment()
                 fragment.arguments = bundle

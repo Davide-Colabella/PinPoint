@@ -12,7 +12,6 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ItemUserSearchedBinding
-import com.univpm.pinpointmvvm.model.constants.Constants
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 
@@ -39,7 +38,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     private fun goToUserClickedProfile(fragment: FragmentActivity, user: User) {
         val bundle = Bundle().apply {
-            putParcelable(Constants.USER_OBJECT_PARCEL, user)
+            putParcelable(User.USER_OBJECT_PARCEL, user)
         }
         val destinationFragment = OtherProfileFragment.newInstance().apply {
             arguments = bundle
