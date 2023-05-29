@@ -67,7 +67,7 @@ class OtherUserPostAdapter(
                 } else {
                     postPosition.text = "Mostra posizione"
                 }
-                val firstThreeNumbers = post.date!!.substring(0, post.date.lastIndexOf("-"))
+                val firstThreeNumbers = post.date!!.substring(0, 10)
                 postDate.text = firstThreeNumbers
                 postPosition.setOnClickListener { listener(post) }
             }

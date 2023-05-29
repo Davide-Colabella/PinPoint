@@ -37,7 +37,7 @@ class PostRepository {
         withContext(Dispatchers.IO) {
             try {
                 val date = Date()
-                val format = SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+                val format = SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
                 val formattedDate = format.format(date)
 
 
@@ -60,7 +60,7 @@ class PostRepository {
 
     private fun pushPostOnDb(imageUri: Uri): Task<Uri> {
         val date = Date()
-        val format = SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+        val format = SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
         val formattedDate = format.format(date)
         val fileRef = dbSettings.storagePosts
             .child(dbSettings.auth.uid!!)

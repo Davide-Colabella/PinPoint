@@ -129,7 +129,7 @@ class UserRepository {
                         it.getValue(PostUiState::class.java)!!
                     }.apply {
                         val dateFormat =
-                            SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+                            SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
                         resultList.value = this.sortedByDescending { post ->
                             val date = dateFormat.parse(post.date)
                             date.time
@@ -194,7 +194,7 @@ class UserRepository {
                     it.getValue(PostUiState::class.java)!!
                 }.apply {
                     val dateFormat =
-                        SimpleDateFormat("dd-MM-yyyy-ss", Locale.getDefault())
+                        SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
                     resultList.value = this.sortedByDescending { post ->
                         val date = dateFormat.parse(post.date)
                         date.time

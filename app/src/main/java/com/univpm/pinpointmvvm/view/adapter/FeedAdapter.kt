@@ -67,7 +67,7 @@ class FeedAdapter(
                 } else {
                     postPosition.text = "Mostra posizione"
                 }
-                val firstThreeNumbers = post.date!!.substring(0, post.date.lastIndexOf("-"))
+                val firstThreeNumbers = post.date!!.substring(0, 10)
                 postDate.text = firstThreeNumbers
                 postPosition.setOnClickListener { positionListener(post) }
                 postUsername.setOnClickListener { usernameListener(post) }
