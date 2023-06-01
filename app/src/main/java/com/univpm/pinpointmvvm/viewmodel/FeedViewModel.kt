@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.repo.FeedRepository
+import com.univpm.pinpointmvvm.model.User
+import com.univpm.pinpointmvvm.repo.FeedRepository
 import com.univpm.pinpointmvvm.uistate.FeedUiState
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment

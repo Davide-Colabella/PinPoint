@@ -6,7 +6,7 @@ import android.net.Uri
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.model.repo.UserRepository
+import com.univpm.pinpointmvvm.repo.UserRepository
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.utils
+package com.univpm.pinpointmvvm.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,7 +8,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.univpm.pinpointmvvm.model.repo.UserRepository
+import com.univpm.pinpointmvvm.repo.UserRepository
 import kotlinx.coroutines.tasks.await
 
 class Localization(private val activity: Activity) : LocationListener {

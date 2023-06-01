@@ -11,7 +11,7 @@ import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ItemPostCurrentUserBinding
-import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
+import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
 

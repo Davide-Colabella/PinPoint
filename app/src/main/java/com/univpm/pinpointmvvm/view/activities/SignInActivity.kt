@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.univpm.pinpointmvvm.databinding.ActivitySignInBinding
-import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
-import com.univpm.pinpointmvvm.model.utils.InputValidator
-import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.repo.DatabaseSettings
+import com.univpm.pinpointmvvm.utils.InputValidator
+import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.utils
+package com.univpm.pinpointmvvm.utils
 
 import android.app.Activity
 import android.graphics.Color

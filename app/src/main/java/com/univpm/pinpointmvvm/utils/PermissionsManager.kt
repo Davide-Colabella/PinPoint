@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.utils
+package com.univpm.pinpointmvvm.utils
 
 import android.Manifest
 import android.content.Context

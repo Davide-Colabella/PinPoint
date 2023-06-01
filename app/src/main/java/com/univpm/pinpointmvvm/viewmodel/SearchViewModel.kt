@@ -2,7 +2,7 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.model.repo.SearchRepository
+import com.univpm.pinpointmvvm.repo.SearchRepository
 import com.univpm.pinpointmvvm.uistate.SearchUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

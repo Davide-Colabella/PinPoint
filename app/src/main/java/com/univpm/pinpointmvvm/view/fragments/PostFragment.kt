@@ -19,9 +19,9 @@ import com.canhub.cropper.CropImageOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentPostBinding
-import com.univpm.pinpointmvvm.model.utils.Localization
-import com.univpm.pinpointmvvm.model.utils.PermissionsManager
-import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.utils.Localization
+import com.univpm.pinpointmvvm.utils.PermissionsManager
+import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 

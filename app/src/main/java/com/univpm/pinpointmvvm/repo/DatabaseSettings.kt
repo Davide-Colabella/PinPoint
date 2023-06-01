@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.repo
+package com.univpm.pinpointmvvm.repo
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
@@ -24,7 +24,9 @@ class DatabaseSettings {
     val dbUsers = reference.child(DATABASE_USERS_PATH)
     val dbPosts = reference.child(DATABASE_POSTS_PATH)
     val dbFollows = reference.child(DATABASE_FOLLOWS_PATH)
-    val storageProfileImage = FirebaseStorage.getInstance().reference.child(STORAGE_PROFILE_IMAGE_PATH)
+    val storageProfileImage = FirebaseStorage.getInstance().reference.child(
+        STORAGE_PROFILE_IMAGE_PATH
+    )
     val storagePosts = FirebaseStorage.getInstance().reference.child(STORAGE_POSTS_PATH)
 
     init {

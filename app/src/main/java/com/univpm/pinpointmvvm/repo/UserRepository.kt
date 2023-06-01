@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.repo
+package com.univpm.pinpointmvvm.repo
 
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.univpm.pinpointmvvm.model.data.User
+import com.univpm.pinpointmvvm.model.User
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import io.reactivex.rxjava3.plugins.RxJavaPlugins.onError
 import java.util.Locale

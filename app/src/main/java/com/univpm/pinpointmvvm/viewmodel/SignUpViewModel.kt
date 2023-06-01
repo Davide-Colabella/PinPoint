@@ -2,10 +2,9 @@ package com.univpm.pinpointmvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
-import com.univpm.pinpointmvvm.model.repo.SignUpRepository
+import com.univpm.pinpointmvvm.model.User
+import com.univpm.pinpointmvvm.repo.DatabaseSettings
+import com.univpm.pinpointmvvm.repo.SignUpRepository
 import com.univpm.pinpointmvvm.uistate.SignUpUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class SignUpViewModel : ViewModel() {
-    private val dbSettings : DatabaseSettings by lazy { DatabaseSettings()}
+    private val dbSettings : DatabaseSettings by lazy { DatabaseSettings() }
     private val repository = SignUpRepository()
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()

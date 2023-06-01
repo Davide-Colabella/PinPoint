@@ -24,9 +24,9 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.repo.UserRepository
-import com.univpm.pinpointmvvm.model.utils.Localization
+import com.univpm.pinpointmvvm.model.User
+import com.univpm.pinpointmvvm.repo.UserRepository
+import com.univpm.pinpointmvvm.utils.Localization
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

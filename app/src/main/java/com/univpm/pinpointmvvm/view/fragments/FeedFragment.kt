@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.databinding.FragmentFeedBinding
-import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
+import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.view.adapter.FeedAdapter
 import com.univpm.pinpointmvvm.viewmodel.FeedViewModel
 import kotlinx.coroutines.launch

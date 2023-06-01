@@ -12,7 +12,7 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ItemUserSearchedBinding
-import com.univpm.pinpointmvvm.model.data.User
+import com.univpm.pinpointmvvm.model.User
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {

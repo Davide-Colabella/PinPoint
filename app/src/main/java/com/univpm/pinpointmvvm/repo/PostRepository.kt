@@ -1,9 +1,9 @@
-package com.univpm.pinpointmvvm.model.repo
+package com.univpm.pinpointmvvm.repo
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
-import com.univpm.pinpointmvvm.model.data.Post
+import com.univpm.pinpointmvvm.model.Post
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat

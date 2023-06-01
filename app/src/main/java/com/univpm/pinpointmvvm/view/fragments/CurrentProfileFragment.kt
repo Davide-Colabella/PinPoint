@@ -15,8 +15,8 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentCurrentProfileBinding
-import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
-import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.utils.ImageLoadListener
+import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.uistate.UserUiState
 import com.univpm.pinpointmvvm.view.activities.AccountEditActivity
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
@@ -53,6 +53,7 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
                 startActivity(Intent(context, AccountEditActivity::class.java))
             }
             profileFragmentSettings.setOnClickListener {
+                requireActivity().finish()
                 startActivity(Intent(context, AccountSettingsActivity::class.java))
             }
         }

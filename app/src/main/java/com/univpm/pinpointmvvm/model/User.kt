@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.data
+package com.univpm.pinpointmvvm.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 

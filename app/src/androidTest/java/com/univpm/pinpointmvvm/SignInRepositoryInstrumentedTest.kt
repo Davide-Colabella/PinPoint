@@ -9,7 +9,7 @@ import org.junit.Assert.*
  */
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.univpm.pinpointmvvm.model.repo.SignInRepository
+import com.univpm.pinpointmvvm.repo.SignInRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -12,8 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentOtherProfileBinding
-import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.utils.ImageLoadListener
+import com.univpm.pinpointmvvm.model.User
+import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.view.adapter.OtherUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.OtherProfileViewModel
 import io.getstream.avatarview.coil.loadImage

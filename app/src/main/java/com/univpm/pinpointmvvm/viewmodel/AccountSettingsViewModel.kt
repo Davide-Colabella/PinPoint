@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.univpm.pinpointmvvm.model.repo.UserRepository
+import com.univpm.pinpointmvvm.repo.UserRepository
 import com.univpm.pinpointmvvm.uistate.AccountSettingsUiState
 import com.univpm.pinpointmvvm.view.activities.AccountSettingsActivity
 import com.univpm.pinpointmvvm.view.activities.SignInActivity
