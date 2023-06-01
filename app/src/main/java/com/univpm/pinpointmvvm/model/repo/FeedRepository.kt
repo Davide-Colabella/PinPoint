@@ -44,7 +44,7 @@ class FeedRepository {
 
                 resultList.value = postList.toList().sortedByDescending { post ->
                     val date = SimpleDateFormat(
-                        "dd-MM-yyyy-hh-mm-ss",
+                        "yyyy-MM-dd-HH-mm-ss",
                         Locale.getDefault()
                     ).parse(post.date)
                     date.time
