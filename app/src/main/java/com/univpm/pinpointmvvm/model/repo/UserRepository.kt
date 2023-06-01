@@ -13,7 +13,6 @@ import com.google.firebase.database.ValueEventListener
 import com.univpm.pinpointmvvm.model.data.User
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import io.reactivex.rxjava3.plugins.RxJavaPlugins.onError
-import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
 class UserRepository {
@@ -129,7 +128,7 @@ class UserRepository {
                         it.getValue(PostUiState::class.java)!!
                     }.apply {
                         val dateFormat =
-                            SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
+                            SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault())
                         resultList.value = this.sortedByDescending { post ->
                             val date = dateFormat.parse(post.date)
                             date.time
@@ -194,7 +193,7 @@ class UserRepository {
                     it.getValue(PostUiState::class.java)!!
                 }.apply {
                     val dateFormat =
-                        SimpleDateFormat("dd-MM-yyyy-hh-mm-ss", Locale.getDefault())
+                        SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault())
                     resultList.value = this.sortedByDescending { post ->
                         val date = dateFormat.parse(post.date)
                         date.time
@@ -331,7 +330,7 @@ class UserRepository {
 
                     // Check if the other user follows the current user
                     val otherUserFollowingCurrentUserRef = dbSettings.dbFollows
-                        .child(user.uid!!)
+                        .child(user.uid)
                         .child("following")
                         .child(currentUserUid)
 
