@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.utils
+package com.univpm.pinpointmvvm.utils
 
 class InputValidator {
     // Verifica se il fullname contiene solo lettere dell'alfabeto, spazi e non è vuoto

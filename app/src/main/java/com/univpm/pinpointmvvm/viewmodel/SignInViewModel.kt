@@ -3,8 +3,8 @@ package com.univpm.pinpointmvvm.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.univpm.pinpointmvvm.model.repo.DatabaseSettings
-import com.univpm.pinpointmvvm.model.repo.SignInRepository
+import com.univpm.pinpointmvvm.repo.DatabaseSettings
+import com.univpm.pinpointmvvm.repo.SignInRepository
 import com.univpm.pinpointmvvm.uistate.SignInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

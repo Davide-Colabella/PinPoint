@@ -9,8 +9,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.univpm.pinpointmvvm.databinding.ActivitySignUpBinding
-import com.univpm.pinpointmvvm.model.utils.InputValidator
-import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.utils.InputValidator
+import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 

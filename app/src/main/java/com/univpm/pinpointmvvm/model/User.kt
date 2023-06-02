@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.data
+package com.univpm.pinpointmvvm.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -14,3 +14,8 @@ data class User(
     var latitude: String? = "41.9027835",
     var longitude: String? = "12.4963655",
 ) : Parcelable
+{
+    companion object {
+        const val USER_OBJECT_PARCEL = "USER_OBJECT_PARCEL"
+    }
+}

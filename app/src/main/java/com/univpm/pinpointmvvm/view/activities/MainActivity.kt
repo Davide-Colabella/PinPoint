@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityMainBinding
-import com.univpm.pinpointmvvm.model.utils.SharedPreferences
+import com.univpm.pinpointmvvm.utils.SharedPreferences
 import com.univpm.pinpointmvvm.view.fragments.CurrentProfileFragment
 import com.univpm.pinpointmvvm.view.fragments.FeedFragment
 import com.univpm.pinpointmvvm.view.fragments.HomeFragment

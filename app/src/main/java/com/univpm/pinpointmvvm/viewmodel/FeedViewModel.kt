@@ -11,9 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.univpm.pinpointmvvm.R
-import com.univpm.pinpointmvvm.model.constants.Constants
-import com.univpm.pinpointmvvm.model.data.User
-import com.univpm.pinpointmvvm.model.repo.FeedRepository
+import com.univpm.pinpointmvvm.model.User
+import com.univpm.pinpointmvvm.repo.FeedRepository
 import com.univpm.pinpointmvvm.uistate.FeedUiState
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
@@ -73,7 +72,7 @@ class FeedViewModel : ViewModel() {
         val user = allUsers.find { it.username == post.username }!!
 
         val bundle = Bundle().apply {
-            putParcelable(Constants.USER_OBJECT_PARCEL, user)
+            putParcelable(User.USER_OBJECT_PARCEL, user)
         }
         val destinationFragment = OtherProfileFragment.newInstance().apply {
             arguments = bundle

@@ -15,9 +15,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.FragmentHomeBinding
-import com.univpm.pinpointmvvm.model.utils.Localization
-import com.univpm.pinpointmvvm.model.utils.PermissionsManager
-import com.univpm.pinpointmvvm.model.utils.SnackbarManager
+import com.univpm.pinpointmvvm.utils.Localization
+import com.univpm.pinpointmvvm.utils.PermissionsManager
+import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 

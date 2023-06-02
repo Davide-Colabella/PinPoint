@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
-import com.univpm.pinpointmvvm.model.utils.SharedPreferences
+import com.univpm.pinpointmvvm.utils.SharedPreferences
 import com.univpm.pinpointmvvm.view.fragments.PreferencesFragment
 import com.univpm.pinpointmvvm.viewmodel.AccountSettingsViewModel
 import kotlinx.coroutines.launch

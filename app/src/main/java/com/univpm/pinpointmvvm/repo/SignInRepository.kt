@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.repo
+package com.univpm.pinpointmvvm.repo
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.univpm.pinpointmvvm.model.utils
+package com.univpm.pinpointmvvm.utils
 
 interface ImageLoadListener {
     fun onImageLoaded()

@@ -15,8 +15,8 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountEditBinding
-import com.univpm.pinpointmvvm.model.utils.InputValidator
-import com.univpm.pinpointmvvm.model.utils.PermissionsManager
+import com.univpm.pinpointmvvm.utils.InputValidator
+import com.univpm.pinpointmvvm.utils.PermissionsManager
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
