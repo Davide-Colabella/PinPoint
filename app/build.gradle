@@ -93,3 +93,23 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+tasks.withType(org.jetbrains.dokka.gradle.DokkaTask) {
+    moduleName = "PinPoint"
+    moduleVersion = project.version.toString()
+    outputDirectory = file("$buildDir/dokka/$name")
+    failOnWarning = false
+    suppressObviousFunctions = true
+    suppressInheritedMembers = true // Imposta questa opzione su "true" per escludere i metodi ereditati
+    offlineMode = false
+
+    // .. altre opzioni di configurazione ...
+
+    // Configurazione del set di sorgenti
+    dokkaSourceSets {
+        // Esempio di configurazione per il set di sorgenti principale
+        named('main') {
+            // ... altre opzioni di configurazione del set di sorgenti ...
+        }
+    }
+}
