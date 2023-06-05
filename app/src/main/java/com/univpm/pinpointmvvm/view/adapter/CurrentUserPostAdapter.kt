@@ -14,7 +14,9 @@ import com.univpm.pinpointmvvm.databinding.ItemPostCurrentUserBinding
 import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
-
+/**
+ * Adapter per la visualizzazione dei post dell'utente corrente
+ */
 class CurrentUserPostAdapter(
     private val deleteListener: (PostUiState) -> Unit,
     private val positionListener: (PostUiState) -> Unit,
@@ -76,6 +78,10 @@ class CurrentUserPostAdapter(
             }
         }
 
+        /**
+         * Metodo per ottenere il del tema corrente
+         * @return Int colore del tema corrente
+         */
         private fun getColorTheme(): Int {
             val currentNightMode = AppCompatDelegate.getDefaultNightMode()
             return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {

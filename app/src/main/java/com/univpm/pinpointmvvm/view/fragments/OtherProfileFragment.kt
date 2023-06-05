@@ -19,14 +19,24 @@ import com.univpm.pinpointmvvm.viewmodel.OtherProfileViewModel
 import io.getstream.avatarview.coil.loadImage
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione del profilo utente di un altro utente
+ */
 class OtherProfileFragment : Fragment(), ImageLoadListener {
+    //User
     private lateinit var user: User
+
+    //ViewBinding
     private lateinit var viewBinding: FragmentOtherProfileBinding
+
+    //ViewModel
     private val viewModel: OtherProfileViewModel by viewModels {
         OtherProfileViewModel.OtherProfileViewModelFactory(
             user
         )
     }
+
+    //Adapter
     private val otherUserPostAdapter: OtherUserPostAdapter by lazy {
         OtherUserPostAdapter(
             listener = {
@@ -34,6 +44,8 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
             }, imageLoadListener = this
         )
     }
+
+    //Numero di immagini caricate
     private var numImagesLoaded = 0
 
     companion object {
@@ -56,6 +68,10 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         return viewBinding.root
     }
 
+    /**
+     * Metodo per ottenere il colore del tema
+     * @return Int colore del tema
+     */
     private fun getColorTheme(): Int {
         val currentNightMode = AppCompatDelegate.getDefaultNightMode()
         return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -65,6 +81,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per impostare l'interfaccia utente del profilo utente in base al click sul bottone
+     */
     private fun followButtonListener() {
         viewBinding.followButton.setOnClickListener {
             if (viewBinding.followButton.text.toString() == "Segui")
@@ -74,6 +93,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per l'osservazione del fatto che l'utente segua l'altro utente
+     */
     private fun checkFollowing() {
         viewModel.checkFollowing(user).observe(
             requireActivity()
@@ -86,6 +108,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per l'osservazione del fatto che entrambi gli utenti si seguano
+     */
     private fun checkBothUsersFollowing() {
         viewModel.checkBothUsersFollowing(user).observe(
             viewLifecycleOwner
@@ -112,6 +137,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per l'osservazione della lista di post
+     */
     private fun observeListOfPosts() {
         lifecycleScope.launch {
             viewModel.uiState.collect { userUiState ->
@@ -140,6 +168,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
 
     }
 
+    /**
+     * Metodo per la configurazione dell'interfaccia utente
+     */
     private fun profileUiSetup() {
         lifecycleScope.launch {
             viewModel.uiState.collect {
@@ -165,6 +196,9 @@ class OtherProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per notificare il caricamento di un'immagine
+     */
     override fun onImageLoaded() {
         numImagesLoaded++
         if (numImagesLoaded >= otherUserPostAdapter.itemCount) {

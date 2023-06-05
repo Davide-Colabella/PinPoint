@@ -1,20 +1,19 @@
 package com.univpm.pinpointmvvm.view.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ActivityAccountSettingsBinding
-import com.univpm.pinpointmvvm.utils.SharedPreferences
 import com.univpm.pinpointmvvm.view.fragments.PreferencesFragment
 import com.univpm.pinpointmvvm.viewmodel.AccountSettingsViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Activity per le impostazioni dell'account
+ */
 class AccountSettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAccountSettingsBinding
     private val viewModel: AccountSettingsViewModel by viewModels()
@@ -28,7 +27,10 @@ class AccountSettingsActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.container_preferences, PreferencesFragment()).commit()
 
-
+        /**
+         * Osservazione dello stato dell'utente, se è loggato o meno.
+         * Se non è loggato, viene reindirizzato alla schermata di login.
+         */
         lifecycleScope.launch {
             viewModel.uiState.collect {
                 if (it.isLoggedOut) {
@@ -42,6 +44,9 @@ class AccountSettingsActivity : AppCompatActivity() {
             }
         }
 
+        /**
+         * Logout dell'utente
+         */
         binding.logoutBtn.setOnClickListener {
             viewModel.logOut()
         }

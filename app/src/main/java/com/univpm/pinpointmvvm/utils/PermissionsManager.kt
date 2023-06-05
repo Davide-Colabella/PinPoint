@@ -6,6 +6,9 @@ import androidx.preference.PreferenceManager
 import com.gun0912.tedpermission.coroutine.TedPermission
 import com.univpm.pinpointmvvm.view.fragments.PreferencesFragment
 
+/**
+ * Classe che gestisce i permessi dell'applicazione
+ */
 class PermissionsManager(private val context: Context) {
     companion object {
         private val locationPerms = arrayOf(
@@ -15,6 +18,11 @@ class PermissionsManager(private val context: Context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val sharedPrefs = SharedPreferences(context)
+
+    /**
+     * Funzione che controlla i permessi dell'applicazione relativi alla camera
+     * @return Boolean true se i permessi sono stati dati, false altrimenti
+     */
     suspend fun checkCameraPermission(): Boolean {
 
         return TedPermission.create()
@@ -24,6 +32,10 @@ class PermissionsManager(private val context: Context) {
             .checkGranted()
     }
 
+    /**
+     * Funzione che controlla i permessi dell'applicazione relativi alla posizione
+     * @return Boolean true se i permessi sono stati dati, false altrimenti
+     */
     private suspend fun checkLocationPermission(): Boolean {
 
         val permissionResults: Boolean = if (sharedPrefs.isFirstRun()) {
@@ -39,17 +51,27 @@ class PermissionsManager(private val context: Context) {
         return permissionResults
     }
 
-    //setta lo switch della preferenza relativa alla posizione in base ai permessi dati al primo avvio
+    /**
+     * Funzione che imposta lo stato dello switch della preferenza relativa alla posizione
+     * @param permissionResults Boolean true se i permessi sono stati dati, false altrimenti
+     */
     private fun setLocPref(permissionResults: Boolean) {
         preferences.edit().putBoolean(PreferencesFragment.LOCATION_KEY, permissionResults)
             .apply()
     }
 
-    // ritorna lo stato dello switch della preferenza relativa alla posizione
+    /**
+     * Funzione che restituisce lo stato dello switch della preferenza relativa alla posizione
+     * @return Boolean true se i permessi sono stati dati, false altrimenti
+     */
     private fun getLocPref(): Boolean {
         return preferences.getBoolean(PreferencesFragment.LOCATION_KEY, false)
     }
 
+    /**
+     * Funzione che controlla i permessi dell'applicazione relativi alla posizione e utili per impostare correttamente la mappa
+     * @return Boolean true se i permessi sono stati dati, false altrimenti
+     */
     suspend fun checkLocationPermissionForMap(): Boolean {
         return if (checkLocationPermission()) {
             getLocPref()

@@ -1,5 +1,8 @@
 package com.univpm.pinpointmvvm.model
 
+/**
+ * Classe che rappresenta un post
+ */
 data class Post(
     val imageUrl: String? = null,
     val userId: String? = null,

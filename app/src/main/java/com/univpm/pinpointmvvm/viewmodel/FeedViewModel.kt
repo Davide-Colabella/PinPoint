@@ -22,10 +22,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel per la gestione del feed
+ */
 class FeedViewModel : ViewModel() {
+    // StateFlow per la gestione dello stato del feed
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
+
+    // Repository
     private val feedRepository = FeedRepository.instance
+
+    // Lista di tutti gli utenti
     private val allUsers: MutableList<User> = mutableListOf()
 
     init {
@@ -46,6 +54,9 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Metodo per aggiornare il feed prendendo tutti i post
+     */
     private fun fetchAllPosts() {
         feedRepository.getAllPosts(
             allUsers,
@@ -61,6 +72,11 @@ class FeedViewModel : ViewModel() {
         )
     }
 
+    /**
+     * Metodo visualizzare la posizione del post su Google Maps
+     * @param postUiState post da visualizzare
+     * @param context contesto
+     */
     fun viewOnGoogleMap(postUiState: PostUiState, context: Context) {
         val locationString = "${postUiState.latitude},${postUiState.longitude}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
@@ -68,6 +84,12 @@ class FeedViewModel : ViewModel() {
         ContextCompat.startActivity(context, intent, null)
     }
 
+    /**
+     * Metodo per visualizzare il profilo dell'utente che ha pubblicato il post dopo aver
+     * effettuato il click sul suo username
+     * @param post post da visualizzare
+     * @param fragment fragment da sostituire
+     */
     fun goToUserClickedProfile(post: PostUiState, fragment: FragmentActivity) {
         val user = allUsers.find { it.username == post.username }!!
 

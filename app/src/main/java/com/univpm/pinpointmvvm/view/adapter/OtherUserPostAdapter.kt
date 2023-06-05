@@ -14,6 +14,9 @@ import com.univpm.pinpointmvvm.databinding.ItemPostOtherUserBinding
 import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
 
+/**
+ * Adapter per la visualizzazione dei post dell'utente non corrente
+ */
 class OtherUserPostAdapter(
     private val listener: (PostUiState) -> Unit,
     private val imageLoadListener: ImageLoadListener

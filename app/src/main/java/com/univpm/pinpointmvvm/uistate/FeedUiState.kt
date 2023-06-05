@@ -2,6 +2,9 @@ package com.univpm.pinpointmvvm.uistate
 
 import androidx.lifecycle.LiveData
 
+/**
+ * Classe che rappresenta lo stato dell'interfaccia grafica della schermata del feed
+ */
 data class FeedUiState(
     val isLoading : Boolean = false,
     val isLoaded: Boolean = false,

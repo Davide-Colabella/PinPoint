@@ -24,6 +24,9 @@ import com.univpm.pinpointmvvm.view.adapter.CurrentUserPostAdapter
 import com.univpm.pinpointmvvm.viewmodel.CurrentProfileViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione del profilo utente corrente
+ */
 class CurrentProfileFragment : Fragment(), ImageLoadListener {
     companion object {
         fun newInstance() = CurrentProfileFragment()
@@ -73,6 +76,10 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         observeDeletePostError()
     }
 
+    /**
+     * Metodo per ottenere il colore del tema corrente
+     * @return Int colore del tema corrente
+     */
     private fun getColorTheme(): Int {
         val currentNightMode = AppCompatDelegate.getDefaultNightMode()
         return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -82,6 +89,10 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per osservare la lista dei post dell'utente corrente
+     * @param uiState UserUiState stato dell'utente
+     */
     private fun observeListOfPosts(uiState: UserUiState) {
         uiState.posts?.observe(viewLifecycleOwner) { posts ->
             if (posts.isEmpty()) {
@@ -103,6 +114,10 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per impostare l'interfaccia grafica
+     * @param uiState UserUiState stato dell'utente
+     */
     private fun setupUi(uiState: UserUiState) {
         viewBinding.apply {
             profileFragmentUsername.text = uiState.username
@@ -128,6 +143,9 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per osservare l'errore di cancellazione di un post
+     */
     private fun observeDeletePostError() {
         lifecycleScope.launch {
             viewModel.postDeleteError.collect {
@@ -140,6 +158,9 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per osservare il successo di cancellazione di un post
+     */
     private fun observeDeletePostSuccess() {
         lifecycleScope.launch {
             viewModel.postDeleteSuccess.collect {
@@ -154,6 +175,9 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
 
     }
 
+    /**
+     * Metodo per notificare il caricamento di un'immagine e cambiare la visibilità della progress bar
+     */
     override fun onImageLoaded() {
         numImagesLoaded++
         if (numImagesLoaded >= currentUserPostAdapter.itemCount) {

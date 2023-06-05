@@ -7,8 +7,17 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.univpm.pinpointmvvm.R
 
+/**
+ * Classe che gestisce la visualizzazione degli Snackbar
+ */
 object SnackbarManager {
 
+    /**
+     * Metodo che visualizza un messaggio di fallimento per un'activity
+     * @param message messaggio da visualizzare
+     * @param activity activity in cui visualizzare il messaggio
+     * @param view view in cui visualizzare il messaggio
+     */
     fun onFailure(message: String, activity: Activity, view: View) {
         Snackbar.make(
             view,
@@ -20,6 +29,12 @@ object SnackbarManager {
             .show()
     }
 
+    /**
+     * Metodo che visualizza un messaggio di successo per un fragment
+     * @param message messaggio da visualizzare
+     * @param activity activity in cui visualizzare il messaggio
+     * @param view view in cui visualizzare il messaggio
+     */
     fun onSuccess(message: String, fragment: Fragment) {
         Snackbar.make(
             fragment.requireView(),
@@ -31,6 +46,12 @@ object SnackbarManager {
             .show()
     }
 
+    /**
+     * Metodo che visualizza un messaggio di fallimento per un fragment
+     * @param message messaggio da visualizzare
+     * @param activity activity in cui visualizzare il messaggio
+     * @param view view in cui visualizzare il messaggio
+     */
     fun onFailure(message: String, fragment: Fragment) {
         fragment.view?.let {
             Snackbar.make(
@@ -44,6 +65,12 @@ object SnackbarManager {
         }
     }
 
+    /**
+     * Metodo che visualizza un messaggio di warning per un fragment
+     * @param message messaggio da visualizzare
+     * @param activity activity in cui visualizzare il messaggio
+     * @param view view in cui visualizzare il messaggio
+     */
     fun onWarning(message: String, fragment: Fragment) {
         fragment.view?.let {
             Snackbar.make(

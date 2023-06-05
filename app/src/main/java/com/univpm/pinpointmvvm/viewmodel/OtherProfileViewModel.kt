@@ -18,9 +18,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel per la gestione del profilo utente corrente
+ */
 class OtherProfileViewModel(user: User) : ViewModel() {
+    // StateFlow per la gestione dello stato dell'utente
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+
+    // Repository
     private val userRepository = UserRepository()
 
     init {
@@ -41,29 +47,55 @@ class OtherProfileViewModel(user: User) : ViewModel() {
         }
     }
 
-    fun viewOnGoogleMap(it: PostUiState, context : Context) {
-        val locationString = "${it.latitude},${it.longitude}"
+    /**
+     * Metodo per visualizzare la posizione del post su Google Maps
+     * @param state post
+     * @param context contesto
+     */
+    fun viewOnGoogleMap(state: PostUiState, context: Context) {
+        val locationString = "${state.latitude},${state.longitude}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
         intent.setPackage("com.google.android.apps.maps")
-        startActivity(context,intent, null)
+        startActivity(context, intent, null)
     }
 
+    /**
+     * Metodo per seguire un utente
+     * @param user utente da seguire
+     */
     fun followUser(user: User) {
         userRepository.followUser(user)
     }
 
+    /**
+     * Metodo per smettere di seguire un utente
+     * @param user utente da smettere di seguire
+     */
     fun unfollowUser(user: User) {
         userRepository.unfollowUser(user)
     }
 
+    /**
+     * Metodo per controllare se l'utente è seguito
+     * @param user utente da controllare
+     */
     fun checkFollowing(user: User): LiveData<Boolean> {
         return userRepository.checkFollowing(user)
     }
 
+    /**
+     * Metodo per controllare se gli utenti si seguono a vicenda
+     * @param user utente da controllare
+     */
     fun checkBothUsersFollowing(user: User): LiveData<Boolean> {
         return userRepository.checkBothUsersFollowing(user)
     }
 
+    /**
+     * Factory per la creazione del ViewModel
+     * @param user utente
+     * @return OtherProfileViewModel
+     */
     class OtherProfileViewModelFactory(
         private val user: User,
     ) : ViewModelProvider.Factory {

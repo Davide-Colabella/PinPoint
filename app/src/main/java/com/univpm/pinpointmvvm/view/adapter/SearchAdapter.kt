@@ -15,6 +15,9 @@ import com.univpm.pinpointmvvm.databinding.ItemUserSearchedBinding
 import com.univpm.pinpointmvvm.model.User
 import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 
+/**
+ * Adapter per la visualizzazione degli utenti cercati
+ */
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     var users: List<User> = emptyList()
@@ -75,6 +78,10 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
             }
         }
 
+        /**
+         * Metodo per ottenere il colore del tema corrente
+         * @return Int colore del tema corrente
+         */
         private fun getColorTheme(): Int {
             val currentNightMode = AppCompatDelegate.getDefaultNightMode()
             return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {

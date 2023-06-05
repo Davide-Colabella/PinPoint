@@ -14,6 +14,9 @@ import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Activity per la registrazione
+ */
 class SignUpActivity : AppCompatActivity() {
     companion object {
         private const val FULLNAME_ERROR = "Inserisci il nome completo. Solo caratteri alfabetici."
@@ -51,6 +54,9 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Abilita l'interfaccia utente
+     */
     private fun enableUI() {
         viewBinding.apply {
             progressBarSignUp.visibility = View.GONE
@@ -64,6 +70,9 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Disabilita l'interfaccia utente
+     */
     private fun disableUI() {
         viewBinding.apply {
             progressBarSignUp.visibility = View.VISIBLE
@@ -77,6 +86,9 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Al click del bottone "Sign In" viene aperta la schermata di login
+     */
     private fun signInClick(): View.OnClickListener {
         return View.OnClickListener {
             startActivity(Intent(this@SignUpActivity, SignInActivity::class.java))
@@ -84,6 +96,10 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Al click del bottone "Sign Up" vengono controllati i dati inseriti dall'utente
+     * e se corretti viene effettuata la registrazione
+     */
     private fun signUpClick(): View.OnClickListener {
         return View.OnClickListener {
             hideKeyboard()
@@ -118,6 +134,9 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Nasconde la tastiera
+     */
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)

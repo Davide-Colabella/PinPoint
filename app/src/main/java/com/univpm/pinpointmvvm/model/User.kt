@@ -2,7 +2,9 @@ package com.univpm.pinpointmvvm.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-
+/**
+ * Classe che rappresenta un utente
+ */
 @Parcelize
 data class User(
     val uid: String? = null,

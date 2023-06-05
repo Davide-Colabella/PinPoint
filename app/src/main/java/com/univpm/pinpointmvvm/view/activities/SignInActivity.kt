@@ -16,6 +16,9 @@ import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.SignInViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Activity per il login
+ */
 class SignInActivity : AppCompatActivity() {
 
     companion object{
@@ -51,6 +54,9 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Abilita l'interfaccia utente
+     */
     private fun enableUi() {
         viewBinding.apply {
             progressBarSignIn.visibility = View.GONE
@@ -62,6 +68,9 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Disabilita l'interfaccia utente
+     */
     private fun disableUi() {
         viewBinding.apply {
             progressBarSignIn.visibility = View.VISIBLE
@@ -73,12 +82,17 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Nasconde la tastiera
+     */
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
+    /**
+     * Al click del bottone di login, viene effettuato il login se i campi inseriti sono corretti
+     */
     private fun signInClick(): View.OnClickListener {
         return View.OnClickListener {
             hideKeyboard()
@@ -96,6 +110,9 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Al click del bottone di signup, viene aperta l'activity di signup
+     */
     private fun signUpClick(): View.OnClickListener {
         return View.OnClickListener {
             startActivity(
@@ -107,6 +124,9 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Allo start dell'activity, se l'utente è già loggato viene aperta l'activity principale
+     */
     override fun onStart() {
         super.onStart()
         if (viewModel.isLoggedIn()) {

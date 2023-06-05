@@ -1,5 +1,8 @@
 package com.univpm.pinpointmvvm.uistate
 
+/**
+ * Classe che rappresenta lo stato dell'interfaccia grafica della schermata di signup
+ */
 data class SignUpUiState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,

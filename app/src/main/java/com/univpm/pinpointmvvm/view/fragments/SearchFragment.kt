@@ -16,6 +16,9 @@ import com.univpm.pinpointmvvm.viewmodel.SearchViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione della ricerca
+ */
 class SearchFragment : Fragment() {
     private lateinit var viewBinding: FragmentSearchBinding
     private lateinit var viewModel: SearchViewModel
@@ -37,6 +40,9 @@ class SearchFragment : Fragment() {
         return viewBinding.root
     }
 
+    /**
+     * Metodo per osservare la lista di utenti cercati
+     */
     private fun observeListOfUserSearched() {
         lifecycleScope.launch {
             viewModel.uiState.collect { searchUiState ->
@@ -48,6 +54,10 @@ class SearchFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo per impostare l'interfaccia utente, in particolare per impostare l'adapter
+     * alla lista di utenti cercati
+     */
 
     private fun searchUiSetup() {
         viewBinding.recyclerView.apply {
@@ -58,6 +68,10 @@ class SearchFragment : Fragment() {
     }
 
 
+    /**
+     * Metodo per impostare il listener alla searchView.
+     * Qunado il testo cambia, viene chiamato il metodo searchUser
+     */
     private fun searchViewListener() {
         viewBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

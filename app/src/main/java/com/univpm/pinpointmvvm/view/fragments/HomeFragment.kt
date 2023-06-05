@@ -21,6 +21,9 @@ import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione della mappa
+ */
 class HomeFragment : Fragment() {
 
     companion object {
@@ -55,7 +58,9 @@ class HomeFragment : Fragment() {
             R.id.map_fragment
         ) as SupportMapFragment
 
-
+        /**
+         * In base ai permessi dell'utente, viene caricata la posizione corrente o la posizione di default
+         */
         lifecycleScope.launch {
             viewModel.setLocationEnabled(permissionsManager.checkLocationPermissionForMap())
             viewModel.locationEnabled.collect {
@@ -63,8 +68,7 @@ class HomeFragment : Fragment() {
                     position = localization.getLastLocation()
                     if (position.latitude == Localization.LATITUDE_DEFAULT && position.longitude == Localization.LONGITUDE_DEFAULT) {
                         SnackbarManager.onWarning(
-                            DEFAULT_POSITION,
-                            this@HomeFragment
+                            DEFAULT_POSITION, this@HomeFragment
                         )
                     }
                 } else {
@@ -77,25 +81,34 @@ class HomeFragment : Fragment() {
         return viewBinding.root
     }
 
+    /**
+     * Metodo per impostare la mappa a livello grafico
+     * @param locationEnabled: true se l'utente ha dato i permessi per la localizzazione, false altrimenti
+     */
     private fun setupMap(locationEnabled: Boolean) {
         supportMapFragment.getMapAsync { map ->
             if (locationEnabled) {
                 viewModel.apply {
-                    mapAddMarkers(imageLoader, requireActivity(), map, viewLifecycleOwner, getColorTheme())
+                    mapAddMarkers(
+                        imageLoader, requireActivity(), map, viewLifecycleOwner, getColorTheme()
+                    )
                     mapSetUi(map, position, true)
                     mapSnippetClick(requireActivity(), map)
                     mapLocationUpdates(localization, map)
                 }
             } else {
                 viewModel.mapSetUi(
-                    map,
-                    position,
-                    false
+                    map, position, false
                 )
             }
 
         }
     }
+
+    /**
+     * Metodo per ottenere il colore del tema attuale
+     * @return Int colore del tema attuale
+     */
     private fun getColorTheme(): Int {
         val currentNightMode = AppCompatDelegate.getDefaultNightMode()
         return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {

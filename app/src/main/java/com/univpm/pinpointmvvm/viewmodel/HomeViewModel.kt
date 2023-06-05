@@ -31,11 +31,16 @@ import com.univpm.pinpointmvvm.view.fragments.OtherProfileFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-
+/**
+ * ViewModel per la gestione della mappa
+ */
 class HomeViewModel : ViewModel() {
+    // Repository
     private val userRepository = UserRepository()
+    // Lista degli utenti
     private val _users: MutableLiveData<List<User>> = MutableLiveData()
     val users: LiveData<List<User>> = _users
+    // StateFlow per la gestione della localizzazione
     private val _locationEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val locationEnabled = _locationEnabled.asStateFlow()
 
@@ -43,7 +48,14 @@ class HomeViewModel : ViewModel() {
         userRepository.fetchAllUsersOnDatabase(_users)
     }
 
-    //aggiunta dei marker sulla mappa
+    /**
+     * Funzione per il caricamento dei marker sulla mappa
+     * @param imageLoader: ImageLoader
+     * @param homeFragment: FragmentActivity
+     * @param map: GoogleMap
+     * @param viewLifecycleOwner: LifecycleOwner
+     * @param colorTheme: Int
+     */
     fun mapAddMarkers(
         imageLoader: ImageLoader,
         homeFragment: FragmentActivity,
@@ -90,6 +102,12 @@ class HomeViewModel : ViewModel() {
 
     }
 
+    /**
+     * Funzione per l'aggiunta del bordo al marker
+     * @param bitmap: Bitmap
+     * @param colorTheme: Int
+     * @return Bitmap
+     */
     private fun addBorderToBitmap(bitmap: Bitmap, colorTheme: Int): Bitmap {
         val borderWidth = 5
         val borderColor = colorTheme
@@ -115,7 +133,11 @@ class HomeViewModel : ViewModel() {
 
 
 
-
+    /**
+     * Funzione per l'aggiornamento della posizione sulla mappa
+     * @param localization posizione attuale
+     * @param map: GoogleMap
+     */
     fun mapLocationUpdates(localization: Localization, map: GoogleMap) {
         localization.startUpdates { location ->
             val position = LatLng(location!!.latitude, location.longitude)
@@ -125,7 +147,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    //definisce il click sullo snippet del marker
+    /**
+     * Funzione per la gestione del click sul marker
+     * @param homeFragment: FragmentActivity
+     * @param map: GoogleMap
+     */
     fun mapSnippetClick(homeFragment: FragmentActivity, map: GoogleMap) {
         map.setOnInfoWindowClickListener { marker ->
             val user = marker.tag as User
@@ -144,6 +170,13 @@ class HomeViewModel : ViewModel() {
     }
 
     @SuppressLint("MissingPermission")
+    /**
+     * Funzione per la gestione dell'interfaccia della mappa
+     * @param map: GoogleMap
+     * @param position: LatLng
+     * @param isLocationEnabled: Boolean
+     * @suppress MissingPermission
+     */
     fun mapSetUi(map: GoogleMap, position: LatLng, isLocationEnabled: Boolean) {
         map.apply {
             if (position.latitude.equals(Localization.LATITUDE_DEFAULT) && position.longitude.equals(
@@ -178,6 +211,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Funzione per la gestione della posizione.
+     * Controlla se l'utente ha dato il permesso di accedere alla posizione
+     * @param checkLocationPermission: Boolean
+     */
     fun setLocationEnabled(checkLocationPermission: Boolean) {
         _locationEnabled.value = checkLocationPermission
     }

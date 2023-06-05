@@ -2,6 +2,9 @@ package com.univpm.pinpointmvvm.uistate
 
 import com.google.android.gms.maps.model.LatLng
 
+/**
+ * Classe che rappresenta lo stato dell'interfaccia grafica della schermata dei post
+ */
 data class PostUiState(
     val userId : String? = null,
     val imageUrl: String? = null,

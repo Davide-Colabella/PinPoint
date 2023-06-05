@@ -15,6 +15,9 @@ import com.univpm.pinpointmvvm.view.adapter.FeedAdapter
 import com.univpm.pinpointmvvm.viewmodel.FeedViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione del feed
+ */
 class FeedFragment : Fragment(), ImageLoadListener {
     private lateinit var viewBinding: FragmentFeedBinding
     private val viewModel: FeedViewModel by viewModels()
@@ -41,6 +44,10 @@ class FeedFragment : Fragment(), ImageLoadListener {
         return viewBinding.root
     }
 
+    /**
+     * Metodo per impostare l'interfaccia utente, in particolare per impostare l'adapter
+     * alla lista di post
+     */
     private fun setupUi() {
         viewBinding.feedRecyclerview.apply {
             setHasFixedSize(true)
@@ -49,6 +56,9 @@ class FeedFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per osservare la lista di post
+     */
     private fun observeListOfPosts() {
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
@@ -66,6 +76,9 @@ class FeedFragment : Fragment(), ImageLoadListener {
         }
     }
 
+    /**
+     * Metodo per notificare il caricamento di un'immagine e cambiare la visibilità della progress bar
+     */
     override fun onImageLoaded() {
         numImagesLoaded++
         if (numImagesLoaded >= feedAdapter.itemCount) {

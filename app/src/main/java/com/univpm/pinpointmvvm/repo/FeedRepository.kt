@@ -10,6 +10,9 @@ import com.univpm.pinpointmvvm.model.User
 import com.univpm.pinpointmvvm.uistate.PostUiState
 import java.util.Locale
 
+/**
+ * Classe che rappresenta il repository per la gestione del feed
+ */
 class FeedRepository {
     companion object {
         val instance = FeedRepository()
@@ -18,6 +21,15 @@ class FeedRepository {
 
     private val dbSettings = DatabaseSettings()
 
+    /**
+     * Funzione che ritorna tutti i post
+     * @param allUsers lista di tutti gli utenti
+     * @param onSuccess funzione da eseguire in caso di successo
+     * @param onError funzione da eseguire in caso di errore
+     * @return lista di post
+     * @see PostUiState
+     * @see User
+     */
     fun getAllPosts(
         allUsers: MutableList<User>,
         onSuccess: (LiveData<List<PostUiState>>) -> Unit,
@@ -59,7 +71,13 @@ class FeedRepository {
         })
     }
 
-    fun getFollowers(
+    /**
+     * Funzione che ritorna i follower di un utente
+     * @param onSuccess funzione da eseguire in caso di successo
+     * @param onError funzione da eseguire in caso di errore
+     * @return lista di follower
+     */
+    private fun getFollowers(
         onSuccess: (List<String>) -> Unit,
         onError: (Exception) -> Unit
     ) {
@@ -85,7 +103,13 @@ class FeedRepository {
             .addListenerForSingleValueEvent(followersListener)
     }
 
-    fun getFollowing(
+    /**
+     * Funzione che ritorna gli utenti che un utente segue
+     * @param onSuccess funzione da eseguire in caso di successo
+     * @param onError funzione da eseguire in caso di errore
+     * @return lista di utenti che l'utente segue
+     */
+    private fun getFollowing(
         onSuccess: (List<String>) -> Unit,
         onError: (Exception) -> Unit
     ) {
@@ -111,6 +135,12 @@ class FeedRepository {
             .addListenerForSingleValueEvent(followingListener)
     }
 
+    /**
+     * Funzione che ritorna gli utenti comuni tra i follower e gli utenti che l'utente segue
+     * @param onError funzione da eseguire in caso di errore
+     * @param onSuccess funzione da eseguire in caso di successo
+     * @return lista di utenti comuni
+     */
     fun getCommonUsers(
         onError: (Exception) -> Unit,
         onSuccess: (List<User>) -> Unit
@@ -149,8 +179,13 @@ class FeedRepository {
         })
     }
 
-
-    fun getUserById(
+    /**
+     * Funzione che ritorna gli utenti che l'utente segue
+     * @param onError funzione da eseguire in caso di errore
+     * @param onSuccess funzione da eseguire in caso di successo
+     * @return lista di utenti che l'utente segue
+     */
+    private fun getUserById(
         userId: String,
         onSuccess: (User) -> Unit,
         onError: (Exception) -> Unit

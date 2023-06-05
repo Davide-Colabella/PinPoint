@@ -2,6 +2,9 @@ package com.univpm.pinpointmvvm.uistate
 
 import androidx.lifecycle.LiveData
 
+/**
+ * Classe che rappresenta lo stato dell'interfaccia grafica della schermata del profilo
+ */
 data class UserUiState(
     val isFetchingProfile: Boolean = false,
     val username: String? = null,

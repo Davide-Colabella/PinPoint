@@ -11,6 +11,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.univpm.pinpointmvvm.repo.UserRepository
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Classe che rappresenta la localizzazione dell'utente
+ */
 class Localization(private val activity: Activity) : LocationListener {
 
     companion object {
@@ -32,6 +35,11 @@ class Localization(private val activity: Activity) : LocationListener {
 
 
     @SuppressLint("MissingPermission")
+    /**
+     * Funzione che ritorna la posizione attuale dell'utente
+     * @return LatLng
+     * @suppress "MissingPermission"
+     */
     suspend fun getLastLocation(): LatLng {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
         return try {
@@ -44,6 +52,11 @@ class Localization(private val activity: Activity) : LocationListener {
     }
 
     @SuppressLint("MissingPermission")
+            /**
+             * Funzione che inizia a monitorare la posizione dell'utente
+             * @param listener
+             * @suppress "MissingPermission"
+             */
     fun startUpdates(listener: (Location?) -> Unit) {
         this.listener = listener
 
@@ -53,17 +66,21 @@ class Localization(private val activity: Activity) : LocationListener {
 
     }
 
-    fun stopUpdates() {
-        locationManager.removeUpdates(this)
-    }
-
-
+    /**
+     * Funzione che setta la posizione attuale dell'utente
+     * @param location posizione attuale dell'utente
+     */
     private fun setCurrentUserPosition(location: Location) {
         userRepository.updateProfile(
-            latitude = location.latitude.toString(), longitude = location.longitude.toString()
+            latitude = location.latitude.toString(),
+            longitude = location.longitude.toString()
         )
     }
 
+    /**
+     * Funzione che monitora il cambiamento della posizione dell'utente
+     * @param location posizione attuale dell'utente
+     */
     override fun onLocationChanged(location: Location) {
         listener?.invoke(location)
         setCurrentUserPosition(location)

@@ -7,6 +7,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.univpm.pinpointmvvm.R
 
+/**
+ * Fragment per la visualizzazione delle preferenze dell'applicazione
+ */
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     companion object {
@@ -27,6 +30,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /**
+     * Applica il tema in base alla modalità scelta
+     * @param selectedValue modalità scelta
+     */
     fun applyDarkMode(selectedValue: String) {
         val nightMode = when (selectedValue) {
             "0" -> AppCompatDelegate.MODE_NIGHT_NO
@@ -35,15 +42,5 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
         AppCompatDelegate.setDefaultNightMode(nightMode)
     }
-
-
-    fun getSelectedTheme(): String? {
-      return findPreference<ListPreference>(DARK_THEME_KEY)?.value
-    }
-
-    fun setSelectedTheme(theme: String) {
-      findPreference<ListPreference>(DARK_THEME_KEY)?.value = theme
-    }
-
 
 }

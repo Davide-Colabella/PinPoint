@@ -1,6 +1,5 @@
 package com.univpm.pinpointmvvm.view.adapter
 
-import android.provider.Settings.Secure.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,9 +11,12 @@ import coil.transform.CircleCropTransformation
 import com.commit451.coiltransformations.SquareCropTransformation
 import com.univpm.pinpointmvvm.R
 import com.univpm.pinpointmvvm.databinding.ItemFeedBinding
-import com.univpm.pinpointmvvm.utils.ImageLoadListener
 import com.univpm.pinpointmvvm.uistate.PostUiState
+import com.univpm.pinpointmvvm.utils.ImageLoadListener
 
+/**
+ * Adapter per la visualizzazione dei post dell'utente corrente
+ */
 class FeedAdapter(
     private val positionListener: (PostUiState) -> Unit,
     private val usernameListener: (PostUiState) -> Unit,
@@ -74,6 +76,10 @@ class FeedAdapter(
             }
         }
 
+        /**
+         * Metodo per ottenere il del tema corrente
+         * @return Int colore del tema attuale
+         */
         private fun getColorTheme(): Int {
             val currentNightMode = AppCompatDelegate.getDefaultNightMode()
             return if (currentNightMode == AppCompatDelegate.MODE_NIGHT_YES) {

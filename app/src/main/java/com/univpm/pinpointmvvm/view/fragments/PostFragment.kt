@@ -25,6 +25,9 @@ import com.univpm.pinpointmvvm.utils.SnackbarManager
 import com.univpm.pinpointmvvm.viewmodel.PostViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment per la visualizzazione di una pagina per il caricamento di un post
+ */
 class PostFragment : Fragment() {
 
     companion object {
@@ -73,6 +76,10 @@ class PostFragment : Fragment() {
 
         changeDrawableTint()
 
+        /**
+         * Funzione per il caricamento di un post
+         * Deve essere garantito l'accesso alla fotocamera e alla localizzazione
+         */
         lifecycleScope.launch {
             viewModel.setLocalizationEnabled(permissionsManager.checkLocationPermissionForMap())
             viewModel.locationEnabled.collect { locationIsGranted ->
@@ -101,6 +108,9 @@ class PostFragment : Fragment() {
         return viewBinding.root
     }
 
+    /**
+     *  Metodo che imposta l'immagine di default a un colore diverso in base al tema
+     */
     private fun changeDrawableTint() {
         when (AppCompatDelegate.getDefaultNightMode()) {
             AppCompatDelegate.MODE_NIGHT_YES -> viewBinding.imageviewPost.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_photo_night))
@@ -118,6 +128,9 @@ class PostFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo che osserva l'errore di caricamento di un post e mostra un messaggio di errore
+     */
     private suspend fun observeUploadPostError() {
         viewModel.postUploadError.collect {
             if (it.isNotBlank()) {
@@ -128,6 +141,9 @@ class PostFragment : Fragment() {
 
     }
 
+    /**
+     * Metodo che osserva il successo del caricamento di un post e mostra un messaggio di successo
+     */
     private suspend fun observeUploadPostSuccess() {
         viewModel.postUploadSuccess.collect {
             if (it) {
@@ -141,6 +157,9 @@ class PostFragment : Fragment() {
     }
 
 
+    /**
+     * Metodo che chiude il fragment e torna alla home al termine del caricamento di un post
+     */
     private fun closeFragment() {
         val destinationFragment = HomeFragment.newInstance()
         requireActivity().apply {
@@ -153,7 +172,9 @@ class PostFragment : Fragment() {
         }
     }
 
-    //Quando viene premuto il pulsante "salva" aggiunge il post sul database
+    /**
+     * Metodo che permette di caricare un post
+     */
     private fun onUploadPost() {
         viewBinding.btnSalvaImmagine.setOnClickListener {
             if (imageUri != Uri.EMPTY) {
@@ -176,7 +197,9 @@ class PostFragment : Fragment() {
         }
     }
 
-    //quando viene premuto il pulsante "sfoglia" si puo scegliere un'immagine dalla galleria
+    /**
+     * Metodo che permette di scegliere un'immagine dalla galleria
+     */
     private fun onScegliBtnClick() {
         viewBinding.btnSfogliaGalleria.setOnClickListener {
             if (imageUri != Uri.EMPTY) {

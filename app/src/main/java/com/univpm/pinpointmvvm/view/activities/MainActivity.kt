@@ -18,6 +18,9 @@ import com.univpm.pinpointmvvm.view.fragments.PostFragment
 import com.univpm.pinpointmvvm.view.fragments.PreferencesFragment
 import com.univpm.pinpointmvvm.view.fragments.SearchFragment
 
+/**
+ * Activity principale dell'applicazione
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -38,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationListener()
     }
 
+    /**
+     * Metodo per impostare il colore dei pulsanti e delle scritte della bottom navigation
+     * in base al tema selezionato
+     */
     private fun setBottomNavigationColor() {
         binding.bottomNavigationView.backgroundTintList =
             ColorStateList.valueOf(getBottomNavigationViewBackground()[0])
@@ -47,6 +54,10 @@ class MainActivity : AppCompatActivity() {
             ColorStateList.valueOf(getBottomNavigationViewBackground()[1])
     }
 
+    /**
+     * Metodo per impostare il colore del background della bottom navigation
+     * in base al tema selezionato
+     */
     private fun getBottomNavigationViewBackground(): IntArray {
         val nightMode = AppCompatDelegate.getDefaultNightMode()
 
@@ -55,10 +66,12 @@ class MainActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.primaryNight),
                 ContextCompat.getColor(this, R.color.accentNight)
             )
+
             AppCompatDelegate.MODE_NIGHT_NO -> intArrayOf(
                 ContextCompat.getColor(this, R.color.secondaryLight),
                 ContextCompat.getColor(this, R.color.accentLight)
             )
+
             else -> {
                 val uiModeManager = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
                 val isSystemInDarkMode = uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES
@@ -78,7 +91,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Metodo per gestire il comportamento del tasto back
+     */
     override fun onBackPressed() {
         if (binding.bottomNavigationView.selectedItemId == R.id.home) {
             super.onBackPressed()
@@ -87,6 +102,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Metodo per gestire il comportamento della bottom navigation
+     */
     private fun bottomNavigationListener() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
@@ -101,6 +119,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Metodo per sostituire il fragment attuale con quello passato come parametro
+     */
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frame_layout, fragment)
