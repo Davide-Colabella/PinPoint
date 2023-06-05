@@ -17,7 +17,7 @@
             android:entryValues="@array/dark_mode_values"
             android:key="list_theme_preference"
             app:useSimpleSummaryProvider="true"
-            android:title="Dark mode" />
+            android:title="Modalità tema" />
 
     </PreferenceCategory>
 

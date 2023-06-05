@@ -11,23 +11,23 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="no_account">Don\'t have an account? Create one</string>
+    <string name="no_account">Non hai un account? Creane uno</string>
     <string name="full_name">Nome &amp; cognome</string>
     <string name="username">Username</string>
     <string name="sign_up">Sign Up</string>
-    <string name="yes_account">Already have an account? Log In</string>
+    <string name="yes_account">Hai già un account? Log In</string>
 
     <!--Fragment profile-->
     <string name="zero">0</string>
     <string name="post">post</string>
     <string name="followers">follower</string>
     <string name="following">following</string>
-    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_profile">Modifica Profilo</string>
     <string name="segui">Segui</string>
     <string name="bio">Bio</string>
 
     <!--Fragment search-->
-    <string name="search">Search</string>
+    <string name="search">Cerca</string>
 
     <!--Fragment user_item-->
     <string name="follow">Follow</string>
@@ -36,7 +36,7 @@
     <string name="change_profile_image">Cambia immagine</string>
     <string name="delete_account">Delete account</string>
     <string name="logout">Logout</string>
-    <string name="bio_limit">Bio (limit 140 characters)</string>
+    <string name="bio_limit">Bio (limite 140 caratteri)</string>
     <string name="title_activity_account_settings">AccountSettingsActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -92,9 +92,9 @@
     <string name="descrizione">Descrizione</string>
     <string name="date">Data</string>
     <string name="home_nvabar_item">Home</string>
-    <string name="search_nvabar_item">Search</string>
+    <string name="search_nvabar_item">Cerca</string>
     <string name="post_nvabar_item">Post</string>
-    <string name="profile_nvabar_item">Profile</string>
+    <string name="profile_nvabar_item">Profilo</string>
     <string name="nothing_nvabar_item">Nothing</string>
     <string name="cancella_post">Cancella Post</string>
     <string name="position">Posizione</string>
