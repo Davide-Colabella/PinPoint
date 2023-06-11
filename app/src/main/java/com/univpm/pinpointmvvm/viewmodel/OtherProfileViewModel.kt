@@ -56,7 +56,9 @@ class OtherProfileViewModel(user: User) : ViewModel() {
         val locationString = "${state.latitude},${state.longitude}"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$locationString"))
         intent.setPackage("com.google.android.apps.maps")
-        startActivity(context, intent, null)
+        if(intent.resolveActivity(context.packageManager) != null){
+            startActivity(context, intent, null)
+        }
     }
 
     /**
