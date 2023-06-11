@@ -41,7 +41,9 @@ class PermissionsManager(private val context: Context) {
         val permissionResults: Boolean = if (sharedPrefs.isFirstRun()) {
             TedPermission.create().setPermissions(*locationPerms)
                 .setDeniedTitle("Permessi alla localizzazione negati")
-                .setDeniedMessage("Dovresti accettare i permessi di accesso alla localizzazione per poter utilizzare l'applicazione")
+                .setDeniedMessage("Impostazioni del profilo -> Abilita la posizione. \n Impostazioni dell'app -> Concedi i permessi alla localizzazione")
+                .setDeniedCloseButtonText("Chiudi")
+                .setGotoSettingButtonText("Impostazioni")
                 .checkGranted().apply {
                     setLocPref(this)
                 }

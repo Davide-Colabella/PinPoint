@@ -56,7 +56,6 @@ class CurrentProfileFragment : Fragment(), ImageLoadListener {
                 startActivity(Intent(context, AccountEditActivity::class.java))
             }
             profileFragmentSettings.setOnClickListener {
-                requireActivity().finish()
                 startActivity(Intent(context, AccountSettingsActivity::class.java))
             }
         }
